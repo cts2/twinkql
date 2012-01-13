@@ -1,0 +1,23 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http:mayo.edu/sparqler" targetNamespace="http:mayo.edu/sparqler"
+	elementFormDefault="qualified">
+
+	<xsd:element name="sparqlMappings">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="sparqlMap" type="sparqlMap"
+					maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="namespace" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="sparqlMap">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="id" use="required" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+</xsd:schema>

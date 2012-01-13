@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparqler:sparqlMappings namespace="myTestNamespace"
+	xmlns:sparqler="http:mayo.edu/sparqler" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http:mayo.edu/sparqler ../../../main/xsd/sparqlmap.xsd ">
+	<sparqler:sparqlMap id="myTestQuery">
+	<![CDATA[
+	
+	SELECT DISTINCT ?p ?o
+	 WHERE {
+	  GRAPH ?graphURI {
+	   ?s a <http://www.w3.org/2002/07/owl#Ontology>;
+	   ?p ?o
+	
+	  }
+	 }
+	 
+	 ]]>
+	</sparqler:sparqlMap>
+</sparqler:sparqlMappings>
