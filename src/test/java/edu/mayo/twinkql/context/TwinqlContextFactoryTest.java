@@ -21,7 +21,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql;
+package edu.mayo.twinkql.context;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,6 +34,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import edu.mayo.sparqler.model.SparqlMap;
 import edu.mayo.sparqler.model.SparqlMappings;
+import edu.mayo.twinkql.context.TwinkqlContextFactory;
 
 /**
  * The Class TwinqlContextFactoryTest.
