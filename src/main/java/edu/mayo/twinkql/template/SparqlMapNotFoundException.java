@@ -21,54 +21,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import edu.mayo.sparqler.model.SparqlMappings;
+package edu.mayo.twinkql.template;
 
 /**
- * The Class DefaultTwinkqlContext.
+ * The Class SparqlMapNotFoundException.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public class DefaultTwinkqlContext implements TwinkqlContext {
-	
-	private Map<String,SparqlMappings> sparqlMappings = new HashMap<String,SparqlMappings>();
-	
-	/**
-	 * Instantiates a new default twinkql context.
-	 */
-	public DefaultTwinkqlContext(){
-		super();
-	}
+public class SparqlMapNotFoundException extends RuntimeException {
+
+	private static final long serialVersionUID = -3572551432548266228L;
 	
 	/**
-	 * Instantiates a new default twinkql context.
+	 * Instantiates a new sparql map not found exception.
 	 *
-	 * @param maps the maps
+	 * @param namespace the namespace
+	 * @param sparqlMapId the sparql map id
 	 */
-	public DefaultTwinkqlContext(SparqlMappings...maps){
-		this(Arrays.asList(maps));
-	}
-	
-	/**
-	 * Instantiates a new default twinkql context.
-	 *
-	 * @param maps the maps
-	 */
-	public DefaultTwinkqlContext(Iterable<SparqlMappings> maps){
-		for(SparqlMappings mapppings : maps){
-			this.sparqlMappings.put(mapppings.getNamespace(), mapppings);
-		}
+	public SparqlMapNotFoundException(String namespace, String sparqlMapId){
+		super("Sparql map with ID: " + sparqlMapId + " of namespace " + namespace + " was not found.");
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.mayo.twinkql.TwinkqlContext#getSparqlMap(java.lang.String, java.lang.String)
-	 */
-	public SparqlMappings getSparqlMappings(String namespace) {
-		return this.sparqlMappings.get(namespace);
-	}
 }

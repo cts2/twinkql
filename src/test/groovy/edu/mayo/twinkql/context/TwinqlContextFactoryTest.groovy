@@ -23,8 +23,7 @@
  */
 package edu.mayo.twinkql.context;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
@@ -44,32 +43,32 @@ import edu.mayo.twinkql.context.TwinkqlContextFactory;
 public class TwinqlContextFactoryTest {
 	
 	@Test
-	public void testLoadSparqlMappings() throws JiBXException, IOException{
-		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory();
+	void testLoadSparqlMappings() throws JiBXException, IOException{
+		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
 		
-		SparqlMappings mappings = 
+		def mappings = 
 				sparqlContextFactory.loadSparqlMappings(new ClassPathResource("/xml/test.xml"));
 		
-		assertNotNull(mappings);
+		assertNotNull mappings;
 		
-		assertEquals("myTestNamespace", mappings.getNamespace());
+		assertEquals "myTestNamespace", mappings.getNamespace()
 		
-		assertEquals(1, mappings.getSparqlMapList().size());
+		assertEquals 1, mappings.getSparqlMapList().size()
 	}
 	
 	@Test
 	public void testLoadSparqlMapp() throws JiBXException, IOException{
 		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
 		
-		SparqlMappings mappings = 
+		def mappings = 
 				twinkqlContextFactory.loadSparqlMappings(new ClassPathResource("/xml/test.xml"));
 		
 		
-		SparqlMap map = mappings.getSparqlMapList().get(0);
+		def map = mappings.getSparqlMapList().get(0)
 		
-		assertEquals("myTestQuery", map.getId());
+		assertEquals "myTestQuery", map.getId()
 		
-		assertNotNull(map.getString());
+		assertNotNull map.getString()
 		
 	}
 

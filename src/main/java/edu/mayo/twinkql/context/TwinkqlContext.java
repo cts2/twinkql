@@ -23,7 +23,7 @@
  */
 package edu.mayo.twinkql.context;
 
-import edu.mayo.sparqler.model.SparqlMap;
+import edu.mayo.sparqler.model.SparqlMappings;
 
 /**
  * The Interface TwinkqlContext.
@@ -36,8 +36,7 @@ public interface TwinkqlContext {
 	 * Gets the sparql map.
 	 *
 	 * @param namespace the namespace
-	 * @param mapId the map id
 	 * @return the sparql map
 	 */
-	public SparqlMap getSparqlMap(String namespace, String mapId);
+	public SparqlMappings getSparqlMappings(String namespace);
 }
