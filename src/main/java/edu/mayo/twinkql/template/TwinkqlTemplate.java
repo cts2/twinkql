@@ -79,7 +79,7 @@ public class TwinkqlTemplate implements InitializingBean {
 		
 		if(!CollectionUtils.isEmpty(parameters)){
 			for(Entry<String,Object> entrySet : parameters.entrySet()){
-				query = query.replaceAll(
+				query = query.replace(
 						"#{"+entrySet.getKey()+"}", 
 						entrySet.getValue().toString());
 			}

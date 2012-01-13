@@ -57,7 +57,7 @@ public class TwinqlContextFactoryTest {
 	}
 	
 	@Test
-	public void testLoadSparqlMapp() throws JiBXException, IOException{
+	public void testLoadSparqlMap() throws JiBXException, IOException{
 		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
 		
 		def mappings = 
