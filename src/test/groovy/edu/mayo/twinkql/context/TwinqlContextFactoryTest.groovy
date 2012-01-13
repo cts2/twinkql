@@ -21,19 +21,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context;
+package edu.mayo.twinkql.context
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import java.io.IOException;
+import java.io.IOException
 
-import org.jibx.runtime.JiBXException;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
+import org.jibx.runtime.JiBXException
+import org.junit.Test
+import org.springframework.core.io.ClassPathResource
 
-import edu.mayo.sparqler.model.SparqlMap;
-import edu.mayo.sparqler.model.SparqlMappings;
-import edu.mayo.twinkql.context.TwinkqlContextFactory;
+import edu.mayo.sparqler.model.SparqlMap
+import edu.mayo.sparqler.model.SparqlMappings
+import edu.mayo.twinkql.context.TwinkqlContextFactory
 
 /**
  * The Class TwinqlContextFactoryTest.
