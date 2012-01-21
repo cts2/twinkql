@@ -21,51 +21,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context
+package edu.mayo.twinkql.context;
 
-import static org.junit.Assert.*
-
-import java.io.IOException
-
-import org.jibx.runtime.JiBXException
-import org.junit.Test
-import org.springframework.core.io.ClassPathResource
-
-import edu.mayo.twinkql.model.SparqlMap
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 /**
- * The Class TwinqlContextFactoryTest.
- *
- * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
+ * The Interface QueryExecutionProvider.
  */
-public class TwinqlContextFactoryTest {
+public interface QueryExecutionProvider {
 	
-	@Test
-	void testLoadSparqlMappings() throws JiBXException, IOException{
-		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
-		
-		def map = 
-				sparqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
-		
-		assertNotNull map;
-		
-		assertEquals "myTestNamespace", map.getNamespace()
-	}
-	
-	@Test
-	public void testLoadSparqlMap() throws JiBXException, IOException{
-		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
-		
-		SparqlMap map = 
-				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
-		
-		
-		def select = map.getSelectList().getAt(0);
-		
-		assertEquals "myTestQuery", select.getId()
-		
-		assertNotNull select.getString()
-		
-	}
+	/**
+	 * Provide query execution.
+	 *
+	 * @param query the query
+	 * @return the query execution
+	 */
+	public QueryExecution provideQueryExecution(Query query);
 
 }

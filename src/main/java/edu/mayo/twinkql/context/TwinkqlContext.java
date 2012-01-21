@@ -23,7 +23,12 @@
  */
 package edu.mayo.twinkql.context;
 
-import edu.mayo.sparqler.model.SparqlMappings;
+import java.util.Set;
+
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+
+import edu.mayo.twinkql.model.SparqlMap;
 
 /**
  * The Interface TwinkqlContext.
@@ -38,5 +43,13 @@ public interface TwinkqlContext {
 	 * @param namespace the namespace
 	 * @return the sparql map
 	 */
-	public SparqlMappings getSparqlMappings(String namespace);
+	public Set<SparqlMap> getSparqlMaps();
+	
+	/**
+	 * Gets the query execution.
+	 *
+	 * @param query the query
+	 * @return the query execution
+	 */
+	public QueryExecution getQueryExecution(Query query);
 }

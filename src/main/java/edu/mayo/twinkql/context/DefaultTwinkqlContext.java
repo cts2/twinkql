@@ -24,10 +24,13 @@
 package edu.mayo.twinkql.context;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
-import edu.mayo.sparqler.model.SparqlMappings;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+
+import edu.mayo.twinkql.model.SparqlMap;
 
 /**
  * The Class DefaultTwinkqlContext.
@@ -36,7 +39,9 @@ import edu.mayo.sparqler.model.SparqlMappings;
  */
 public class DefaultTwinkqlContext implements TwinkqlContext {
 	
-	private Map<String,SparqlMappings> sparqlMappings = new HashMap<String,SparqlMappings>();
+	private Set<SparqlMap> sparqlMaps = new HashSet<SparqlMap>();
+	
+	private QueryExecutionProvider queryExecutionProvider ;
 	
 	/**
 	 * Instantiates a new default twinkql context.
@@ -48,27 +53,35 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	/**
 	 * Instantiates a new default twinkql context.
 	 *
+	 * @param queryExecutionProvider the query execution provider
 	 * @param maps the maps
 	 */
-	public DefaultTwinkqlContext(SparqlMappings...maps){
-		this(Arrays.asList(maps));
+	public DefaultTwinkqlContext(QueryExecutionProvider queryExecutionProvider, SparqlMap...maps){
+		this(queryExecutionProvider, new HashSet<SparqlMap>(Arrays.asList(maps)));
 	}
 	
 	/**
 	 * Instantiates a new default twinkql context.
 	 *
+	 * @param queryExecutionProvider the query execution provider
 	 * @param maps the maps
 	 */
-	public DefaultTwinkqlContext(Iterable<SparqlMappings> maps){
-		for(SparqlMappings mapppings : maps){
-			this.sparqlMappings.put(mapppings.getNamespace(), mapppings);
-		}
+	public DefaultTwinkqlContext(QueryExecutionProvider queryExecutionProvider, Set<SparqlMap> sparqlMaps){
+		this.queryExecutionProvider = queryExecutionProvider;
+		this.sparqlMaps = sparqlMaps;
 	}
 
 	/* (non-Javadoc)
 	 * @see edu.mayo.twinkql.TwinkqlContext#getSparqlMap(java.lang.String, java.lang.String)
 	 */
-	public SparqlMappings getSparqlMappings(String namespace) {
-		return this.sparqlMappings.get(namespace);
+	public Set<SparqlMap> getSparqlMaps() {
+		return this.sparqlMaps;
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.mayo.twinkql.context.TwinkqlContext#getQueryExecution(com.hp.hpl.jena.query.Query)
+	 */
+	public QueryExecution getQueryExecution(Query query) {
+		return this.queryExecutionProvider.provideQueryExecution(query);
 	}
 }

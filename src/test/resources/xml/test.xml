@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sparqler:sparqlMappings namespace="myTestNamespace"
-	xmlns:sparqler="http:mayo.edu/sparqler" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<sparqlMap namespace="myTestNamespace"
+	xmlns="http:mayo.edu/twinkql" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http:mayo.edu/sparqler ../../../main/xsd/sparqlmap.xsd ">
-	<sparqler:sparqlMap id="myTestQuery">
+	
+	<resultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
+		<triplesMap>
+			<tripleMap objectPart="localName" predicateUri="asdf" beanProperty="test.bean.prop"/>
+		</triplesMap>	
+	</resultMap>
+	
+	
+	<select id="myTestQuery">
 	<![CDATA[
 	
 	SELECT DISTINCT ?p ?o
@@ -15,5 +24,5 @@
 	 }
 	 
 	 ]]>
-	</sparqler:sparqlMap>
-</sparqler:sparqlMappings>
+	</select>
+</sparqlMap>

@@ -21,51 +21,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context
-
-import static org.junit.Assert.*
-
-import java.io.IOException
-
-import org.jibx.runtime.JiBXException
-import org.junit.Test
-import org.springframework.core.io.ClassPathResource
-
-import edu.mayo.twinkql.model.SparqlMap
+package edu.mayo.twinkql.template;
 
 /**
- * The Class TwinqlContextFactoryTest.
+ * The Class ResultMapNotFoundException.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public class TwinqlContextFactoryTest {
+public class ResultMapNotFoundException extends RuntimeException {
+
+	private static final long serialVersionUID = -3572551432548266228L;
 	
-	@Test
-	void testLoadSparqlMappings() throws JiBXException, IOException{
-		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
-		
-		def map = 
-				sparqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
-		
-		assertNotNull map;
-		
-		assertEquals "myTestNamespace", map.getNamespace()
-	}
-	
-	@Test
-	public void testLoadSparqlMap() throws JiBXException, IOException{
-		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
-		
-		SparqlMap map = 
-				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
-		
-		
-		def select = map.getSelectList().getAt(0);
-		
-		assertEquals "myTestQuery", select.getId()
-		
-		assertNotNull select.getString()
-		
+	/**
+	 * Instantiates a new sparql map not found exception.
+	 *
+	 * @param namespace the namespace
+	 * @param resultMapId the resultMapId
+	 */
+	public ResultMapNotFoundException(String namespace, String resultMapId){
+		super("Result Map with ID: " + resultMapId + " of namespace " + namespace + " was not found.");
 	}
 
 }

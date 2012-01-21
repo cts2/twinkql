@@ -1,23 +1,67 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns="http:mayo.edu/sparqler" targetNamespace="http:mayo.edu/sparqler"
+	xmlns="http:mayo.edu/twinkql" targetNamespace="http:mayo.edu/twinkql"
 	elementFormDefault="qualified">
 
-	<xsd:element name="sparqlMappings">
+	<xsd:element name="sparqlMap">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="sparqlMap" type="sparqlMap"
+				<xsd:element name="resultMap" type="resultMap"
 					maxOccurs="unbounded" />
+				<xsd:choice>
+					<xsd:element name="select" type="select"
+						maxOccurs="unbounded" />
+				</xsd:choice>
 			</xsd:sequence>
 			<xsd:attribute name="namespace" use="required" />
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="sparqlMap">
+	<xsd:complexType name="select">
 		<xsd:simpleContent>
 			<xsd:extension base="xsd:string">
 				<xsd:attribute name="id" use="required" />
+				<xsd:attribute name="resultMap" />
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
-	
+
+	<xsd:complexType name="resultMap">
+		<xsd:choice>
+			<xsd:element name="triplesMap" type="triplesMap" />
+			<xsd:element name="rowMap" type="rowMap" maxOccurs="unbounded" />
+		</xsd:choice>
+		<xsd:attribute name="id" use="required" />
+		<xsd:attribute name="resultClass" use="required" />
+	</xsd:complexType>
+
+	<xsd:complexType name="triplesMap">
+		<xsd:sequence>
+			<xsd:element name="tripleMap" type="tripleMap" maxOccurs="unbounded" />
+		</xsd:sequence>
+		<xsd:attribute name="subjectVar" default="s" />
+		<xsd:attribute name="predicateVar" default="p" />
+		<xsd:attribute name="objectVar" default="o" />
+	</xsd:complexType>
+
+	<xsd:complexType name="tripleMap">
+		<xsd:attribute name="predicateUri" use="required" />
+		<xsd:attribute name="beanProperty" use="required" />
+		<xsd:attribute name="objectPart" type="bindingPart" use="required" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="bindingPart">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="localName" />
+			<xsd:enumeration value="uri" />
+			<xsd:enumeration value="namespace" />
+			<xsd:enumeration value="literalValue" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="rowMap">
+		<xsd:attribute name="var" use="required" />
+		<xsd:attribute name="varType" type="bindingPart" use="required" />
+		<xsd:attribute name="beanProperty" use="required" />
+	</xsd:complexType>
+
 </xsd:schema>

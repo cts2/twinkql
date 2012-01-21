@@ -21,51 +21,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context
+package edu.mayo.twinkql.context;
 
-import static org.junit.Assert.*
-
-import java.io.IOException
-
-import org.jibx.runtime.JiBXException
-import org.junit.Test
-import org.springframework.core.io.ClassPathResource
-
-import edu.mayo.twinkql.model.SparqlMap
+import org.springframework.beans.factory.FactoryBean;
 
 /**
- * The Class TwinqlContextFactoryTest.
- *
- * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
+ * A factory for creating TwinkqlContext objects.
  */
-public class TwinqlContextFactoryTest {
-	
-	@Test
-	void testLoadSparqlMappings() throws JiBXException, IOException{
-		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
-		
-		def map = 
-				sparqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
-		
-		assertNotNull map;
-		
-		assertEquals "myTestNamespace", map.getNamespace()
-	}
-	
-	@Test
-	public void testLoadSparqlMap() throws JiBXException, IOException{
-		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
-		
-		SparqlMap map = 
-				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
-		
-		
-		def select = map.getSelectList().getAt(0);
-		
-		assertEquals "myTestQuery", select.getId()
-		
-		assertNotNull select.getString()
-		
+public class SpringTwinkqlContextFactory extends TwinkqlContextFactory
+	implements FactoryBean<TwinkqlContext> {
+
+	public TwinkqlContext getObject() throws Exception {
+		return this.getTwinkqlContext();
 	}
 
+	public Class<?> getObjectType() {
+		return TwinkqlContext.class;
+	}
+
+	public boolean isSingleton() {
+		return true;
+	}
 }

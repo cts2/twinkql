@@ -4,45 +4,33 @@ import static org.junit.Assert.*
 
 import org.junit.Test
 
-import edu.mayo.sparqler.model.SparqlMap
-import edu.mayo.sparqler.model.SparqlMappings
 import edu.mayo.twinkql.context.TwinkqlContext
+import edu.mayo.twinkql.model.Select
+import edu.mayo.twinkql.model.SparqlMap
 
 public class TwinkqlTemplateTest {
 
 	@Test
-	void TestFindSparqlMap(){
-		def template = new TwinkqlTemplate()
-		def mappings = new SparqlMappings(sparqlMapList:[
-			new SparqlMap(id:"test", string:"myQueryString")
-		])
-	
-		assertNotNull template.findSparqlMap(mappings, "test");
-	}
-	
-	@Test(expected=SparqlMapNotFoundException)
-	void TestFindSparqlMapNotFound(){
-		def template = new TwinkqlTemplate()
-		def mappings = new SparqlMappings(sparqlMapList:[
-			new SparqlMap(id:"test", string:"myQueryString")
-		])
-	
-		assertNotNull template.findSparqlMap(mappings, "__INVALID__");
-	}
-	
-	@Test
 	void TestQueryForStringParameterSubstitution(){
-		def mappings = new SparqlMappings(sparqlMapList:[
-			new SparqlMap(id:"test", string:"test #{param} substitution")
-		])
+		def maps = [
+			new SparqlMap(
+				namespace:"ns",
+				selectList:[
+					new Select(
+						id:"test",
+						string:"test #{param} substitution"
+						)	
+				]
+				)	
+		] as Set
 		
 		def twinkqlContext = [
-			getSparqlMappings : {namespace -> mappings}
+			getSparqlMaps : {-> maps}
 		] as TwinkqlContext
 	
 		def template = new TwinkqlTemplate(twinkqlContext)
 	
 		assertEquals "test sub substitution",
-			 template.queryForString("ns", "test", ["param":"sub"])
+			 template.getSelectQueryString("ns", "test", ["param":"sub"])
 	}
 }

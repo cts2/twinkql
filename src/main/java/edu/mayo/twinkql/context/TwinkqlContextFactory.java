@@ -24,28 +24,65 @@
 package edu.mayo.twinkql.context;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.Assert;
 
-import edu.mayo.sparqler.model.SparqlMappings;
+import edu.mayo.twinkql.model.SparqlMap;
 
 /**
  * A factory for creating TwinkqlContext objects.
  */
-public class TwinkqlContextFactory implements FactoryBean<TwinkqlContext> {
+public class TwinkqlContextFactory {
 
 	private String mappingFiles = "classpath:twinkql/**/*.xml";
+	
+	private QueryExecutionProvider queryExecutionProvider;
+	
+	/**
+	 * The Constructor.
+	 */
+	public TwinkqlContextFactory(){
+		super();
+	}
+	
+	/**
+	 * The Constructor.
+	 *
+	 * @param queryExecutionProvider the query execution provider
+	 */
+	public TwinkqlContextFactory(QueryExecutionProvider queryExecutionProvider){
+		this(queryExecutionProvider,null);
+	}
+	
+	/**
+	 * The Constructor.
+	 *
+	 * @param queryExecutionProvider the query execution provider
+	 * @param mappingFiles the mapping files
+	 */
+	public TwinkqlContextFactory(QueryExecutionProvider queryExecutionProvider, String mappingFiles){
+		this.queryExecutionProvider = queryExecutionProvider;
+		
+		if(StringUtils.isNotBlank(mappingFiles)){
+			this.mappingFiles = mappingFiles;
+		}
+	}
 
-	public TwinkqlContext getObject() throws Exception {
-		return new DefaultTwinkqlContext(this.loadMappingFiles());
+	public TwinkqlContext getTwinkqlContext() throws Exception {
+		Assert.notNull(this.queryExecutionProvider, "Please provide a 'QueryExecutionProvider'");
+		
+		return new DefaultTwinkqlContext(
+				this.queryExecutionProvider,
+				this.loadMappingFiles());
 	}
 
 	/**
@@ -53,15 +90,15 @@ public class TwinkqlContextFactory implements FactoryBean<TwinkqlContext> {
 	 *
 	 * @return the iterable
 	 */
-	protected Iterable<SparqlMappings> loadMappingFiles() {
+	protected Set<SparqlMap> loadMappingFiles() {
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		
-		List<SparqlMappings> returnList = new ArrayList<SparqlMappings>();
+		Set<SparqlMap> returnList = new HashSet<SparqlMap>();
 		
 		try {
 			for (org.springframework.core.io.Resource resource : resolver
 					.getResources(this.mappingFiles)) {
-				returnList.add(this.loadSparqlMappings(resource));
+				returnList.add(this.loadSparqlMap(resource));
 				
 			}
 		} catch (IOException e) {
@@ -81,24 +118,26 @@ public class TwinkqlContextFactory implements FactoryBean<TwinkqlContext> {
 	 * @throws JiBXException the ji bx exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	protected SparqlMappings loadSparqlMappings(Resource resource) throws JiBXException, IOException{
+	protected SparqlMap loadSparqlMap(Resource resource) throws JiBXException, IOException{
 		 IBindingFactory factory = 
-			        BindingDirectory.getFactory(SparqlMappings.class);
+			        BindingDirectory.getFactory(SparqlMap.class);
 		 
 		 IUnmarshallingContext unmarshaller = factory.createUnmarshallingContext();
-		 return (SparqlMappings) unmarshaller.unmarshalDocument(resource.getInputStream(), null);
-	}
-
-	public Class<?> getObjectType() {
-		return TwinkqlContext.class;
-	}
-
-	public boolean isSingleton() {
-		return true;
+		 
+		 return (SparqlMap) unmarshaller.unmarshalDocument(resource.getInputStream(), null);
 	}
 
 	public String getMappingFiles() {
 		return mappingFiles;
+	}
+
+	public QueryExecutionProvider getQueryExecutionProvider() {
+		return queryExecutionProvider;
+	}
+
+	public void setQueryExecutionProvider(
+			QueryExecutionProvider queryExecutionProvider) {
+		this.queryExecutionProvider = queryExecutionProvider;
 	}
 
 	public void setMappingFiles(String mappingFiles) {
