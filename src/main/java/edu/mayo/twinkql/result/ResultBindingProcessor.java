@@ -107,7 +107,8 @@ public class ResultBindingProcessor {
 			QuerySolution querySolution = resultSet.next();
 
 			this.handleRowMaps(instance, querySolution, result.getRowMapList());
-
+			
+			returnList.add(instance);
 		}
 		
 		return returnList;

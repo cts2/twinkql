@@ -146,6 +146,25 @@ public class TwinkqlTemplate implements InitializingBean {
 		return QueryFactory.create(queryString);
 	}
 	
+	public TwinkqlContext getTwinkqlContext() {
+		return twinkqlContext;
+	}
+
+	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
+		this.twinkqlContext = twinkqlContext;
+	}
+
+	public ResultBindingProcessor getResultBindingProcessor() {
+		return resultBindingProcessor;
+	}
+
+	public void setResultBindingProcessor(
+			ResultBindingProcessor resultBindingProcessor) {
+		this.resultBindingProcessor = resultBindingProcessor;
+	}
+
+
+
 	private static class Qname {
 		private String namespace;
 		private String localName;

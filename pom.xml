@@ -24,7 +24,7 @@
 		<system>GitHub</system>
 		<url>https://github.com/cts2/twinkql/issues</url>
 	</issueManagement>
-	
+
 	<developers>
 		<developer>
 			<id>kevin</id>
@@ -83,6 +83,7 @@
 							<options>
 								<package>edu.mayo.twinkql.model</package>
 							</options>
+							<schemaBindingDirectory>${basedir}/target/generated-sources/jibx</schemaBindingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -97,6 +98,7 @@
 					<includeSchemas>
 						<includeSchema>sparqlmap.xsd</includeSchema>
 					</includeSchemas>
+					<schemaBindingDirectory>${basedir}/target/generated-sources/jibx</schemaBindingDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
