@@ -41,11 +41,14 @@ import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.RowMap;
 import edu.mayo.twinkql.model.TripleMap;
 import edu.mayo.twinkql.model.TriplesMap;
+import edu.mayo.twinkql.result.beans.PropetySetter;
 
 /**
  * The Class ResultBindingProcessor.
  */
 public class ResultBindingProcessor {
+	
+	private PropetySetter propetySetter = new PropetySetter();
 
 	/**
 	 * Bind.
@@ -132,7 +135,7 @@ public class ResultBindingProcessor {
 					tripleMap.getObjectPart());
 
 			try {
-				BeanUtils.setProperty(binding, tripleMap.getBeanProperty(),
+				this.propetySetter.setBeanProperty(binding, tripleMap.getBeanProperty(),
 						value);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
@@ -152,12 +155,10 @@ public class ResultBindingProcessor {
 					node,
 					rowMap.getVarType());
 
-			try {
-				BeanUtils.setProperty(binding, rowMap.getBeanProperty(),
-						value);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			this.propetySetter.setBeanProperty(
+					binding, 
+					rowMap.getBeanProperty(),
+					value);
 		}
 	}
 
@@ -172,6 +173,9 @@ public class ResultBindingProcessor {
 	 */
 	private String getResultFromQuerySolution(RDFNode rdfNode,
 			BindingPart objectPart) {
+		if(rdfNode == null){
+			return null;
+		}
 
 		String result;
 
