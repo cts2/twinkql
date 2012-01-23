@@ -1,5 +1,5 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns="http:mayo.edu/twinkql" targetNamespace="http:mayo.edu/twinkql"
+	xmlns="http://mayo.edu/twinkql" targetNamespace="http://mayo.edu/twinkql"
 	elementFormDefault="qualified">
 
 	<xsd:element name="sparqlMap">
@@ -8,19 +8,21 @@
 				<xsd:element name="resultMap" type="resultMap"
 					maxOccurs="unbounded" />
 				<xsd:choice>
-					<xsd:element name="select" type="select"
-						maxOccurs="unbounded" />
+					<xsd:sequence>
+						<xsd:element name="select" type="select"
+							maxOccurs="unbounded" />
+					</xsd:sequence>
 				</xsd:choice>
 			</xsd:sequence>
-			<xsd:attribute name="namespace" use="required" />
+			<xsd:attribute name="namespace" type="xsd:string" use="required" />
 		</xsd:complexType>
 	</xsd:element>
 
 	<xsd:complexType name="select">
 		<xsd:simpleContent>
 			<xsd:extension base="xsd:string">
-				<xsd:attribute name="id" use="required" />
-				<xsd:attribute name="resultMap" />
+				<xsd:attribute name="id" type="xsd:string" use="required" />
+				<xsd:attribute name="resultMap" type="xsd:string" />
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
@@ -30,22 +32,23 @@
 			<xsd:element name="triplesMap" type="triplesMap" />
 			<xsd:element name="rowMap" type="rowMap" maxOccurs="unbounded" />
 		</xsd:choice>
-		<xsd:attribute name="id" use="required" />
-		<xsd:attribute name="resultClass" use="required" />
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+		<xsd:attribute name="extends" type="xsd:string" />
+		<xsd:attribute name="resultClass" type="xsd:string" />
 	</xsd:complexType>
 
 	<xsd:complexType name="triplesMap">
 		<xsd:sequence>
 			<xsd:element name="tripleMap" type="tripleMap" maxOccurs="unbounded" />
 		</xsd:sequence>
-		<xsd:attribute name="subjectVar" default="s" />
-		<xsd:attribute name="predicateVar" default="p" />
-		<xsd:attribute name="objectVar" default="o" />
+		<xsd:attribute name="subjectVar" default="s" type="xsd:string"/>
+		<xsd:attribute name="predicateVar" default="p" type="xsd:string"/>
+		<xsd:attribute name="objectVar" default="o" type="xsd:string"/>
 	</xsd:complexType>
 
 	<xsd:complexType name="tripleMap">
-		<xsd:attribute name="predicateUri" use="required" />
-		<xsd:attribute name="beanProperty" use="required" />
+		<xsd:attribute name="predicateUri" type="xsd:string" use="required" />
+		<xsd:attribute name="beanProperty" type="xsd:string"  use="required" />
 		<xsd:attribute name="objectPart" type="bindingPart" use="required" />
 	</xsd:complexType>
 
@@ -59,9 +62,10 @@
 	</xsd:simpleType>
 
 	<xsd:complexType name="rowMap">
-		<xsd:attribute name="var" use="required" />
-		<xsd:attribute name="varType" type="bindingPart" use="required" />
-		<xsd:attribute name="beanProperty" use="required" />
+		<xsd:attribute name="var" type="xsd:string" use="required" />
+		<xsd:attribute name="varType" type="bindingPart" />
+		<xsd:attribute name="beanProperty" type="xsd:string" />
+		<xsd:attribute name="resultMapping" type="xsd:string" />
 	</xsd:complexType>
 
 </xsd:schema>

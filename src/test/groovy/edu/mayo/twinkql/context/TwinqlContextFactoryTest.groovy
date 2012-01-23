@@ -27,7 +27,6 @@ import static org.junit.Assert.*
 
 import java.io.IOException
 
-import org.jibx.runtime.JiBXException
 import org.junit.Test
 import org.springframework.core.io.ClassPathResource
 
@@ -41,7 +40,7 @@ import edu.mayo.twinkql.model.SparqlMap
 public class TwinqlContextFactoryTest {
 	
 	@Test
-	void testLoadSparqlMappings() throws JiBXException, IOException{
+	void testLoadSparqlMappings() throws IOException{
 		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
 		
 		def map = 
@@ -53,18 +52,18 @@ public class TwinqlContextFactoryTest {
 	}
 	
 	@Test
-	public void testLoadSparqlMap() throws JiBXException, IOException{
+	public void testLoadSparqlMap() throws IOException{
 		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
 		
 		SparqlMap map = 
 				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
 		
 		
-		def select = map.getSelectList().getAt(0);
+		def select = map.getSparqlMapSequence().getSelect().getAt(0);
 		
 		assertEquals "myTestQuery", select.getId()
 		
-		assertNotNull select.getString()
+		assertNotNull select.getContent()
 		
 	}
 

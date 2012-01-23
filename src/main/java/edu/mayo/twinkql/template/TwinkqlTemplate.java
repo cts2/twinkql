@@ -79,12 +79,12 @@ public class TwinkqlTemplate implements InitializingBean {
 	
 	protected void initCaches(){
 		for(SparqlMap map : this.twinkqlContext.getSparqlMaps()){
-			for(ResultMap resultMap : map.getResultMapList()){
+			for(ResultMap resultMap : map.getResultMap()){
 				this.resultMap.put(
 						new Qname(map.getNamespace(), resultMap.getId()), 
 						resultMap);
 			}
-			for(Select select : map.getSelectList()){
+			for(Select select : map.getSparqlMapSequence().getSelect()){
 				this.selectMap.put(new Qname(map.getNamespace(), select.getId()), select);
 			}
 		}
@@ -111,7 +111,7 @@ public class TwinkqlTemplate implements InitializingBean {
 	}
 
 	protected String doGetSparqlQueryString(Select select, Map<String,Object> parameters){
-		String query = select.getString();
+		String query = select.getContent();
 		
 		if(!CollectionUtils.isEmpty(parameters)){
 			for(Entry<String,Object> entrySet : parameters.entrySet()){
@@ -141,6 +141,28 @@ public class TwinkqlTemplate implements InitializingBean {
 		ResultMap resultMap = this.resultMap.get(new Qname(namespace, select.getResultMap()));
 		
 		return (List<T>) this.resultBindingProcessor.bindToRows(resultSet, resultMap);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T selectForObject(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
+		Select select = this.selectMap.get(new Qname(namespace,selectId));
+		
+		ResultMap resultMap = this.resultMap.get(new Qname(namespace, select.getResultMap()));
+		
+		if(resultMap.getRowMapCount() > 0){
+			throw new UnsupportedOperationException();
+		} else {
+			String queryString = this.getSelectQueryString(namespace, selectId, parameters);
+			
+			Query query = this.doCreateQuery(queryString);
+			
+			QueryExecution queryExecution = 
+					this.twinkqlContext.getQueryExecution(query);
+			
+			ResultSet resultSet = queryExecution.execSelect();
+			
+			return (T) this.resultBindingProcessor.bindToTriples(resultSet, resultMap);
+		}
 	}
 	
 	protected Query doCreateQuery(String queryString){

@@ -30,11 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.util.CollectionUtils;
+
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
-import edu.mayo.twinkql.model.BindingPart;
+import edu.mayo.twinkql.model.types.BindingPart;
 import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.RowMap;
 import edu.mayo.twinkql.model.TripleMap;
@@ -107,7 +109,7 @@ public class ResultBindingProcessor {
 			
 			QuerySolution querySolution = resultSet.next();
 
-			this.handleRowMaps(instance, querySolution, result.getRowMapList());
+			this.handleRowMaps(instance, querySolution, result.getRowMap());
 			
 			returnList.add(instance);
 		}
@@ -127,6 +129,9 @@ public class ResultBindingProcessor {
 	 */
 	protected void handleTriplesMap(Object binding, RDFNode object,
 			Set<TripleMap> tripleMapSet) {
+		if(CollectionUtils.isEmpty(tripleMapSet)){
+			return;
+		}
 
 		for (TripleMap tripleMap : tripleMapSet) {
 			String value = this.getResultFromQuerySolution(object,
@@ -144,9 +149,9 @@ public class ResultBindingProcessor {
 	protected void handleRowMaps(
 			Object binding, 
 			QuerySolution querySolution,
-			Iterable<RowMap> rowMapSet) {
+			RowMap[] rowMaps) {
 
-		for (RowMap rowMap : rowMapSet) {
+		for (RowMap rowMap : rowMaps) {
 			RDFNode node = querySolution.get(rowMap.getVar());
 			
 			String value = this.getResultFromQuerySolution(
@@ -178,7 +183,7 @@ public class ResultBindingProcessor {
 		String result;
 
 		switch (objectPart) {
-		case LOCAL_NAME: {
+		case LOCALNAME: {
 			result = rdfNode.asNode().getLocalName();
 			break;
 		}
@@ -190,7 +195,7 @@ public class ResultBindingProcessor {
 			result = rdfNode.asNode().getNameSpace();
 			break;
 		}
-		case LITERAL_VALUE: {
+		case LITERALVALUE: {
 			result = rdfNode.asLiteral().getString();
 			break;
 		}
@@ -213,7 +218,7 @@ public class ResultBindingProcessor {
 			TriplesMap triplesMap) {
 		Map<String, Set<TripleMap>> returnMap = new HashMap<String, Set<TripleMap>>();
 
-		for (TripleMap tripleMap : triplesMap.getTripleMapList()) {
+		for (TripleMap tripleMap : triplesMap.getTripleMap()) {
 			String predicateUri = tripleMap.getPredicateUri();
 
 			if (!returnMap.containsKey(predicateUri)) {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sparqlMap namespace="myTestNamespace"
-	xmlns="http:mayo.edu/twinkql" 
+	xmlns="http://mayo.edu/twinkql" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http:mayo.edu/sparqler ../../../main/xsd/sparqlmap.xsd ">
+	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
 	
 	<resultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
 		<triplesMap>
@@ -24,5 +24,9 @@
 	 }
 	 
 	 ]]>
+	</select>
+	
+	<select id="test">
+		asdf
 	</select>
 </sparqlMap>

@@ -7,6 +7,7 @@ import org.junit.Test
 import edu.mayo.twinkql.context.TwinkqlContext
 import edu.mayo.twinkql.model.Select
 import edu.mayo.twinkql.model.SparqlMap
+import edu.mayo.twinkql.model.SparqlMapSequence
 
 public class TwinkqlTemplateTest {
 
@@ -15,13 +16,15 @@ public class TwinkqlTemplateTest {
 		def maps = [
 			new SparqlMap(
 				namespace:"ns",
-				selectList:[
-					new Select(
-						id:"test",
-						string:"test #{param} substitution"
-						)	
-				]
-				)	
+				sparqlMapSequence:new SparqlMapSequence(
+					select:[
+						new Select(
+							id:"test",
+							content:"test #{param} substitution"
+							)	
+					]
+				)
+			)	
 		] as Set
 		
 		def twinkqlContext = [

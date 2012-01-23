@@ -10,10 +10,10 @@ import com.hp.hpl.jena.query.ResultSet
 import com.hp.hpl.jena.rdf.model.RDFNode
 import com.hp.hpl.jena.rdf.model.ResourceFactory
 
-import edu.mayo.twinkql.model.BindingPart
 import edu.mayo.twinkql.model.ResultMap
 import edu.mayo.twinkql.model.TripleMap
 import edu.mayo.twinkql.model.TriplesMap
+import edu.mayo.twinkql.model.types.BindingPart
 
 class ResultBindingProcessorTest {
 
@@ -49,11 +49,11 @@ class ResultBindingProcessorTest {
 				new TriplesMap(
 					predicateVar: "p",
 					objectVar: "o",
-					tripleMapList: [
+					tripleMap: [
 						new TripleMap(
 							beanProperty: "oneProp",
 							predicateUri: "http://predicateUri",
-							objectPart: BindingPart.LITERAL_VALUE
+							objectPart: BindingPart.LITERALVALUE
 						)
 					]
 				)

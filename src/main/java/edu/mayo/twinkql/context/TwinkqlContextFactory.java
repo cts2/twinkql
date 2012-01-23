@@ -24,14 +24,13 @@
 package edu.mayo.twinkql.context;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
-import org.jibx.runtime.JiBXException;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
@@ -44,87 +43,94 @@ import edu.mayo.twinkql.model.SparqlMap;
 public class TwinkqlContextFactory {
 
 	private String mappingFiles = "classpath:twinkql/**/*.xml";
-	
+
 	private QueryExecutionProvider queryExecutionProvider;
-	
+
 	/**
 	 * The Constructor.
 	 */
-	public TwinkqlContextFactory(){
+	public TwinkqlContextFactory() {
 		super();
 	}
-	
+
 	/**
 	 * The Constructor.
-	 *
-	 * @param queryExecutionProvider the query execution provider
+	 * 
+	 * @param queryExecutionProvider
+	 *            the query execution provider
 	 */
-	public TwinkqlContextFactory(QueryExecutionProvider queryExecutionProvider){
-		this(queryExecutionProvider,null);
+	public TwinkqlContextFactory(QueryExecutionProvider queryExecutionProvider) {
+		this(queryExecutionProvider, null);
 	}
-	
+
 	/**
 	 * The Constructor.
-	 *
-	 * @param queryExecutionProvider the query execution provider
-	 * @param mappingFiles the mapping files
+	 * 
+	 * @param queryExecutionProvider
+	 *            the query execution provider
+	 * @param mappingFiles
+	 *            the mapping files
 	 */
-	public TwinkqlContextFactory(QueryExecutionProvider queryExecutionProvider, String mappingFiles){
+	public TwinkqlContextFactory(QueryExecutionProvider queryExecutionProvider,
+			String mappingFiles) {
 		this.queryExecutionProvider = queryExecutionProvider;
-		
-		if(StringUtils.isNotBlank(mappingFiles)){
+
+		if (StringUtils.isNotBlank(mappingFiles)) {
 			this.mappingFiles = mappingFiles;
 		}
 	}
 
 	public TwinkqlContext getTwinkqlContext() throws Exception {
-		Assert.notNull(this.queryExecutionProvider, "Please provide a 'QueryExecutionProvider'");
-		
-		return new DefaultTwinkqlContext(
-				this.queryExecutionProvider,
+		Assert.notNull(this.queryExecutionProvider,
+				"Please provide a 'QueryExecutionProvider'");
+
+		return new DefaultTwinkqlContext(this.queryExecutionProvider,
 				this.loadMappingFiles());
 	}
 
 	/**
 	 * Load mapping files.
-	 *
+	 * 
 	 * @return the iterable
 	 */
 	protected Set<SparqlMap> loadMappingFiles() {
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		
+
 		Set<SparqlMap> returnList = new HashSet<SparqlMap>();
-		
+
 		try {
 			for (org.springframework.core.io.Resource resource : resolver
 					.getResources(this.mappingFiles)) {
 				returnList.add(this.loadSparqlMap(resource));
-				
+
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		} catch (JiBXException e) {
-			throw new RuntimeException(e);
 		}
-		
+
 		return returnList;
 	}
-	
+
 	/**
 	 * Load sparql mappings.
-	 *
-	 * @param resource the resource
+	 * 
+	 * @param resource
+	 *            the resource
 	 * @return the sparql mappings
-	 * @throws JiBXException the ji bx exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws JiBXException
+	 *             the ji bx exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws ValidationException
+	 * @throws MarshalException
 	 */
-	protected SparqlMap loadSparqlMap(Resource resource) throws JiBXException, IOException{
-		 IBindingFactory factory = 
-			        BindingDirectory.getFactory(SparqlMap.class);
-		 
-		 IUnmarshallingContext unmarshaller = factory.createUnmarshallingContext();
-		 
-		 return (SparqlMap) unmarshaller.unmarshalDocument(resource.getInputStream(), null);
+	protected SparqlMap loadSparqlMap(Resource resource) {
+		try {
+			return SparqlMap.unmarshalSparqlMap(new InputStreamReader(resource
+					.getInputStream()));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public String getMappingFiles() {
