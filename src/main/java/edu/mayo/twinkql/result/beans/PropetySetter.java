@@ -7,50 +7,90 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 public class PropetySetter {
-	
-	public void setBeanProperty(Object bean, String propertyName, Object value){
-		if(value == null){
+
+	public void setBeanProperty(Object bean, String propertyName, Object value) {
+		if (value == null) {
 			return;
 		}
-		
+
 		String[] propertyChain = propertyName.split("\\.");
-		
-		if(propertyChain.length > 1){
+
+		if (propertyChain.length > 1) {
 			this.instantiateNestedProperties(bean, propertyChain);
 		}
-		
+
 		try {
-			BeanUtils.setProperty(bean, propertyName,
-					value);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} 
+			BeanUtils.setProperty(bean, propertyName, value);
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException(e);
+		} catch (InvocationTargetException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
-	public void instantiateNestedProperties(Object obj, String[] propertyChain) {
-	    try {     
-	        if (propertyChain.length > 1) {
-	            StringBuffer nestedProperty = new StringBuffer();
-	            for (int i = 0; i < propertyChain.length - 1; i++) {
-	                String fn = propertyChain[i];
-	                if (i != 0) {
-	                    nestedProperty.append(".");
-	                }
-	                nestedProperty.append(fn);
+	protected void instantiateNestedProperties(Object obj,
+			String[] propertyChain) {
 
-	                Object value = PropertyUtils.getProperty(obj, nestedProperty.toString());
+		if (propertyChain.length > 1) {
+			StringBuffer nestedProperty = new StringBuffer();
+			for (int i = 0; i < propertyChain.length - 1; i++) {
+				String fn = propertyChain[i];
+				if (i != 0) {
+					nestedProperty.append(".");
+				}
+				nestedProperty.append(fn);
 
-	                if (value == null) {
-	                    PropertyDescriptor propertyDescriptor = PropertyUtils.getPropertyDescriptor(obj, nestedProperty.toString());
-	                    Class<?> propertyType = propertyDescriptor.getPropertyType();
-	                    Object newInstance = propertyType.newInstance();
-	                    PropertyUtils.setProperty(obj, nestedProperty.toString(), newInstance);
-	                }
-	            }
-	        }
-	    } catch (Exception e) {
-	        throw new RuntimeException(e);
-	    }
+				Object value;
+				try {
+					value = PropertyUtils.getProperty(obj,
+							nestedProperty.toString());
+				} catch (IllegalAccessException e) {
+					throw new IllegalStateException(e);
+				} catch (InvocationTargetException e) {
+					throw new IllegalStateException(e);
+				} catch (NoSuchMethodException e) {
+					throw new NoAccessMethodsForResultPropertyException(
+							nestedProperty.toString());
+				}
+
+				if (value == null) {
+					PropertyDescriptor propertyDescriptor;
+					try {
+						propertyDescriptor = PropertyUtils
+								.getPropertyDescriptor(obj,
+										nestedProperty.toString());
+					} catch (IllegalAccessException e) {
+						throw new IllegalStateException(e);
+					} catch (InvocationTargetException e) {
+						throw new IllegalStateException(e);
+					} catch (NoSuchMethodException e) {
+						throw new NoAccessMethodsForResultPropertyException(
+								nestedProperty.toString());
+					}
+					Class<?> propertyType = propertyDescriptor
+							.getPropertyType();
+					Object newInstance;
+					try {
+						newInstance = propertyType.newInstance();
+					} catch (InstantiationException e) {
+						throw new NestedPropertyInstantiationException(
+								propertyType);
+					} catch (IllegalAccessException e) {
+						throw new IllegalStateException(e);
+					}
+					try {
+						PropertyUtils.setProperty(obj,
+								nestedProperty.toString(), newInstance);
+					} catch (IllegalAccessException e) {
+						throw new IllegalStateException(e);
+					} catch (InvocationTargetException e) {
+						throw new IllegalStateException(e);
+					} catch (NoSuchMethodException e) {
+						throw new NoAccessMethodsForResultPropertyException(
+								nestedProperty.toString());
+					}
+				}
+			}
+		}
 	}
-
 }

@@ -124,6 +124,7 @@ public class TwinkqlTemplate implements InitializingBean {
 		return query;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T> List<T> selectForList(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
 		
 		Select select = this.selectMap.get(new Qname(namespace,selectId));
