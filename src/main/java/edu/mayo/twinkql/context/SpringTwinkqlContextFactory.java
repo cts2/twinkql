@@ -23,16 +23,27 @@
  */
 package edu.mayo.twinkql.context;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import edu.mayo.twinkql.instance.SpringBeanNameInstantiator;
 
 /**
  * A factory for creating TwinkqlContext objects.
  */
 public class SpringTwinkqlContextFactory extends TwinkqlContextFactory
-	implements FactoryBean<TwinkqlContext> {
+	implements FactoryBean<TwinkqlContext>, ApplicationContextAware {
+	
+	private ApplicationContext applicationContext;
 
 	public TwinkqlContext getObject() throws Exception {
-		return this.getTwinkqlContext();
+		TwinkqlContext context = this.getTwinkqlContext();
+		
+		context.getInstantiators().add(new SpringBeanNameInstantiator(this.applicationContext));
+		
+		return context;
 	}
 
 	public Class<?> getObjectType() {
@@ -41,5 +52,10 @@ public class SpringTwinkqlContextFactory extends TwinkqlContextFactory
 
 	public boolean isSingleton() {
 		return true;
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 }

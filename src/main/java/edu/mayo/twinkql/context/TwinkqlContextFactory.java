@@ -29,8 +29,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
@@ -84,6 +82,10 @@ public class TwinkqlContextFactory {
 		Assert.notNull(this.queryExecutionProvider,
 				"Please provide a 'QueryExecutionProvider'");
 
+		return this.doCreateTwinkqlContext();
+	}
+	
+	protected TwinkqlContext doCreateTwinkqlContext(){
 		return new DefaultTwinkqlContext(this.queryExecutionProvider,
 				this.loadMappingFiles());
 	}
@@ -113,16 +115,9 @@ public class TwinkqlContextFactory {
 
 	/**
 	 * Load sparql mappings.
-	 * 
-	 * @param resource
-	 *            the resource
+	 *
+	 * @param resource the resource
 	 * @return the sparql mappings
-	 * @throws JiBXException
-	 *             the ji bx exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws ValidationException
-	 * @throws MarshalException
 	 */
 	protected SparqlMap loadSparqlMap(Resource resource) {
 		try {

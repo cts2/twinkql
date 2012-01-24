@@ -21,38 +21,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context;
-
-import java.util.Set;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-
-import edu.mayo.twinkql.instance.Instantiator;
-import edu.mayo.twinkql.model.SparqlMap;
+package edu.mayo.twinkql.result.callback;
 
 /**
- * The Interface TwinkqlContext.
+ * The Interface AfterResultBinding.
  *
+ * @param <T> the generic type
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public interface TwinkqlContext {
+public interface AfterResultBinding<T> {
 	
 	/**
-	 * Gets the sparql map.
+	 * After binding.
 	 *
-	 * @param namespace the namespace
-	 * @return the sparql map
+	 * @param bindingResult the binding result
+	 * @return the t
 	 */
-	public Set<SparqlMap> getSparqlMaps();
-	
-	/**
-	 * Gets the query execution.
-	 *
-	 * @param query the query
-	 * @return the query execution
-	 */
-	public QueryExecution getQueryExecution(Query query);
-	
-	public Set<Instantiator> getInstantiators();
+	public T afterBinding(T bindingResult);
+
 }

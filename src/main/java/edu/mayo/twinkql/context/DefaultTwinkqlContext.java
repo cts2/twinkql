@@ -30,6 +30,8 @@ import java.util.Set;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 
+import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
+import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.SparqlMap;
 
 /**
@@ -41,13 +43,15 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	
 	private Set<SparqlMap> sparqlMaps = new HashSet<SparqlMap>();
 	
-	private QueryExecutionProvider queryExecutionProvider ;
+	private QueryExecutionProvider queryExecutionProvider;
+	
+	private Set<Instantiator> instantiators;
 	
 	/**
 	 * Instantiates a new default twinkql context.
 	 */
 	public DefaultTwinkqlContext(){
-		super();
+		this(null);
 	}
 	
 	/**
@@ -64,11 +68,18 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	 * Instantiates a new default twinkql context.
 	 *
 	 * @param queryExecutionProvider the query execution provider
-	 * @param maps the maps
+	 * @param sparqlMaps the sparql maps
 	 */
 	public DefaultTwinkqlContext(QueryExecutionProvider queryExecutionProvider, Set<SparqlMap> sparqlMaps){
 		this.queryExecutionProvider = queryExecutionProvider;
 		this.sparqlMaps = sparqlMaps;
+		this.instantiators = this.doAddInstantiators(new HashSet<Instantiator>());
+	}
+	
+	protected Set<Instantiator> doAddInstantiators(Set<Instantiator> instantiators){
+		instantiators.add(new DefaultClassForNameInstantiator());
+		
+		return instantiators;
 	}
 
 	/* (non-Javadoc)
@@ -83,5 +94,9 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	 */
 	public QueryExecution getQueryExecution(Query query) {
 		return this.queryExecutionProvider.provideQueryExecution(query);
+	}
+
+	public Set<Instantiator> getInstantiators() {
+		return this.instantiators;
 	}
 }

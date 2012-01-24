@@ -37,8 +37,8 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
+import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
-import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.Select;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.result.ResultBindingProcessor;
@@ -52,49 +52,57 @@ public class TwinkqlTemplate implements InitializingBean {
 
 	private TwinkqlContext twinkqlContext;
 	
-	private ResultBindingProcessor resultBindingProcessor = new ResultBindingProcessor();
+	private ResultBindingProcessor resultBindingProcessor ;
 	
 	private Map<Qname,Select> selectMap = new HashMap<Qname,Select>();
-	private Map<Qname,ResultMap> resultMap = new HashMap<Qname,ResultMap>();
 	
+	/**
+	 * Instantiates a new twinkql template.
+	 *
+	 */
+	public TwinkqlTemplate(){
+		super();
+	}
 	
 	/**
 	 * Instantiates a new twinkql template.
 	 *
 	 * @param twinkqlContext the twinkql context
 	 */
-	public TwinkqlTemplate(){
-		super();
-	}
-	
 	public TwinkqlTemplate(TwinkqlContext twinkqlContext){
+		this.resultBindingProcessor = new ResultBindingProcessor(twinkqlContext);
 		this.twinkqlContext = twinkqlContext;
 		this.initCaches();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(this.twinkqlContext, "The property 'twinkqlContext' must be set!");
+		this.resultBindingProcessor = new ResultBindingProcessor(this.twinkqlContext);
 		this.initCaches();
 	}
 	
+	/**
+	 * Inits the caches.
+	 */
 	protected void initCaches(){
 		for(SparqlMap map : this.twinkqlContext.getSparqlMaps()){
-			for(ResultMap resultMap : map.getResultMap()){
-				this.resultMap.put(
-						new Qname(map.getNamespace(), resultMap.getId()), 
-						resultMap);
-			}
-			for(Select select : map.getSparqlMapSequence().getSelect()){
-				this.selectMap.put(new Qname(map.getNamespace(), select.getId()), select);
+			
+			if(map.getSparqlMapSequence() != null){
+				for(Select select : map.getSparqlMapSequence().getSelect()){
+					this.selectMap.put(new Qname(map.getNamespace(), select.getId()), select);
+				}
 			}
 		}
 	}
-
+	
 	/**
 	 * Query for string.
 	 *
 	 * @param namespace the namespace
-	 * @param mapId the map id
+	 * @param selectId the select id
 	 * @param parameters the parameters
 	 * @return the string
 	 */
@@ -110,6 +118,13 @@ public class TwinkqlTemplate implements InitializingBean {
 		return queryString;
 	}
 
+	/**
+	 * Do get sparql query string.
+	 *
+	 * @param select the select
+	 * @param parameters the parameters
+	 * @return the string
+	 */
 	protected String doGetSparqlQueryString(Select select, Map<String,Object> parameters){
 		String query = select.getContent();
 		
@@ -124,9 +139,76 @@ public class TwinkqlTemplate implements InitializingBean {
 		return query;
 	}
 	
+	/**
+	 * Select for list.
+	 *
+	 * @param <T> the generic type
+	 * @param namespace the namespace
+	 * @param selectId the select id
+	 * @param parameters the parameters
+	 * @param requiredType the required type
+	 * @return the list
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> selectForList(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
+		return this.doBind(namespace, selectId, parameters, new DoBind<List<T>>(){
+
+			public List<T> doBind(ResultSet resultSet, Qname resultMap) {
+				return (List<T>) resultBindingProcessor.bindForList(resultSet, resultMap);
+			}	
+		});
+	}
+	
+	/**
+	 * Select for object.
+	 *
+	 * @param <T> the generic type
+	 * @param namespace the namespace
+	 * @param selectId the select id
+	 * @param parameters the parameters
+	 * @param requiredType the required type
+	 * @return the t
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T selectForObject(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
+		return this.doBind(namespace, selectId, parameters, new DoBind<T>(){
+
+			public T doBind(ResultSet resultSet, Qname resultMap) {
+				return (T) resultBindingProcessor.bindForObject(resultSet, resultMap);
+			}
+			
+		});
+	}
+	
+	/**
+	 * The Interface DoBind.
+	 *
+	 * @param <T> the generic type
+	 * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
+	 */
+	private interface DoBind<T> {
 		
+		/**
+		 * Do bind.
+		 *
+		 * @param resultSet the result set
+		 * @param resultMap the result map
+		 * @return the t
+		 */
+		public T doBind(ResultSet resultSet, Qname resultMap);
+	}
+	
+	/**
+	 * Do bind.
+	 *
+	 * @param <T> the generic type
+	 * @param namespace the namespace
+	 * @param selectId the select id
+	 * @param parameters the parameters
+	 * @param doBind the do bind
+	 * @return the t
+	 */
+	public <T> T doBind(String namespace, String selectId, Map<String,Object> parameters, DoBind<T> doBind){	
 		Select select = this.selectMap.get(new Qname(namespace,selectId));
 		
 		String queryString = this.getSelectQueryString(namespace, selectId, parameters);
@@ -138,33 +220,17 @@ public class TwinkqlTemplate implements InitializingBean {
 		
 		ResultSet resultSet = queryExecution.execSelect();
 		
-		ResultMap resultMap = this.resultMap.get(new Qname(namespace, select.getResultMap()));
-		
-		return (List<T>) this.resultBindingProcessor.bindToRows(resultSet, resultMap);
+		Qname resultQname = Qname.toQname(select.getResultMap(), namespace);
+			
+		return doBind.doBind(resultSet, resultQname);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T> T selectForObject(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
-		Select select = this.selectMap.get(new Qname(namespace,selectId));
-		
-		ResultMap resultMap = this.resultMap.get(new Qname(namespace, select.getResultMap()));
-		
-		if(resultMap.getRowMapCount() > 0){
-			throw new UnsupportedOperationException();
-		} else {
-			String queryString = this.getSelectQueryString(namespace, selectId, parameters);
-			
-			Query query = this.doCreateQuery(queryString);
-			
-			QueryExecution queryExecution = 
-					this.twinkqlContext.getQueryExecution(query);
-			
-			ResultSet resultSet = queryExecution.execSelect();
-			
-			return (T) this.resultBindingProcessor.bindToTriples(resultSet, resultMap);
-		}
-	}
-	
+	/**
+	 * Do create query.
+	 *
+	 * @param queryString the query string
+	 * @return the query
+	 */
 	protected Query doCreateQuery(String queryString){
 		return QueryFactory.create(queryString);
 	}
@@ -184,55 +250,5 @@ public class TwinkqlTemplate implements InitializingBean {
 	public void setResultBindingProcessor(
 			ResultBindingProcessor resultBindingProcessor) {
 		this.resultBindingProcessor = resultBindingProcessor;
-	}
-
-
-
-	private static class Qname {
-		private String namespace;
-		private String localName;
-		
-		private Qname(String namespace, String localName){
-			super();
-			this.namespace = namespace;
-			this.localName = localName;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((localName == null) ? 0 : localName.hashCode());
-			result = prime * result
-					+ ((namespace == null) ? 0 : namespace.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Qname other = (Qname) obj;
-			if (localName == null) {
-				if (other.localName != null)
-					return false;
-			} else if (!localName.equals(other.localName))
-				return false;
-			if (namespace == null) {
-				if (other.namespace != null)
-					return false;
-			} else if (!namespace.equals(other.namespace))
-				return false;
-			return true;
-		}
-
-		public String toString(){
-			return "Namespace: " + this.namespace + ", LocalName: " + this.localName;
-		}
 	}
 }

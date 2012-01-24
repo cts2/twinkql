@@ -28,6 +28,8 @@ import com.hp.hpl.jena.query.QueryExecution;
 
 /**
  * The Interface QueryExecutionProvider.
+ *
+ * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 public interface QueryExecutionProvider {
 	

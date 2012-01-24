@@ -23,36 +23,20 @@
  */
 package edu.mayo.twinkql.context;
 
-import java.util.Set;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-
-import edu.mayo.twinkql.instance.Instantiator;
-import edu.mayo.twinkql.model.SparqlMap;
-
 /**
- * The Interface TwinkqlContext.
+ * The Class ContextValidator.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public interface TwinkqlContext {
+public class ContextValidator {
 	
 	/**
-	 * Gets the sparql map.
+	 * Validate.
 	 *
-	 * @param namespace the namespace
-	 * @return the sparql map
+	 * @param twinkqlContext the twinkql context
 	 */
-	public Set<SparqlMap> getSparqlMaps();
-	
-	/**
-	 * Gets the query execution.
-	 *
-	 * @param query the query
-	 * @return the query execution
-	 */
-	public QueryExecution getQueryExecution(Query query);
-	
-	public Set<Instantiator> getInstantiators();
+	public void validate(TwinkqlContext twinkqlContext){
+		
+	}
+
 }

@@ -6,10 +6,10 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="resultMap" type="resultMap"
-					maxOccurs="unbounded" />
+					minOccurs="0" maxOccurs="unbounded" />
 				<xsd:choice>
 					<xsd:sequence>
-						<xsd:element name="select" type="select"
+						<xsd:element name="select" type="select" minOccurs="0"
 							maxOccurs="unbounded" />
 					</xsd:sequence>
 				</xsd:choice>
@@ -35,20 +35,24 @@
 		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="extends" type="xsd:string" />
 		<xsd:attribute name="resultClass" type="xsd:string" />
+		<xsd:attribute name="afterMap" type="xsd:string" />
+		<xsd:attribute name="beforeMap" type="xsd:string" />
 	</xsd:complexType>
 
 	<xsd:complexType name="triplesMap">
 		<xsd:sequence>
 			<xsd:element name="tripleMap" type="tripleMap" maxOccurs="unbounded" />
 		</xsd:sequence>
-		<xsd:attribute name="subjectVar" default="s" type="xsd:string"/>
-		<xsd:attribute name="predicateVar" default="p" type="xsd:string"/>
-		<xsd:attribute name="objectVar" default="o" type="xsd:string"/>
+		<xsd:attribute name="subjectVar" default="s" type="xsd:string" />
+		<xsd:attribute name="predicateVar" default="p" type="xsd:string" />
+		<xsd:attribute name="objectVar" default="o" type="xsd:string" />
 	</xsd:complexType>
 
 	<xsd:complexType name="tripleMap">
-		<xsd:attribute name="predicateUri" type="xsd:string" use="required" />
-		<xsd:attribute name="beanProperty" type="xsd:string"  use="required" />
+		<xsd:attribute name="predicateUri" type="xsd:string"
+			use="required" />
+		<xsd:attribute name="beanProperty" type="xsd:string"
+			use="required" />
 		<xsd:attribute name="objectPart" type="bindingPart" use="required" />
 	</xsd:complexType>
 
