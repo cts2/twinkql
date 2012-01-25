@@ -46,7 +46,7 @@ import edu.mayo.twinkql.model.RowMap;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.TripleMap;
 import edu.mayo.twinkql.model.types.BindingPart;
-import edu.mayo.twinkql.result.beans.PropetySetter;
+import edu.mayo.twinkql.result.beans.PropertySetter;
 import edu.mayo.twinkql.result.callback.AfterResultBinding;
 import edu.mayo.twinkql.result.callback.CallbackInstantiator;
 
@@ -59,7 +59,7 @@ public class ResultBindingProcessor {
 
 	private Map<Qname, List<ResultMap>> resultMap = new HashMap<Qname, List<ResultMap>>();
 
-	private PropetySetter propetySetter = new PropetySetter();
+	private PropertySetter propertySetter = new PropertySetter();
 	
 	private CallbackInstantiator callbackInstantiator;
 
@@ -180,18 +180,17 @@ public class ResultBindingProcessor {
 
 		Map<String, Set<TripleMap>> tripleMapSet = this
 				.getMapForTriplesMap(result);
+		
+		Map<String,Integer> collectionTracker = new HashMap<String,Integer>();
 
 		while (resultSet.hasNext()) {
 			QuerySolution querySolution = resultSet.next();
 
-			RDFNode predicate = querySolution.get(result.get(0).getTriplesMap()
-					.getPredicateVar());
-
-			RDFNode object = querySolution.get(result.get(0).getTriplesMap()
-					.getObjectVar());
-
-			this.handleTriplesMap(instance, object,
-					tripleMapSet.get(predicate.asNode().getURI()));
+			this.processOneTriple(
+					querySolution,
+					instance, 
+					tripleMapSet,
+					collectionTracker);
 
 		}
 		
@@ -268,28 +267,118 @@ public class ResultBindingProcessor {
 	 * 
 	 * @param binding
 	 *            the binding
+	 * @param instance 
+	 * @param tripleMapSet 
 	 * @param object
 	 *            the object
 	 * @param tripleMapSet
 	 *            the triple map set
 	 */
-	protected void handleTriplesMap(Object binding, RDFNode object,
-			Set<TripleMap> tripleMapSet) {
-		if (CollectionUtils.isEmpty(tripleMapSet)) {
-			return;
-		}
+	protected void processOneTriple(
+			QuerySolution querySolution, 
+			Object instance, 
+			Map<String, Set<TripleMap>> tripleMapSet, 
+			Map<String,Integer> collectionTracker) {
 
-		for (TripleMap tripleMap : tripleMapSet) {
-			String value = this.getResultFromQuerySolution(object,
-					tripleMap.getObjectPart());
+			RDFNode predicate = querySolution.get("p");
 
-			try {
-				this.propetySetter.setBeanProperty(binding,
-						tripleMap.getBeanProperty(), value);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+			RDFNode object = querySolution.get("o");
+			
+			Set<TripleMap> tripleMaps = tripleMapSet.get(predicate.asNode().getURI());
+
+			if(CollectionUtils.isEmpty(tripleMaps)){
+				tripleMaps = tripleMapSet.get("*");
 			}
+			
+			if(CollectionUtils.isEmpty(tripleMaps)){
+				return;
+			}
+			
+			for(TripleMap tripleMap : tripleMaps){
+				if(StringUtils.isNotBlank(tripleMap.getResultMapping())){
+					String composite = tripleMap.getResultMapping();
+					
+					List<ResultMap> compositeList = this.resultMap.get(Qname.toQname(composite));
+					
+					Object compositeObject;
+					try {
+						compositeObject = Class.forName(compositeList.get(0).getResultClass()).newInstance();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+			
+					this.processOneTriple(
+							querySolution, 
+							compositeObject, 
+							this.getMapForTriplesMap(compositeList), 
+							collectionTracker);
+					
+					String property = tripleMap.getBeanProperty();
+					
+					if(this.hasNestedCollection(property)){
+						Integer index = collectionTracker.get(property);
+						if(index == null){
+							index = 0;
+						}
+						String indexedProperty = this.addIndexToProperty(property, index);
+						
+						collectionTracker.put(property, ++index);
+						
+						property = indexedProperty;
+					}
+					
+					this.propertySetter.setBeanProperty(
+							instance,
+							property, 
+							compositeObject);
+	
+				} else {
+					String value;
+
+					if(tripleMap.getObjectPart() != null){
+						value = this.getResultFromQuerySolution(object,
+							tripleMap.getObjectPart());
+					} else {
+						value = this.getResultFromQuerySolution(predicate,
+								tripleMap.getPredicatePart());
+					}
+					
+					if(value != null){
+					
+						String property = tripleMap.getBeanProperty();
+						
+						if(this.hasNestedCollection(property)){
+							Integer index = collectionTracker.get(property);
+							if(index == null){
+								index = 0;
+							}
+							String indexedProperty = this.addIndexToProperty(property, index);
+							
+							collectionTracker.put(property, ++index);
+							
+							property = indexedProperty;
+						}
+						
+						this.propertySetter.setBeanProperty(
+								instance,
+								property, 
+								value);
+					}
+				}
+			}
+
+	}
+	
+	protected String addIndexToProperty(String property, int index){
+		return StringUtils.replace(property, "[]", "[" + Integer.toString(index) + "]");
+	}
+	
+	protected boolean hasNestedCollection(String property){
+		int matches = StringUtils.countMatches(property, "[]");
+		if(matches > 1){
+			throw new RuntimeException("Only ONE nested Collection property allowed.");
 		}
+		return matches > 0;
 	}
 
 	/**
@@ -311,7 +400,7 @@ public class ResultBindingProcessor {
 				
 				Object compositeInstance = this.processOneRow(querySolution, compositeResults);
 
-				this.propetySetter.setBeanProperty(
+				this.propertySetter.setBeanProperty(
 						binding,
 						rowMap.getBeanProperty(), 
 						compositeInstance);
@@ -321,7 +410,7 @@ public class ResultBindingProcessor {
 				String value = this.getResultFromQuerySolution(node,
 						rowMap.getVarType());
 	
-				this.propetySetter.setBeanProperty(binding,
+				this.propertySetter.setBeanProperty(binding,
 						rowMap.getBeanProperty(), value);
 			}
 		}
@@ -358,7 +447,11 @@ public class ResultBindingProcessor {
 			break;
 		}
 		case LITERALVALUE: {
-			result = rdfNode.asLiteral().getString();
+			if(! rdfNode.isLiteral()){
+				result = null;
+			} else {
+				result = rdfNode.asLiteral().getString();
+			}
 			break;
 		}
 		default: {

@@ -49,11 +49,12 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="tripleMap">
-		<xsd:attribute name="predicateUri" type="xsd:string"
-			use="required" />
+		<xsd:attribute name="predicateUri" type="xsd:string" />
 		<xsd:attribute name="beanProperty" type="xsd:string"
 			use="required" />
-		<xsd:attribute name="objectPart" type="bindingPart" use="required" />
+		<xsd:attribute name="objectPart" type="bindingPart" />
+		<xsd:attribute name="predicatePart" type="bindingPart" />
+		<xsd:attribute name="resultMapping" type="xsd:string" />
 	</xsd:complexType>
 
 	<xsd:simpleType name="bindingPart">

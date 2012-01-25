@@ -4,11 +4,13 @@ import static org.junit.Assert.*
 
 import org.junit.Test
 
-class PropetySetterTest {
+import edu.mayo.twinkql.result.beans.NoAccessMethodsForResultPropertyException
+
+class PropertySetterTest {
 	
 	@Test
 	void TestSetBeanProperty(){
-		def p = new PropetySetter();
+		def p = new PropertySetter();
 		
 		def t = new TestClass();
 		
@@ -18,28 +20,20 @@ class PropetySetterTest {
 	}
 	
 	@Test
-	void TestInstantiateNewProperty(){
-		def p = new PropetySetter();
+	void TestSetBeanPropertyList(){
+		def p = new PropertySetter();
 		
-		def t = new TestClass();
+		def t = new TestClassList();
 		
-		p.instantiateNestedProperties(t, ["nested","val"] as String[])
+		p.setBeanProperty(t, "stringList[0]", "some value")
 		
-		assertNotNull t.nested;
+		assertEquals 1, t.stringList.size()
+		assertEquals "some value", t.stringList.get(0)
 	}
-	
-	@Test(expected=NestedPropertyInstantiationException)
-	void TestInstantiateNewPropertyWithInstantiationException(){
-		def p = new PropetySetter();
-		
-		def t = new TestClass();
-		
-		p.instantiateNestedProperties(t, ["badNested","val"] as String[])
-	}
-	
+
 	@Test(expected=NoAccessMethodsForResultPropertyException)
 	void TestInstantiateNewPropertyWithBadProperty(){
-		def p = new PropetySetter();
+		def p = new PropertySetter();
 		
 		def t = new TestClass();
 		
@@ -54,6 +48,9 @@ class TestClass {
 
 class TestClassNested {
 	String val;
+}
+
+class TestClassList {
 	List<String> stringList = new ArrayList<String>()
 }
 
@@ -64,3 +61,4 @@ class TestClassNestedNoInstantiate {
 		
 	}
 }
+
