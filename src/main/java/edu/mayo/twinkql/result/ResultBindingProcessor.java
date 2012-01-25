@@ -49,6 +49,7 @@ import edu.mayo.twinkql.model.types.BindingPart;
 import edu.mayo.twinkql.result.beans.PropertySetter;
 import edu.mayo.twinkql.result.callback.AfterResultBinding;
 import edu.mayo.twinkql.result.callback.CallbackInstantiator;
+import edu.mayo.twinkql.result.callback.Modifier;
 
 /**
  * The Class ResultBindingProcessor.
@@ -197,8 +198,10 @@ public class ResultBindingProcessor {
 		for(ResultMap resultMap : result){
 			if(StringUtils.isNotBlank(resultMap.getAfterMap())){
 
+				@SuppressWarnings("unchecked")
 				AfterResultBinding<Object> afterCallback = 
-					this.callbackInstantiator.instantiateAfterCallback(resultMap.getAfterMap());
+					this.callbackInstantiator.instantiateCallback(
+							resultMap.getAfterMap(), AfterResultBinding.class);
 				
 				instance = afterCallback.afterBinding(instance);
 			}
@@ -249,8 +252,9 @@ public class ResultBindingProcessor {
 			this.handleRowMaps(instance, querySolution, resultMap.getRowMap());
 			if(StringUtils.isNotBlank(resultMap.getAfterMap())){
 				try {
+					@SuppressWarnings("unchecked")
 					AfterResultBinding<Object> afterCallback = 
-							this.callbackInstantiator.instantiateAfterCallback(resultMap.getAfterMap());
+							this.callbackInstantiator.instantiateCallback(resultMap.getAfterMap(), AfterResultBinding.class);
 					
 					instance = afterCallback.afterBinding(instance);
 				} catch (Exception e) {
@@ -336,11 +340,15 @@ public class ResultBindingProcessor {
 					String value;
 
 					if(tripleMap.getObjectPart() != null){
-						value = this.getResultFromQuerySolution(object,
-							tripleMap.getObjectPart());
+						value = this.getResultFromQuerySolution(
+								object,
+								tripleMap.getObjectPart(),
+								tripleMap.getModifier());
 					} else {
-						value = this.getResultFromQuerySolution(predicate,
-								tripleMap.getPredicatePart());
+						value = this.getResultFromQuerySolution(
+								predicate,
+								tripleMap.getPredicatePart(),
+								tripleMap.getModifier());
 					}
 					
 					if(value != null){
@@ -407,8 +415,10 @@ public class ResultBindingProcessor {
 			} else {
 				RDFNode node = querySolution.get(rowMap.getVar());
 	
-				String value = this.getResultFromQuerySolution(node,
-						rowMap.getVarType());
+				String value = this.getResultFromQuerySolution(
+						node,
+						rowMap.getVarType(),
+						null);
 	
 				this.propertySetter.setBeanProperty(binding,
 						rowMap.getBeanProperty(), value);
@@ -425,8 +435,10 @@ public class ResultBindingProcessor {
 	 *            the object part
 	 * @return the result from query solution
 	 */
-	private String getResultFromQuerySolution(RDFNode rdfNode,
-			BindingPart objectPart) {
+	private String getResultFromQuerySolution(
+			RDFNode rdfNode,
+			BindingPart objectPart,
+			String modifier) {
 		if (rdfNode == null) {
 			return null;
 		}
@@ -459,6 +471,13 @@ public class ResultBindingProcessor {
 		}
 		}
 
+		if(StringUtils.isNotBlank(modifier)){
+			@SuppressWarnings("unchecked")
+			Modifier<String> modifierObject =
+				this.callbackInstantiator.instantiateCallback(modifier, Modifier.class);
+			
+			result = modifierObject.beforeSetting(result);
+		}
 		return result;
 	}
 

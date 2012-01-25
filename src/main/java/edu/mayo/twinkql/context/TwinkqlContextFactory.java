@@ -96,7 +96,7 @@ public class TwinkqlContextFactory {
 	 * @return the iterable
 	 */
 	protected Set<SparqlMap> loadMappingFiles() {
-		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		PathMatchingResourcePatternResolver resolver = this.createPathMatchingResourcePatternResolver();;
 
 		Set<SparqlMap> returnList = new HashSet<SparqlMap>();
 
@@ -111,6 +111,10 @@ public class TwinkqlContextFactory {
 		}
 
 		return returnList;
+	}
+	
+	protected PathMatchingResourcePatternResolver createPathMatchingResourcePatternResolver(){
+		return new PathMatchingResourcePatternResolver();
 	}
 
 	/**

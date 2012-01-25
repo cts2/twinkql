@@ -29,7 +29,7 @@ package edu.mayo.twinkql.result.callback;
  * @param <T> the generic type
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public interface AfterResultBinding<T> {
+public interface AfterResultBinding<T> extends Callback {
 	
 	/**
 	 * After binding.

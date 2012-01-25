@@ -26,6 +26,7 @@ package edu.mayo.twinkql.result.callback;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
@@ -55,14 +56,19 @@ public class CallbackInstantiator {
 	 * @return the after result binding
 	 */
 	@SuppressWarnings("unchecked")
-	public AfterResultBinding<Object> instantiateAfterCallback(String className){
+	public <T extends Callback> T instantiateCallback(String className, Class<T> requiredType){
 		if(! this.callbackCache.containsKey(className)){
-			AfterResultBinding<Object> afterCallback = 
-					(AfterResultBinding<Object>) this.getInstantiator(className).instantiate(className);
-			this.callbackCache.put(className, afterCallback);
+			Object callback = this.getInstantiator(className).instantiate(className);
+			
+			if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
+				throw new RuntimeException();
+			}
+			
+			this.callbackCache.put(className, callback);
 		}
 		
-		return (AfterResultBinding<Object>) this.callbackCache.get(className);
+		
+		return (T) this.callbackCache.get(className);
 	}
 
 	protected Instantiator getInstantiator(String beanName){
