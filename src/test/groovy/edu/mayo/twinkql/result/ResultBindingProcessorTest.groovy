@@ -15,11 +15,12 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory
 import edu.mayo.twinkql.context.DefaultTwinkqlContext
 import edu.mayo.twinkql.context.Qname
 import edu.mayo.twinkql.context.TwinkqlContext
+import edu.mayo.twinkql.model.CompositeResultMap
+import edu.mayo.twinkql.model.PerRowResultMap
 import edu.mayo.twinkql.model.ResultMap
 import edu.mayo.twinkql.model.RowMap
 import edu.mayo.twinkql.model.SparqlMap
 import edu.mayo.twinkql.model.TripleMap
-import edu.mayo.twinkql.model.TriplesMap
 import edu.mayo.twinkql.model.types.BindingPart
 import edu.mayo.twinkql.result.callback.AfterResultBinding
 
@@ -34,7 +35,8 @@ class ResultBindingProcessorTest {
 		QuerySolution querysolution = createMock(QuerySolution)
 		
 		def predicate = [
-			asNode: { com.hp.hpl.jena.graph.Node.createURI("http://predicateUri") }
+			asNode: { com.hp.hpl.jena.graph.Node.createURI("http://predicateUri") },
+			isLiteral: { false }
 		] as RDFNode
 		
 		expect(querysolution.get("p")).andReturn(predicate)
@@ -51,28 +53,26 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new CompositeResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap:[
+	
 						new TripleMap(
 							beanProperty: "oneProp",
 							predicateUri: "http://predicateUri",
-							objectPart: BindingPart.LITERALVALUE,
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
+			
 		);
 	
 		def twinkqlContext = [
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					compositeResultMap:[result])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -111,28 +111,25 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new CompositeResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap:[
+				
 						new TripleMap(
 							beanProperty: "oneProp",
 							predicateUri: "http://predicateUri",
-							objectPart: BindingPart.LITERALVALUE
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
 		);
 	
 		def twinkqlContext = [
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					compositeResultMap:[result])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -171,28 +168,24 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new CompositeResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap: [
 						new TripleMap(
 							beanProperty: "list[]",
 							predicateUri: "http://predicateUri",
-							objectPart: BindingPart.LITERALVALUE
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
 		);
 	
 		def twinkqlContext = [
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					compositeResultMap:[result])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -232,28 +225,24 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new CompositeResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap: [
 						new TripleMap(
 							beanProperty: "compositeList[].threeProp",
 							predicateUri: "http://predicateUri",
-							objectPart: BindingPart.LITERALVALUE
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
 		);
 	
 		def twinkqlContext = [
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					compositeResultMap:[result])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -310,28 +299,24 @@ class ResultBindingProcessorTest {
 		expect(resultset.hasNext()).andReturn(false)
 		replay(resultset, querysolution1, querysolution2)
 		
-		def result = new ResultMap(
+		def result = new CompositeResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap: [
 						new TripleMap(
 							beanProperty: "list[]",
 							predicateUri: "http://predicateUri",
-							objectPart: BindingPart.LITERALVALUE
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
 		);
 	
 		def twinkqlContext = [
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					compositeResultMap:[result])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -372,29 +357,25 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new CompositeResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			afterMap:"edu.mayo.twinkql.result.TestAfterBinding",
 			id: "resultId",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap: [
 						new TripleMap(
 							beanProperty: "oneProp",
 							predicateUri: "http://predicateUri",
-							objectPart: BindingPart.LITERALVALUE
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
 		);
 	
 		def twinkqlContext = new DefaultTwinkqlContext(
 			null,
 			[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					compositeResultMap:[result])
 				] as Set)
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -451,45 +432,37 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution1, querysolution2)
 		
-		def result1 = new ResultMap(
+		def result1 = new CompositeResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultMap1",
 			extends:"ns:resultMap2",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap: [
 						new TripleMap(
 							beanProperty: "oneProp",
 							predicateUri: "http://predicateUri1",
-							objectPart: BindingPart.LITERALVALUE
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
 		);
 	
-		def result2 = new ResultMap(
+		def result2 = new CompositeResultMap(
 			id: "resultMap2",
-			triplesMap:
-				new TriplesMap(
-					predicateVar: "p",
-					objectVar: "o",
-					tripleMap: [
+			tripleMap: [
 						new TripleMap(
 							beanProperty: "twoProp",
 							predicateUri: "http://predicateUri2",
-							objectPart: BindingPart.LITERALVALUE
+							var: "o",
+							varType: BindingPart.LITERALVALUE
 						)
 					]
-				)
 		);
 	
 		def twinkqlContext = [
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result1,result2])
+					compositeResultMap:[result1,result2])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -523,7 +496,7 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
 			rowMap:[
@@ -539,7 +512,7 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					perRowResultMap:[result])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -573,7 +546,7 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
 			afterMap:"edu.mayo.twinkql.result.TestAfterBinding",
@@ -590,7 +563,7 @@ class ResultBindingProcessorTest {
 			null,
 			[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result])
+					perRowResultMap:[result])
 				] as Set)
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -627,7 +600,7 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result1 = new ResultMap(
+		def result1 = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultMap1",
 			rowMap:[
@@ -643,7 +616,7 @@ class ResultBindingProcessorTest {
 				]
 		);
 	
-		def result2 = new ResultMap(
+		def result2 = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult2",
 			id: "resultMap2",
 			rowMap:[
@@ -659,7 +632,7 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result1,result2])
+					perRowResultMap:[result1,result2])
 				] as Set
 			}
 		] as TwinkqlContext
@@ -706,7 +679,7 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result1 = new ResultMap(
+		def result1 = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultMap1",
 			rowMap:[
@@ -722,7 +695,7 @@ class ResultBindingProcessorTest {
 				]
 		);
 	
-		def result2 = new ResultMap(
+		def result2 = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult2",
 			id: "resultMap2",
 			rowMap:[
@@ -738,7 +711,7 @@ class ResultBindingProcessorTest {
 				]
 		);
 	
-		def result3 = new ResultMap(
+		def result3 = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult3",
 			id: "resultMap3",
 			rowMap:[
@@ -754,7 +727,7 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					resultMap:[result1,result2,result3])
+					perRowResultMap:[result1,result2,result3])
 				] as Set
 			}
 		] as TwinkqlContext

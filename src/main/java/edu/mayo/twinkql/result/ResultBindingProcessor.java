@@ -41,6 +41,8 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.model.CompositeResultMap;
+import edu.mayo.twinkql.model.PerRowResultMap;
 import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.RowMap;
 import edu.mayo.twinkql.model.SparqlMap;
@@ -58,7 +60,9 @@ import edu.mayo.twinkql.result.callback.Modifier;
  */
 public class ResultBindingProcessor {
 
-	private Map<Qname, List<ResultMap>> resultMap = new HashMap<Qname, List<ResultMap>>();
+	private Map<Qname, List<PerRowResultMap>> perRowResultMap = new HashMap<Qname, List<PerRowResultMap>>();
+
+	private Map<Qname, List<CompositeResultMap>> compositeResultMap = new HashMap<Qname, List<CompositeResultMap>>();
 
 	private PropertySetter propertySetter = new PropertySetter();
 	
@@ -81,23 +85,44 @@ public class ResultBindingProcessor {
 	 * Inits the caches.
 	 */
 	protected void initCaches() {
-		Map<Qname, ResultMap> results = new HashMap<Qname, ResultMap>();
+		Map<Qname, CompositeResultMap> compositeResults = new HashMap<Qname, CompositeResultMap>();
+		Map<Qname, PerRowResultMap> perRowResults = new HashMap<Qname, PerRowResultMap>();
 
 		for (SparqlMap map : this.twinkqlContext.getSparqlMaps()) {
-			for (ResultMap resultMap : map.getResultMap()) {
-				results.put(new Qname(map.getNamespace(), resultMap.getId()),
+			for (CompositeResultMap resultMap : map.getCompositeResultMap()) {
+				compositeResults.put(new Qname(map.getNamespace(), resultMap.getId()),
+						resultMap);
+			}
+			for (PerRowResultMap resultMap : map.getPerRowResultMap()) {
+				perRowResults.put(new Qname(map.getNamespace(), resultMap.getId()),
 						resultMap);
 			}
 		}
 
-		for (Entry<Qname, ResultMap> result : results.entrySet()) {
-			List<ResultMap> recursiveResult = new ArrayList<ResultMap>();
+		for (Entry<Qname, CompositeResultMap> result : compositeResults.entrySet()) {
+			List<CompositeResultMap> recursiveResult = new ArrayList<CompositeResultMap>();
 			recursiveResult.add(result.getValue());
 			
-			List<ResultMap> resultChain = this.getExtendedResultMap(recursiveResult, results);
+			List<CompositeResultMap> resultChain = this.getExtendedResultMap(recursiveResult, compositeResults);
 
-			this.resultMap.put(result.getKey(), resultChain);
+			this.compositeResultMap.put(result.getKey(), resultChain);
 		}
+		
+		for (Entry<Qname, PerRowResultMap> result : perRowResults.entrySet()) {
+			List<PerRowResultMap> recursiveResult = new ArrayList<PerRowResultMap>();
+			recursiveResult.add(result.getValue());
+			
+			List<PerRowResultMap> resultChain = this.getExtendedResultMap(recursiveResult, perRowResults);
+
+			this.perRowResultMap.put(result.getKey(), resultChain);
+		}
+		
+	}
+	
+	protected void populateResultMapCache(
+			Map<Qname, ? extends ResultMap> allRresults,
+			Map<Qname,List<? extends ResultMap>> cache){
+		
 	}
 
 	/**
@@ -107,15 +132,15 @@ public class ResultBindingProcessor {
 	 * @param allResults the all results
 	 * @return the extended result map
 	 */
-	protected List<ResultMap> getExtendedResultMap(List<ResultMap> resultChain,
-			Map<Qname, ResultMap> allResults) {
-		ResultMap lastResult = resultChain.get(resultChain.size() - 1);
+	protected <T extends ResultMap> List<T> getExtendedResultMap(List<T> resultChain,
+			Map<Qname, T> allResults) {
+		T lastResult = resultChain.get(resultChain.size() - 1);
 
 		if (StringUtils.isBlank(lastResult.getExtends())) {
 			return resultChain;
 		} else {
 			Qname extendsResult = Qname.toQname(lastResult.getExtends());
-			ResultMap extendedResult = allResults.get(extendsResult);
+			T extendedResult = allResults.get(extendsResult);
 
 			resultChain.add(extendedResult);
 
@@ -131,7 +156,7 @@ public class ResultBindingProcessor {
 	 * @return the list
 	 */
 	public List<Object> bindForList(ResultSet resultSet, Qname resultMap) {
-		List<ResultMap> resultMaps = this.resultMap.get(resultMap);
+		List<PerRowResultMap> resultMaps = this.perRowResultMap.get(resultMap);
 		
 		Assert.isTrue(! CollectionUtils.isEmpty(resultMaps));
 		
@@ -147,15 +172,22 @@ public class ResultBindingProcessor {
 	 * @return the object
 	 */
 	public Object bindForObject(ResultSet resultSet, Qname resultMap) {
-		List<ResultMap> resultMaps = this.resultMap.get(resultMap);
+		List<CompositeResultMap> resultMaps = this.compositeResultMap.get(resultMap);
 		
 		Assert.isTrue(! CollectionUtils.isEmpty(resultMaps));
-		
-		if(resultMaps.get(0).getRowMapCount() > 0){
-			return this.bindToRows(resultSet, resultMaps);
-		} else {
-			return this.bindToTriples(resultSet, resultMaps);
+
+		return this.bindToTriples(resultSet, resultMaps);
+	}
+	
+	protected String getPredicateVariableName(List<CompositeResultMap> result){
+		String var = null;
+		for(ResultMap map : result){
+			if(var == null){
+				//var = map.get
+			}
 		}
+		
+		return "p";
 	}
 
 	/**
@@ -167,7 +199,7 @@ public class ResultBindingProcessor {
 	 *            the result
 	 * @return the iterable< object>
 	 */
-	protected Object bindToTriples(ResultSet resultSet, List<ResultMap> result) {
+	protected Object bindToTriples(ResultSet resultSet, List<CompositeResultMap> result) {
 
 		String className = result.get(0).getResultClass();
 
@@ -217,7 +249,7 @@ public class ResultBindingProcessor {
 	 * @param result the result
 	 * @return the list
 	 */
-	protected List<Object> bindToRows(ResultSet resultSet, List<ResultMap> result) {
+	protected List<Object> bindToRows(ResultSet resultSet, List<PerRowResultMap> result) {
 
 		List<Object> returnList = new ArrayList<Object>();
 
@@ -238,7 +270,7 @@ public class ResultBindingProcessor {
 	 * @param resultMaps the result maps
 	 * @return the object
 	 */
-	protected Object processOneRow(QuerySolution querySolution, List<ResultMap> resultMaps){
+	protected Object processOneRow(QuerySolution querySolution, List<PerRowResultMap> resultMaps){
 		Object instance;
 
 		String className = resultMaps.get(resultMaps.size() - 1).getResultClass();
@@ -248,7 +280,7 @@ public class ResultBindingProcessor {
 			throw new RuntimeException(e);
 		}
 
-		for (ResultMap resultMap : resultMaps) {
+		for (PerRowResultMap resultMap : resultMaps) {
 			this.handleRowMaps(instance, querySolution, resultMap.getRowMap());
 			if(StringUtils.isNotBlank(resultMap.getAfterMap())){
 				try {
@@ -285,9 +317,7 @@ public class ResultBindingProcessor {
 			Map<String,Integer> collectionTracker) {
 
 			RDFNode predicate = querySolution.get("p");
-
-			RDFNode object = querySolution.get("o");
-			
+	
 			Set<TripleMap> tripleMaps = tripleMapSet.get(predicate.asNode().getURI());
 
 			if(CollectionUtils.isEmpty(tripleMaps)){
@@ -299,10 +329,11 @@ public class ResultBindingProcessor {
 			}
 			
 			for(TripleMap tripleMap : tripleMaps){
+							
 				if(StringUtils.isNotBlank(tripleMap.getResultMapping())){
 					String composite = tripleMap.getResultMapping();
 					
-					List<ResultMap> compositeList = this.resultMap.get(Qname.toQname(composite));
+					List<CompositeResultMap> compositeList = this.compositeResultMap.get(Qname.toQname(composite));
 					
 					Object compositeObject;
 					try {
@@ -337,19 +368,12 @@ public class ResultBindingProcessor {
 							compositeObject);
 	
 				} else {
-					String value;
-
-					if(tripleMap.getObjectPart() != null){
-						value = this.getResultFromQuerySolution(
-								object,
-								tripleMap.getObjectPart(),
-								tripleMap.getModifier());
-					} else {
-						value = this.getResultFromQuerySolution(
-								predicate,
-								tripleMap.getPredicatePart(),
-								tripleMap.getModifier());
-					}
+					RDFNode node = querySolution.get(tripleMap.getVar());
+					
+					String value = this.getResultFromQuerySolution(
+								node,
+								tripleMap);
+			
 					
 					if(value != null){
 					
@@ -404,7 +428,7 @@ public class ResultBindingProcessor {
 			
 			if(StringUtils.isNotBlank(resultMapping)){
 	
-				List<ResultMap> compositeResults = this.resultMap.get(Qname.toQname(resultMapping));
+				List<PerRowResultMap> compositeResults = this.perRowResultMap.get(Qname.toQname(resultMapping));
 				
 				Object compositeInstance = this.processOneRow(querySolution, compositeResults);
 
@@ -417,8 +441,7 @@ public class ResultBindingProcessor {
 	
 				String value = this.getResultFromQuerySolution(
 						node,
-						rowMap.getVarType(),
-						null);
+						rowMap);
 	
 				this.propertySetter.setBeanProperty(binding,
 						rowMap.getBeanProperty(), value);
@@ -437,40 +460,39 @@ public class ResultBindingProcessor {
 	 */
 	private String getResultFromQuerySolution(
 			RDFNode rdfNode,
-			BindingPart objectPart,
-			String modifier) {
+			RowMap rowMap) {
 		if (rdfNode == null) {
 			return null;
 		}
+		
+		BindingPart part = rowMap.getVarType();
 
 		String result;
 
-		switch (objectPart) {
-		case LOCALNAME: {
-			result = rdfNode.asNode().getLocalName();
-			break;
-		}
-		case URI: {
-			result = rdfNode.asNode().getURI();
-			break;
-		}
-		case NAMESPACE: {
-			result = rdfNode.asNode().getNameSpace();
-			break;
-		}
-		case LITERALVALUE: {
-			if(! rdfNode.isLiteral()){
-				result = null;
-			} else {
-				result = rdfNode.asLiteral().getString();
+		switch (part) {
+			case LOCALNAME: {
+				result = rdfNode.asNode().getLocalName();
+				break;
 			}
-			break;
-		}
-		default: {
-			throw new IllegalStateException();
-		}
+			case URI: {
+				result = rdfNode.asNode().getURI();
+				break;
+			}
+			case NAMESPACE: {
+				result = rdfNode.asNode().getNameSpace();
+				break;
+			}
+			case LITERALVALUE: {
+				result = rdfNode.asLiteral().getString();
+				break;
+			}
+			default: {
+				throw new IllegalStateException();
+			}
 		}
 
+		String modifier = rowMap.getModifier();
+		
 		if(StringUtils.isNotBlank(modifier)){
 			@SuppressWarnings("unchecked")
 			Modifier<String> modifierObject =
@@ -488,11 +510,11 @@ public class ResultBindingProcessor {
 	 * @return the map for triples map
 	 */
 	protected Map<String, Set<TripleMap>> getMapForTriplesMap(
-			List<ResultMap> resultMaps) {
+			List<CompositeResultMap> resultMaps) {
 		Map<String, Set<TripleMap>> returnMap = new HashMap<String, Set<TripleMap>>();
 
-		for (ResultMap result : resultMaps) {
-			for (TripleMap tripleMap : result.getTriplesMap().getTripleMap()) {
+		for (CompositeResultMap result : resultMaps) {
+			for (TripleMap tripleMap : result.getTripleMap()) {
 				String predicateUri = tripleMap.getPredicateUri();
 
 				if (!returnMap.containsKey(predicateUri)) {

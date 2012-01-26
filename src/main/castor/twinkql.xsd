@@ -5,7 +5,9 @@
 	<xsd:element name="sparqlMap">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="resultMap" type="resultMap"
+				<xsd:element name="perRowResultMap" type="perRowResultMap"
+					minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element name="compositeResultMap" type="compositeResultMap"
 					minOccurs="0" maxOccurs="unbounded" />
 				<xsd:choice>
 					<xsd:sequence>
@@ -26,12 +28,28 @@
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
+	
+	<xsd:complexType name="perRowResultMap">
+		<xsd:complexContent>
+			<xsd:extension base="resultMap">
+				<xsd:sequence>
+					<xsd:element name="rowMap" type="rowMap" maxOccurs="unbounded" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="compositeResultMap">
+		<xsd:complexContent>
+			<xsd:extension base="resultMap">
+				<xsd:sequence>
+					<xsd:element name="tripleMap" type="tripleMap" maxOccurs="unbounded" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
 
-	<xsd:complexType name="resultMap">
-		<xsd:choice>
-			<xsd:element name="triplesMap" type="triplesMap" />
-			<xsd:element name="rowMap" type="rowMap" maxOccurs="unbounded" />
-		</xsd:choice>
+	<xsd:complexType abstract="true" name="resultMap">
 		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="extends" type="xsd:string" />
 		<xsd:attribute name="resultClass" type="xsd:string" />
@@ -39,23 +57,12 @@
 		<xsd:attribute name="beforeMap" type="xsd:string" />
 	</xsd:complexType>
 
-	<xsd:complexType name="triplesMap">
-		<xsd:sequence>
-			<xsd:element name="tripleMap" type="tripleMap" maxOccurs="unbounded" />
-		</xsd:sequence>
-		<xsd:attribute name="subjectVar" default="s" type="xsd:string" />
-		<xsd:attribute name="predicateVar" default="p" type="xsd:string" />
-		<xsd:attribute name="objectVar" default="o" type="xsd:string" />
-	</xsd:complexType>
-
 	<xsd:complexType name="tripleMap">
-		<xsd:attribute name="predicateUri" type="xsd:string" />
-		<xsd:attribute name="beanProperty" type="xsd:string"
-			use="required" />
-		<xsd:attribute name="objectPart" type="bindingPart" />
-		<xsd:attribute name="predicatePart" type="bindingPart" />
-		<xsd:attribute name="resultMapping" type="xsd:string" />
-		<xsd:attribute name="modifier" type="xsd:string" />
+		<xsd:complexContent>
+			<xsd:extension base="rowMap">
+				<xsd:attribute name="predicateUri" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:simpleType name="bindingPart">
@@ -68,10 +75,11 @@
 	</xsd:simpleType>
 
 	<xsd:complexType name="rowMap">
-		<xsd:attribute name="var" type="xsd:string" use="required" />
+		<xsd:attribute name="var" type="xsd:string" />
 		<xsd:attribute name="varType" type="bindingPart" />
 		<xsd:attribute name="beanProperty" type="xsd:string" />
 		<xsd:attribute name="resultMapping" type="xsd:string" />
+		<xsd:attribute name="modifier" type="xsd:string" />
 	</xsd:complexType>
 
 </xsd:schema>

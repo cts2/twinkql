@@ -4,11 +4,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
 	
-	<resultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
-		<triplesMap>
-			<tripleMap objectPart="localName" predicateUri="asdf" beanProperty="test.bean.prop"/>
-		</triplesMap>	
-	</resultMap>
+	<compositeResultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
+		<tripleMap var="p" varType="localName" predicateUri="asdf" beanProperty="test.bean.prop"/>	
+	</compositeResultMap>
 	
 	
 	<select id="myTestQuery">
