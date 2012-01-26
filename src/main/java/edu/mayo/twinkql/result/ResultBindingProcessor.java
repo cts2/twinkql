@@ -175,7 +175,7 @@ public class ResultBindingProcessor {
 		List<CompositeResultMap> resultMaps = this.compositeResultMap.get(resultMap);
 		
 		Assert.isTrue(! CollectionUtils.isEmpty(resultMaps));
-
+	
 		return this.bindToTriples(resultSet, resultMaps);
 	}
 	
@@ -201,6 +201,10 @@ public class ResultBindingProcessor {
 	 * @return the iterable< object>
 	 */
 	protected Object bindToTriples(ResultSet resultSet, List<CompositeResultMap> result) {
+		//return quickly for empty ResultSet
+		if(! resultSet.hasNext()){
+			return null;
+		} 
 
 		String className = result.get(0).getResultClass();
 
@@ -225,7 +229,6 @@ public class ResultBindingProcessor {
 					instance, 
 					tripleMapSet,
 					collectionTracker);
-
 		}
 		
 		for(ResultMap resultMap : result){
