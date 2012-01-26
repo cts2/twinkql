@@ -1,8 +1,11 @@
 package edu.mayo.twinkql.instance;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.ApplicationContext;
 
 public class SpringBeanNameInstantiator implements Instantiator {
+	
+	private final static String SPRING_PREFIX = "spring";
 	
 	private ApplicationContext context;
 
@@ -11,12 +14,17 @@ public class SpringBeanNameInstantiator implements Instantiator {
 		this.context = context;
 	}
 	
-	public Object instantiate(String className) {
-		return this.context.getBean(className);
+	protected String getBeanName(String alias){
+		return StringUtils.substringAfter(alias, SPRING_PREFIX + ":");
+	}
+	
+	public Object instantiate(String alias) {
+		return this.context.getBean(
+				this.getBeanName(alias));
 	}
 
 	public String getPrefix() {
-		return "spring";
+		return SPRING_PREFIX;
 	}
 
 }

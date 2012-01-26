@@ -180,10 +180,11 @@ public class ResultBindingProcessor {
 	}
 	
 	protected String getPredicateVariableName(List<CompositeResultMap> result){
+		//TODO: finish this method
 		String var = null;
 		for(ResultMap map : result){
 			if(var == null){
-				//var = map.get
+				//
 			}
 		}
 		
@@ -318,7 +319,8 @@ public class ResultBindingProcessor {
 
 			RDFNode predicate = querySolution.get("p");
 	
-			Set<TripleMap> tripleMaps = tripleMapSet.get(predicate.asNode().getURI());
+			String predicateUri = predicate.asNode().getURI();
+			Set<TripleMap> tripleMaps = tripleMapSet.get(predicateUri);
 
 			if(CollectionUtils.isEmpty(tripleMaps)){
 				tripleMaps = tripleMapSet.get("*");
