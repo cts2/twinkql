@@ -181,13 +181,6 @@ public class ResultBindingProcessor {
 	
 	protected String getPredicateVariableName(List<CompositeResultMap> result){
 		//TODO: finish this method
-		String var = null;
-		for(ResultMap map : result){
-			if(var == null){
-				//
-			}
-		}
-		
 		return "p";
 	}
 

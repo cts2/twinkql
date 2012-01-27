@@ -30,7 +30,7 @@ class ResultBindingProcessorTest {
 	void testBindForObjectWithTripleMappings(){
 
 		ResultSet resultset = createMock(ResultSet)
-		expect(resultset.hasNext()).andReturn(true)
+		expect(resultset.hasNext()).andReturn(true).times(2)
 		
 		QuerySolution querysolution = createMock(QuerySolution)
 		
@@ -89,7 +89,7 @@ class ResultBindingProcessorTest {
 	void testBindForObjectWithTripleMappingsDefault(){
 
 		ResultSet resultset = createMock(ResultSet)
-		expect(resultset.hasNext()).andReturn(true)
+		expect(resultset.hasNext()).andReturn(true).times(2)
 		
 		QuerySolution querysolution = createMock(QuerySolution)
 		
@@ -146,7 +146,7 @@ class ResultBindingProcessorTest {
 	void testBindForObjectWithTripleMappingsWithList(){
 
 		ResultSet resultset = createMock(ResultSet)
-		expect(resultset.hasNext()).andReturn(true)
+		expect(resultset.hasNext()).andReturn(true).times(2)
 		
 		QuerySolution querysolution = createMock(QuerySolution)
 		
@@ -203,7 +203,7 @@ class ResultBindingProcessorTest {
 	void testBindForObjectWithTripleMappingsWithNestedCompositeList(){
 
 		ResultSet resultset = createMock(ResultSet)
-		expect(resultset.hasNext()).andReturn(true)
+		expect(resultset.hasNext()).andReturn(true).times(2)
 		
 		QuerySolution querysolution = createMock(QuerySolution)
 		
@@ -260,7 +260,7 @@ class ResultBindingProcessorTest {
 	void testBindForObjectWithTripleMappingsWithListTwoEntries(){
 
 		ResultSet resultset = createMock(ResultSet)
-		expect(resultset.hasNext()).andReturn(true)
+		expect(resultset.hasNext()).andReturn(true).times(2)
 		
 		QuerySolution querysolution1 = createMock(QuerySolution)
 		
@@ -390,7 +390,7 @@ class ResultBindingProcessorTest {
 	void testBindForObjectWithTripleMappingsWithExtends(){
 	
 		ResultSet resultset = createMock(ResultSet)
-		expect(resultset.hasNext()).andReturn(true)
+		expect(resultset.hasNext()).andReturn(true).times(2)
 		
 		QuerySolution querysolution1 = createMock(QuerySolution)
 		
