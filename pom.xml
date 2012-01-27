@@ -41,6 +41,21 @@
 	<scm>
 		<developerConnection>scm:git:git@github.com:cts2/twinkql.git</developerConnection>
 	</scm>
+	
+	<distributionManagement>
+		<repository>
+			<id>informatics-releases</id>
+			<url>http://informatics.mayo.edu/maven/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>informatics-snapshots</id>
+			<url>http://informatics.mayo.edu/maven/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<site>
+			<id>site-upload-server</id>
+			<url>scp://informatics.mayo.edu:/home/informatics/homes/cts2framework/public_html/sites/${project.artifactId}</url>
+		</site>
+	</distributionManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
