@@ -23,11 +23,9 @@
  */
 package edu.mayo.twinkql.context
 
+import java.io.IOException;
 import static org.junit.Assert.*
-
-import java.io.IOException
-
-import org.junit.Test
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource
 
 import edu.mayo.twinkql.model.SparqlMap
@@ -44,7 +42,7 @@ public class TwinqlContextFactoryTest {
 		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
 		
 		def map = 
-				sparqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
+				sparqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/testMap.xml"));
 		
 		assertNotNull map;
 		
@@ -56,10 +54,10 @@ public class TwinqlContextFactoryTest {
 		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
 		
 		SparqlMap map = 
-				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/test.xml"));
+				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/testMap.xml"));
 		
 		
-		def select = map.getSparqlMapSequence().getSelect().getAt(0);
+		def select = map.getSparqlMapItem(1).getSparqlMapChoice().getSparqlMapChoiceItem(0).getSelect()
 		
 		assertEquals "myTestQuery", select.getId()
 		

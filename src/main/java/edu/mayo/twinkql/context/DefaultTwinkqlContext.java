@@ -33,6 +33,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
 import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.SparqlMap;
+import edu.mayo.twinkql.model.TwinkqlConfig;
 
 /**
  * The Class DefaultTwinkqlContext.
@@ -47,11 +48,13 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	
 	private Set<Instantiator> instantiators;
 	
+	private TwinkqlConfig twinkqlConfig;
+	
 	/**
 	 * Instantiates a new default twinkql context.
 	 */
 	public DefaultTwinkqlContext(){
-		this(null);
+		this(null,null);
 	}
 	
 	/**
@@ -60,8 +63,8 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	 * @param queryExecutionProvider the query execution provider
 	 * @param maps the maps
 	 */
-	public DefaultTwinkqlContext(QueryExecutionProvider queryExecutionProvider, SparqlMap...maps){
-		this(queryExecutionProvider, new HashSet<SparqlMap>(Arrays.asList(maps)));
+	public DefaultTwinkqlContext(TwinkqlConfig twinkqlConfig, QueryExecutionProvider queryExecutionProvider, SparqlMap...maps){
+		this(twinkqlConfig, queryExecutionProvider, new HashSet<SparqlMap>(Arrays.asList(maps)));
 	}
 	
 	/**
@@ -70,7 +73,8 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	 * @param queryExecutionProvider the query execution provider
 	 * @param sparqlMaps the sparql maps
 	 */
-	public DefaultTwinkqlContext(QueryExecutionProvider queryExecutionProvider, Set<SparqlMap> sparqlMaps){
+	public DefaultTwinkqlContext(TwinkqlConfig twinkqlConfig, QueryExecutionProvider queryExecutionProvider, Set<SparqlMap> sparqlMaps){
+		this.twinkqlConfig = twinkqlConfig;
 		this.queryExecutionProvider = queryExecutionProvider;
 		this.sparqlMaps = sparqlMaps;
 		this.instantiators = this.doAddInstantiators(new HashSet<Instantiator>());
@@ -98,5 +102,9 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 
 	public Set<Instantiator> getInstantiators() {
 		return this.instantiators;
+	}
+
+	public TwinkqlConfig getTwinkqlConfig() {
+		return this.twinkqlConfig;
 	}
 }

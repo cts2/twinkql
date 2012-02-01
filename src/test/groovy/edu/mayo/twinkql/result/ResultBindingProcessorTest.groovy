@@ -1,9 +1,7 @@
 package edu.mayo.twinkql.result;
 
-import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
-
-import java.util.List
+import static org.easymock.EasyMock.*
 
 import org.junit.Test
 
@@ -12,17 +10,19 @@ import com.hp.hpl.jena.query.ResultSet
 import com.hp.hpl.jena.rdf.model.RDFNode
 import com.hp.hpl.jena.rdf.model.ResourceFactory
 
-import edu.mayo.twinkql.context.DefaultTwinkqlContext
 import edu.mayo.twinkql.context.Qname
 import edu.mayo.twinkql.context.TwinkqlContext
+import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator
 import edu.mayo.twinkql.model.CompositeResultMap
 import edu.mayo.twinkql.model.PerRowResultMap
-import edu.mayo.twinkql.model.ResultMap
 import edu.mayo.twinkql.model.RowMap
 import edu.mayo.twinkql.model.SparqlMap
+import edu.mayo.twinkql.model.SparqlMapItem
 import edu.mayo.twinkql.model.TripleMap
 import edu.mayo.twinkql.model.types.BindingPart
 import edu.mayo.twinkql.result.callback.AfterResultBinding
+
+
 
 class ResultBindingProcessorTest {
 
@@ -72,9 +72,15 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					compositeResultMap:[result])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							compositeResultMap:result
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -129,9 +135,15 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					compositeResultMap:[result])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							compositeResultMap:result
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -185,9 +197,15 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					compositeResultMap:[result])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							compositeResultMap:result
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -242,9 +260,15 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					compositeResultMap:[result])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							compositeResultMap:result
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -316,9 +340,15 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					compositeResultMap:[result])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							compositeResultMap:result
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -371,18 +401,27 @@ class ResultBindingProcessorTest {
 					]
 		);
 	
-		def twinkqlContext = new DefaultTwinkqlContext(
-			null,
-			[new SparqlMap(
+		def twinkqlContext = [
+			getSparqlMaps:{
+				[new SparqlMap(
 					namespace:"ns",
-					compositeResultMap:[result])
-				] as Set)
+					sparqlMapItem: [
+						new SparqlMapItem(
+							compositeResultMap:result
+						)
+					]
+				)
+				] as Set
+			},
+			getInstantiators:{ [ new DefaultClassForNameInstantiator() ] as Set },
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
 		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultId"))
 
-		assertEquals "Modified!!", r;
+		assertEquals "Modified!!", r.oneProp;
 	
 	}
 
@@ -462,9 +501,18 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					compositeResultMap:[result1,result2])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							compositeResultMap:result1
+						),
+						new SparqlMapItem(
+							compositeResultMap:result2
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -512,9 +560,15 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					perRowResultMap:[result])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							perRowResultMap:result
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -559,19 +613,28 @@ class ResultBindingProcessorTest {
 				]
 		);
 	
-		def twinkqlContext = new DefaultTwinkqlContext(
-			null,
-			[new SparqlMap(
+		def twinkqlContext = [
+			getSparqlMaps:{
+				[new SparqlMap(
 					namespace:"ns",
-					perRowResultMap:[result])
-				] as Set)
+					sparqlMapItem: [
+						new SparqlMapItem(
+							perRowResultMap:result
+						)
+					]
+				)
+				] as Set
+			},
+			getInstantiators:{ [ new DefaultClassForNameInstantiator() ] as Set },
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
 		def r = binding.bindForList(resultset, Qname.toQname("ns:resultId"))
 
 		assertEquals 1, r.size()
-		assertEquals "Modified!!", r.get(0)
+		assertEquals "Modified!!", r.get(0).oneProp
 	}
 	
 	@Test
@@ -632,9 +695,18 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					perRowResultMap:[result1,result2])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							perRowResultMap:result1
+						),
+						new SparqlMapItem(
+							perRowResultMap:result2
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -727,9 +799,21 @@ class ResultBindingProcessorTest {
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
-					perRowResultMap:[result1,result2,result3])
+					sparqlMapItem: [
+						new SparqlMapItem(
+							perRowResultMap:result1
+						),
+						new SparqlMapItem(
+							perRowResultMap:result2
+						),
+						new SparqlMapItem(
+							perRowResultMap:result3
+						)
+					]
+				)
 				] as Set
-			}
+			},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
@@ -747,8 +831,8 @@ class ResultBindingProcessorTest {
 
 class TestAfterBinding implements AfterResultBinding {
 
-	public Object afterBinding(Object bindingResult) {
-		return "Modified!!"
+	public void afterBinding(bindingResult, Map callbackParams) {
+		bindingResult.oneProp = "Modified!!"
 	}
 	
 }

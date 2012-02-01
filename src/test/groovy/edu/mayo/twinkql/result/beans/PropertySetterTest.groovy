@@ -1,10 +1,8 @@
 package edu.mayo.twinkql.result.beans;
 
+import java.util.List;
 import static org.junit.Assert.*
-
-import org.junit.Test
-
-import edu.mayo.twinkql.result.beans.NoAccessMethodsForResultPropertyException
+import org.junit.Test;
 
 class PropertySetterTest {
 	

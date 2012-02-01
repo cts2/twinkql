@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<twinkqlConfig
+	xmlns="http://mayo.edu/twinkql" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
+	
+	<namespace prefix="test" uri="http://something"/>
+
+</twinkqlConfig>

@@ -24,23 +24,31 @@
 package edu.mayo.twinkql.context;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
 import edu.mayo.twinkql.model.SparqlMap;
+import edu.mayo.twinkql.model.TwinkqlConfig;
 
 /**
  * A factory for creating TwinkqlContext objects.
  */
 public class TwinkqlContextFactory {
+	
+	protected final Log log = LogFactory.getLog(getClass());
 
-	private String mappingFiles = "classpath:twinkql/**/*.xml";
+	private String mappingFiles = "classpath:twinkql/**/*Map.xml";
+	
+	private String configurationFile = "classpath:twinkql/configuration.xml";
 
 	private QueryExecutionProvider queryExecutionProvider;
 
@@ -86,7 +94,9 @@ public class TwinkqlContextFactory {
 	}
 	
 	protected TwinkqlContext doCreateTwinkqlContext(){
-		return new DefaultTwinkqlContext(this.queryExecutionProvider,
+		return new DefaultTwinkqlContext(
+				this.loadConfigurationFile(),
+				this.queryExecutionProvider,
 				this.loadMappingFiles());
 	}
 
@@ -96,8 +106,8 @@ public class TwinkqlContextFactory {
 	 * @return the iterable
 	 */
 	protected Set<SparqlMap> loadMappingFiles() {
-		PathMatchingResourcePatternResolver resolver = this.createPathMatchingResourcePatternResolver();;
-
+		PathMatchingResourcePatternResolver resolver = this.createPathMatchingResourcePatternResolver();
+		
 		Set<SparqlMap> returnList = new HashSet<SparqlMap>();
 
 		try {
@@ -113,6 +123,21 @@ public class TwinkqlContextFactory {
 		return returnList;
 	}
 	
+	protected TwinkqlConfig loadConfigurationFile() {
+		PathMatchingResourcePatternResolver resolver = this.createPathMatchingResourcePatternResolver();
+
+		Resource configFile = resolver.getResource(this.configurationFile);
+		
+		TwinkqlConfig config = null;
+		if(! configFile.exists()){
+			this.log.warn("No Twinql Configuration File specified. Using defaults.");
+		} else {
+			config = this.loadTwinkqlConfig(configFile);
+		}
+		
+		return config;
+	}
+	
 	protected PathMatchingResourcePatternResolver createPathMatchingResourcePatternResolver(){
 		return new PathMatchingResourcePatternResolver();
 	}
@@ -125,11 +150,24 @@ public class TwinkqlContextFactory {
 	 */
 	protected SparqlMap loadSparqlMap(Resource resource) {
 		try {
-			return SparqlMap.unmarshalSparqlMap(new InputStreamReader(resource
-					.getInputStream()));
+			String xml = IOUtils.toString(resource.getInputStream());
+			return SparqlMap.unmarshalSparqlMap(new StringReader(this.decorateXml(xml)));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	protected TwinkqlConfig loadTwinkqlConfig(Resource resource) {
+		try {
+			String xml = IOUtils.toString(resource.getInputStream());
+			return TwinkqlConfig.unmarshalTwinkqlConfig(new StringReader(this.decorateXml(xml)));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	protected String decorateXml(String xml){
+		return StringUtils.replace(xml, "<iterator", "{iteratorMarker}<iterator");
 	}
 
 	public String getMappingFiles() {

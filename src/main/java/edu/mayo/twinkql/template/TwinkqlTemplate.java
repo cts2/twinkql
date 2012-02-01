@@ -23,11 +23,19 @@
  */
 package edu.mayo.twinkql.template;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import jodd.bean.BeanUtil;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -39,8 +47,14 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.model.Iterator;
+import edu.mayo.twinkql.model.NamespaceDefinition;
 import edu.mayo.twinkql.model.Select;
 import edu.mayo.twinkql.model.SparqlMap;
+import edu.mayo.twinkql.model.SparqlMapChoiceItem;
+import edu.mayo.twinkql.model.SparqlMapItem;
+import edu.mayo.twinkql.model.TwinkqlConfig;
+import edu.mayo.twinkql.model.TwinkqlConfigItem;
 import edu.mayo.twinkql.result.ResultBindingProcessor;
 
 /**
@@ -55,6 +69,8 @@ public class TwinkqlTemplate implements InitializingBean {
 	private ResultBindingProcessor resultBindingProcessor ;
 	
 	private Map<Qname,Select> selectMap = new HashMap<Qname,Select>();
+	
+	private Set<String> prefixes = new HashSet<String>();
 	
 	/**
 	 * Instantiates a new twinkql template.
@@ -81,18 +97,47 @@ public class TwinkqlTemplate implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(this.twinkqlContext, "The property 'twinkqlContext' must be set!");
 		this.resultBindingProcessor = new ResultBindingProcessor(this.twinkqlContext);
+		this.initPrefixes(this.twinkqlContext.getTwinkqlConfig());
 		this.initCaches();
 	}
 	
+	
+	public void initPrefixes(TwinkqlConfig config){
+		if(config == null){
+			return;
+		}
+
+		if(config.getTwinkqlConfigItem() != null){
+			for(TwinkqlConfigItem item : config.getTwinkqlConfigItem()){
+				if(item.getNamespace() != null){
+					this.prefixes.add(this.buildPrefix(item.getNamespace()));
+				}
+			}
+		}
+	}
+	
+	protected String buildPrefix(NamespaceDefinition def){
+		String uri = def.getUri();
+		String prefix = def.getPrefix();
+		
+		return "PREFIX " + prefix + ": <" + uri + ">";
+	}
 	/**
 	 * Inits the caches.
 	 */
 	protected void initCaches(){
 		for(SparqlMap map : this.twinkqlContext.getSparqlMaps()){
 			
-			if(map.getSparqlMapSequence() != null){
-				for(Select select : map.getSparqlMapSequence().getSelect()){
-					this.selectMap.put(new Qname(map.getNamespace(), select.getId()), select);
+			if(map.getSparqlMapItem() != null){
+				for(SparqlMapItem item : map.getSparqlMapItem()){
+					if(item.getSparqlMapChoice() != null){
+						for(SparqlMapChoiceItem choice : item.getSparqlMapChoice().getSparqlMapChoiceItem()){
+							Select select = choice.getSelect();
+							if(select != null){
+								this.selectMap.put(new Qname(map.getNamespace(), select.getId()), select);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -118,6 +163,18 @@ public class TwinkqlTemplate implements InitializingBean {
 		return queryString;
 	}
 
+	protected String addInKnownPrefixes(String query){
+		StringBuilder sb = new StringBuilder();
+		for(String prefix : this.prefixes){
+			sb.append(prefix);
+			sb.append("\n");
+		}
+
+		sb.append(query);
+		
+		return sb.toString();
+	}
+	
 	/**
 	 * Do get sparql query string.
 	 *
@@ -128,15 +185,118 @@ public class TwinkqlTemplate implements InitializingBean {
 	protected String doGetSparqlQueryString(Select select, Map<String,Object> parameters){
 		String query = select.getContent();
 		
+		query = this.addInKnownPrefixes(query);
+		
+		
+		
 		if(!CollectionUtils.isEmpty(parameters)){
-			for(Entry<String,Object> entrySet : parameters.entrySet()){
+			List<String> preSetParams = this.getVariables(query);
+			for(String presetParam : preSetParams){
+				
+				String strippedVariable = this.stripVariableWrapping(presetParam);
+				
+				String key = StringUtils.substringBefore(strippedVariable, ".");
+				
+				Object varObject = parameters.get(key);
+				
+				String path = StringUtils.substringAfter(strippedVariable, ".");
+				
+				String value;
+				if(StringUtils.isNotBlank(path)){
+					value = (String) BeanUtil.getSimpleProperty(varObject, path, true);
+				} else {
+					value = varObject.toString();
+				}
+			
 				query = query.replace(
-						"#{"+entrySet.getKey()+"}", 
-						entrySet.getValue().toString());
+						presetParam, value);
+			
 			}
 		}
 		
+		for(Iterator itr : select.getIterator()){
+
+			String paramProp = itr.getProperty();
+			String collectionPath = itr.getCollection();
+			
+			Object iterableParam = parameters.get(paramProp);
+			//return fast if emtpy collection
+			if(iterableParam == null){
+				query = this.replaceIteratorMarker(query, "");
+				continue;
+			}
+			
+			Collection<?> collection;
+			if(collectionPath.equals(".")){
+				collection = (Collection<?>) iterableParam;
+			} else {
+				collection = (Collection<?>) BeanUtil.getProperty(iterableParam, collectionPath);
+			}
+	
+			//return fast if emtpy collection
+			if(CollectionUtils.isEmpty(collection)){
+				query = this.replaceIteratorMarker(query, "");
+				continue;
+			}
+
+			StringBuilder totalContent = new StringBuilder();
+			
+			totalContent.append(itr.getOpen());
+
+			int counter = 0;
+			for(Object item : collection){
+				String content = itr.getContent();
+				
+				List<String> variables = this.getVariables(content);
+
+				for(String variable : variables){
+					String value = (String)BeanUtil.getProperty(item, this.stripVariableWrappingForIterator(variable));
+					content = StringUtils.replace(content, variable, value);
+				}
+				
+				totalContent.append(content);
+				
+				if(++counter < collection.size()){
+					totalContent.append(itr.getSeparator());
+				}
+			}
+			
+			totalContent.append(itr.getClose());
+			
+			query = this.replaceIteratorMarker(query, totalContent.toString());
+		}
+		
 		return query;
+	}
+	
+	private String replaceIteratorMarker(String query, String replacement){
+		return StringUtils.replaceOnce(query, "{iteratorMarker}", replacement);
+	}
+	
+	private String stripVariableWrapping(String variable){
+		variable = StringUtils.removeStart(variable, "#{");
+		variable = StringUtils.removeEnd(variable, "}");
+		
+		return variable;
+	}
+	
+	private String stripVariableWrappingForIterator(String variable){
+		variable = StringUtils.removeStart(this.stripVariableWrapping(variable), "item.");
+		
+		return variable;
+	}
+	
+	private List<String> getVariables(String text) {
+		List<String> returnList = new ArrayList<String>();
+
+		Pattern pattern = Pattern.compile("#\\{[^\\}]+\\}");
+
+		Matcher matcher = pattern.matcher(text);
+		while (matcher.find()) {
+			returnList.add(matcher.group());
+		}
+
+		return returnList;
 	}
 	
 	/**

@@ -1,30 +1,49 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns="http://mayo.edu/twinkql" targetNamespace="http://mayo.edu/twinkql"
 	elementFormDefault="qualified">
+	
+	<xsd:element name="twinkqlConfig">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="namespace" type="namespaceDefinition"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="namespaceDefinition" >
+		<xsd:attribute name="prefix" type="xsd:string" use="required" />
+		<xsd:attribute name="uri" type="xsd:string" use="required" />
+	</xsd:complexType>
 
 	<xsd:element name="sparqlMap">
 		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="perRowResultMap" type="perRowResultMap"
-					minOccurs="0" maxOccurs="unbounded" />
-				<xsd:element name="compositeResultMap" type="compositeResultMap"
-					minOccurs="0" maxOccurs="unbounded" />
-				<xsd:choice>
-					<xsd:sequence>
-						<xsd:element name="select" type="select" minOccurs="0"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="perRowResultMap" type="perRowResultMap" />
+				<xsd:element name="compositeResultMap" type="compositeResultMap" />
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="select" type="select" />
 				</xsd:choice>
-			</xsd:sequence>
+			</xsd:choice>
 			<xsd:attribute name="namespace" type="xsd:string" use="required" />
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="select">
+	<xsd:complexType name="select" mixed="true">
+		<xsd:sequence>
+			<xsd:element name="iterator" type="iterator" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+		<xsd:attribute name="resultMap" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="iterator">
 		<xsd:simpleContent>
 			<xsd:extension base="xsd:string">
-				<xsd:attribute name="id" type="xsd:string" use="required" />
-				<xsd:attribute name="resultMap" type="xsd:string" />
+				<xsd:attribute name="property" type="xsd:string" use="required" />
+				<xsd:attribute name="collection" type="xsd:string" use="required" />
+				<xsd:attribute name="open" type="xsd:string" />
+				<xsd:attribute name="separator" type="xsd:string" />
+				<xsd:attribute name="close" type="xsd:string" />
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
@@ -44,12 +63,16 @@
 			<xsd:extension base="resultMap">
 				<xsd:sequence>
 					<xsd:element name="tripleMap" type="tripleMap" maxOccurs="unbounded" />
+					<xsd:element name="if" type="conditional" minOccurs="0" maxOccurs="unbounded" />
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType abstract="true" name="resultMap">
+		<xsd:sequence>
+			<xsd:element name="discriminator" type="discriminator" minOccurs="0" />
+		</xsd:sequence>
 		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="extends" type="xsd:string" />
 		<xsd:attribute name="resultClass" type="xsd:string" />
@@ -78,8 +101,31 @@
 		<xsd:attribute name="var" type="xsd:string" />
 		<xsd:attribute name="varType" type="bindingPart" />
 		<xsd:attribute name="beanProperty" type="xsd:string" />
+		<xsd:attribute name="callbackId" type="xsd:string" />
 		<xsd:attribute name="resultMapping" type="xsd:string" />
 		<xsd:attribute name="modifier" type="xsd:string" />
+	</xsd:complexType>
+
+	<xsd:complexType name="discriminator">
+		<xsd:sequence>
+			<xsd:element name="case" type="case" minOccurs="2" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="var" type="xsd:string" />
+		<xsd:attribute name="varType" type="bindingPart" />
+		<xsd:attribute name="predicateUri" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="case">
+		<xsd:attribute name="value" type="xsd:string" />
+		<xsd:attribute name="resultMapping" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="conditional">
+		<xsd:sequence>
+			<xsd:element name="tripleMap" type="tripleMap"  maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="function" type="xsd:string" use="required" />
+		<xsd:attribute name="param" type="xsd:string" use="required" />
 	</xsd:complexType>
 
 </xsd:schema>

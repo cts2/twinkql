@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparqlMap namespace="myTestNamespace"
+	xmlns="http://mayo.edu/twinkql" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
+
+	<compositeResultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
+		<discriminator var="p" varType="localName" predicateUri="asdf">
+			<case value="1" resultMapping="mapping1"/>
+			<case value="2" resultMapping="mapping2"/>
+		</discriminator>
+		<tripleMap var="p" varType="localName" predicateUri="asdf" beanProperty="test.bean.prop"/>	
+		<tripleMap var="p" varType="localName" predicateUri="asdf" callbackId="callbackId"/>	
+		<if function="dsaf" param="p">
+			<tripleMap var="p" varType="localName" predicateUri="asdf" callbackId="callbackId"/>	
+		</if>
+	</compositeResultMap>
+
+	<select id="myTestQuery">
+
+	
+	SELECT DISTINCT ?p ?o
+	 WHERE {
+	  GRAPH ?graphURI {
+	   <![CDATA[ ?s a <http://www.w3.org/2002/07/owl#Ontology>;]]>
+	   ?p ?o
+	
+	  }
+	 
+	 }
+	</select>
+	
+	<select id="testIterativeQuery">
+		 SELECT DISTINCT ?p ?o
+			 WHERE {
+			  GRAPH ?graphURI {
+			   <![CDATA[ ?s a <http://www.w3.org/2002/07/owl#Ontology>;]]>
+			   ?p ?o
+			
+			  }
+			 <iterator property="myCollection" collection="." open="FILTER(" close=")" separator="&amp;&amp;">
+			 	regex( ?#{item.var}, '#{item.text}' )
+			 </iterator>
+			 }
+	  
+
+	</select>
+	
+</sparqlMap>

@@ -23,30 +23,21 @@
  */
 package edu.mayo.twinkql.result.callback;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.StringUtils;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
-import edu.mayo.twinkql.instance.Instantiator;
+import edu.mayo.twinkql.instance.AbstractCachingInstantiatingBean;
 
 /**
  * The Class CallbackInstantiator.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public class CallbackInstantiator {
+public class CallbackInstantiator extends AbstractCachingInstantiatingBean {
 	
-	private Map<String,Object> callbackCache = new HashMap<String,Object>();
-	
-	private TwinkqlContext twinkqlContext;
 	
 	public CallbackInstantiator(TwinkqlContext twinkqlContext){
-		super();
-		this.twinkqlContext = twinkqlContext;
-		
+		super(twinkqlContext);
 	}
 	
 	/**
@@ -57,32 +48,13 @@ public class CallbackInstantiator {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Callback> T instantiateCallback(String className, Class<T> requiredType){
-		if(! this.callbackCache.containsKey(className)){
-			Object callback = this.getInstantiator(className).instantiate(className);
+		Object callback = this.instantiate(className);
 			
-			if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
-				throw new RuntimeException();
-			}
-			
-			this.callbackCache.put(className, callback);
+		if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
+			throw new RuntimeException();
 		}
 		
-		
-		return (T) this.callbackCache.get(className);
+		return (T) callback;
 	}
 
-	protected Instantiator getInstantiator(String beanName){
-		String prefix = null;
-		if(StringUtils.contains(beanName, ':')){
-			prefix = StringUtils.substringBefore(beanName, ":");
-		}
-		
-		for(Instantiator instantiator : this.twinkqlContext.getInstantiators()){
-			if(StringUtils.equals(prefix, instantiator.getPrefix())){
-				return instantiator;
-			}
-		}
-		
-		return null;
-	}
 }

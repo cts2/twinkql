@@ -30,6 +30,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 
 import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.SparqlMap;
+import edu.mayo.twinkql.model.TwinkqlConfig;
 
 /**
  * The Interface TwinkqlContext.
@@ -53,6 +54,8 @@ public interface TwinkqlContext {
 	 * @return the query execution
 	 */
 	public QueryExecution getQueryExecution(Query query);
+	
+	public TwinkqlConfig getTwinkqlConfig();
 	
 	public Set<Instantiator> getInstantiators();
 }

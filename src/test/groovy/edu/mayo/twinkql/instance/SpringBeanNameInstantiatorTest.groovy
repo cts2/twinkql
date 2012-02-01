@@ -1,8 +1,7 @@
 package edu.mayo.twinkql.instance;
 
+import org.junit.Test;
 import static org.junit.Assert.*
-
-import org.junit.Test
 
 class SpringBeanNameInstantiatorTest {
 	

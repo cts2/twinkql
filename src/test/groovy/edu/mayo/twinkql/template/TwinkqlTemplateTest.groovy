@@ -1,13 +1,19 @@
 package edu.mayo.twinkql.template;
 
-import static org.junit.Assert.*
 
 import org.junit.Test
+import org.springframework.core.io.ClassPathResource
 
 import edu.mayo.twinkql.context.TwinkqlContext
+import edu.mayo.twinkql.context.TwinkqlContextFactory
 import edu.mayo.twinkql.model.Select
 import edu.mayo.twinkql.model.SparqlMap
-import edu.mayo.twinkql.model.SparqlMapSequence
+import edu.mayo.twinkql.model.SparqlMapChoice
+import edu.mayo.twinkql.model.SparqlMapChoiceItem
+import edu.mayo.twinkql.model.SparqlMapItem
+import static org.junit.Assert.*
+
+
 
 public class TwinkqlTemplateTest {
 
@@ -16,19 +22,26 @@ public class TwinkqlTemplateTest {
 		def maps = [
 			new SparqlMap(
 				namespace:"ns",
-				sparqlMapSequence:new SparqlMapSequence(
-					select:[
-						new Select(
-							id:"test",
-							content:"test #{param} substitution"
-							)	
-					]
-				)
+				sparqlMapItem:[
+					new SparqlMapItem(
+						sparqlMapChoice:new SparqlMapChoice(
+							sparqlMapChoiceItem: [
+								new SparqlMapChoiceItem(
+								select: new Select(
+										id:"test",
+										content:"test #{param} substitution"
+										)	
+								)
+								]
+							)
+						)
+				]
 			)	
 		] as Set
 		
 		def twinkqlContext = [
-			getSparqlMaps : {-> maps}
+			getSparqlMaps : {-> maps},
+			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
 		def template = new TwinkqlTemplate(twinkqlContext)
@@ -36,4 +49,30 @@ public class TwinkqlTemplateTest {
 		assertEquals "test sub substitution",
 			 template.getSelectQueryString("ns", "test", ["param":"sub"])
 	}
+	
+	@Test
+	void TestQueryForStringParameterSubstitutionWithIterator(){
+			
+		TwinkqlContextFactory factory = new TwinkqlContextFactory()
+		SparqlMap map = factory.loadSparqlMap(new ClassPathResource("xml/testMap.xml"))
+		
+		def twinkqlContext = [
+			getSparqlMaps : {-> [map] as Set},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
+	
+		def template = new TwinkqlTemplate(twinkqlContext)
+	
+		println  template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
+			myCollection:[
+				new TestQuery(var:"var1", text:"someText1"), new TestQuery(var:"var2", text:"someText2")]
+			])
+	}
+	
+	
+}
+
+class TestQuery {
+	def var
+	def text
 }
