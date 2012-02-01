@@ -28,7 +28,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import edu.mayo.twinkql.instance.internal.SpringBeanNameInstantiator;
+import edu.mayo.twinkql.instance.SpringBeanNameInstantiator;
 
 /**
  * A factory for creating TwinkqlContext objects.

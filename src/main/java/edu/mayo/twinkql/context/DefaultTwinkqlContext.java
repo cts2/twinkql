@@ -21,7 +21,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context.internal;
+package edu.mayo.twinkql.context;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,10 +30,8 @@ import java.util.Set;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 
-import edu.mayo.twinkql.context.QueryExecutionProvider;
-import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
 import edu.mayo.twinkql.instance.Instantiator;
-import edu.mayo.twinkql.instance.internal.DefaultClassForNameInstantiator;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.TwinkqlConfig;
 

@@ -1,9 +1,8 @@
-package edu.mayo.twinkql.instance.internal;
+package edu.mayo.twinkql.instance;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.ApplicationContext;
 
-import edu.mayo.twinkql.instance.Instantiator;
 
 public class SpringBeanNameInstantiator implements Instantiator {
 	

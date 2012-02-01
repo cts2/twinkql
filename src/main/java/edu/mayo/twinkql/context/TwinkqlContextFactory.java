@@ -36,7 +36,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
-import edu.mayo.twinkql.context.internal.DefaultTwinkqlContext;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.TwinkqlConfig;
 

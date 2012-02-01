@@ -1,6 +1,5 @@
-package edu.mayo.twinkql.instance.internal;
+package edu.mayo.twinkql.instance;
 
-import edu.mayo.twinkql.instance.Instantiator;
 
 public class DefaultClassForNameInstantiator implements Instantiator {
 

@@ -1,9 +1,8 @@
-package edu.mayo.twinkql.instance.internal;
+package edu.mayo.twinkql.instance;
 
 import org.apache.commons.lang.StringUtils;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
-import edu.mayo.twinkql.instance.Instantiator;
 
 public class AbstractInstantiatingBean {
 	

@@ -12,7 +12,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory
 
 import edu.mayo.twinkql.context.Qname
 import edu.mayo.twinkql.context.TwinkqlContext
-import edu.mayo.twinkql.instance.internal.DefaultClassForNameInstantiator;
+import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
 import edu.mayo.twinkql.model.CompositeResultMap
 import edu.mayo.twinkql.model.PerRowResultMap
 import edu.mayo.twinkql.model.RowMap
