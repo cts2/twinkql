@@ -543,7 +543,7 @@ public class ResultBindingProcessor {
 	protected boolean hasNestedCollection(String property){
 		int matches = StringUtils.countMatches(property, "[]");
 		if(matches > 1){
-			throw new RuntimeException("Only ONE nested Collection property allowed.");
+			throw new MappingException("Only ONE nested Collection property allowed.");
 		}
 		return matches > 0;
 	}

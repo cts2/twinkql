@@ -5,7 +5,7 @@ import org.junit.Test
 import org.springframework.core.io.ClassPathResource
 
 import edu.mayo.twinkql.context.TwinkqlContext
-import edu.mayo.twinkql.context.TwinkqlContextFactory
+import edu.mayo.twinkql.context.TwinkqlContextFactory;
 import edu.mayo.twinkql.model.Select
 import edu.mayo.twinkql.model.SparqlMap
 import edu.mayo.twinkql.model.SparqlMapChoice

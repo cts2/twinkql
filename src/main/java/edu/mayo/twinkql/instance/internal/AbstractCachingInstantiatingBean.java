@@ -1,4 +1,4 @@
-package edu.mayo.twinkql.instance;
+package edu.mayo.twinkql.instance.internal;
 
 import java.util.HashMap;
 import java.util.Map;

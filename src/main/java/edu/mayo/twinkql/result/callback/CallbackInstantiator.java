@@ -26,7 +26,7 @@ package edu.mayo.twinkql.result.callback;
 import org.apache.commons.lang.ClassUtils;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
-import edu.mayo.twinkql.instance.AbstractCachingInstantiatingBean;
+import edu.mayo.twinkql.instance.internal.AbstractCachingInstantiatingBean;
 
 /**
  * The Class CallbackInstantiator.
