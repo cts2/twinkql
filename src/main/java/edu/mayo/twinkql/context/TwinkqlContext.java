@@ -25,7 +25,6 @@ package edu.mayo.twinkql.context;
 
 import java.util.Set;
 
-import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 
 import edu.mayo.twinkql.instance.Instantiator;
@@ -53,7 +52,7 @@ public interface TwinkqlContext {
 	 * @param query the query
 	 * @return the query execution
 	 */
-	public QueryExecution getQueryExecution(Query query);
+	public QueryExecution getQueryExecution(String query);
 	
 	public TwinkqlConfig getTwinkqlConfig();
 	

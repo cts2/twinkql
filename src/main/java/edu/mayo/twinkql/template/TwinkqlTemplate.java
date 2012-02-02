@@ -44,6 +44,7 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
 
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
@@ -55,6 +56,7 @@ import edu.mayo.twinkql.model.SparqlMapChoiceItem;
 import edu.mayo.twinkql.model.SparqlMapItem;
 import edu.mayo.twinkql.model.TwinkqlConfig;
 import edu.mayo.twinkql.model.TwinkqlConfigItem;
+import edu.mayo.twinkql.result.MappingException;
 import edu.mayo.twinkql.result.ResultBindingProcessor;
 
 /**
@@ -157,6 +159,10 @@ public class TwinkqlTemplate implements InitializingBean {
 			Map<String,Object> parameters){
 		
 		Select select = this.selectMap.get(new Qname(namespace,selectId));
+		
+		if(select == null){
+			throw new MappingException("SELECT Statement Namespace: " + namespace + ", ID: " + selectId +  " was not found.");
+		}
 		
 		String queryString = this.doGetSparqlQueryString(select, parameters);
 		
@@ -373,10 +379,10 @@ public class TwinkqlTemplate implements InitializingBean {
 		
 		String queryString = this.getSelectQueryString(namespace, selectId, parameters);
 		
-		Query query = this.doCreateQuery(queryString);
+		//Query query = this.doCreateQuery(queryString);
 		
 		QueryExecution queryExecution = 
-				this.twinkqlContext.getQueryExecution(query);
+				this.twinkqlContext.getQueryExecution(queryString);
 		
 		ResultSet resultSet = queryExecution.execSelect();
 		
@@ -392,7 +398,7 @@ public class TwinkqlTemplate implements InitializingBean {
 	 * @return the query
 	 */
 	protected Query doCreateQuery(String queryString){
-		return QueryFactory.create(queryString);
+		return QueryFactory.create(queryString, Syntax.syntaxARQ);
 	}
 	
 	public TwinkqlContext getTwinkqlContext() {

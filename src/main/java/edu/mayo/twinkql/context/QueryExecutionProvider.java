@@ -23,7 +23,6 @@
  */
 package edu.mayo.twinkql.context;
 
-import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 
 /**
@@ -39,6 +38,6 @@ public interface QueryExecutionProvider {
 	 * @param query the query
 	 * @return the query execution
 	 */
-	public QueryExecution provideQueryExecution(Query query);
+	public QueryExecution provideQueryExecution(String query);
 
 }

@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 
 import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
@@ -96,7 +95,7 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	/* (non-Javadoc)
 	 * @see edu.mayo.twinkql.context.TwinkqlContext#getQueryExecution(com.hp.hpl.jena.query.Query)
 	 */
-	public QueryExecution getQueryExecution(Query query) {
+	public QueryExecution getQueryExecution(String query) {
 		return this.queryExecutionProvider.provideQueryExecution(query);
 	}
 

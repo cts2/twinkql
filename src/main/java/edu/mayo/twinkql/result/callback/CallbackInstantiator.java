@@ -47,7 +47,7 @@ public class CallbackInstantiator extends AbstractCachingInstantiatingBean {
 	 * @return the after result binding
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Callback> T instantiateCallback(String className, Class<T> requiredType){
+	public <T extends Callback> T instantiateCallback(String className, Class<T> requiredType) {
 		Object callback = this.instantiate(className);
 			
 		if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
