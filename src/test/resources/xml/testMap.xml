@@ -17,16 +17,12 @@
 	</compositeResultMap>
 
 	<select id="myTestQuery">
-
-	
 	SELECT DISTINCT ?p ?o
 	 WHERE {
 	  GRAPH ?graphURI {
 	   <![CDATA[ ?s a <http://www.w3.org/2002/07/owl#Ontology>;]]>
 	   ?p ?o
-	
 	  }
-	 
 	 }
 	</select>
 	
@@ -39,11 +35,9 @@
 			
 			  }
 			 <iterator property="myCollection" collection="." open="FILTER(" close=")" separator="&amp;&amp;">
-			 	regex( ?#{item.var}, '#{item.text}' )
+			 	REGEX( ?#{item.var}, '#{item.text}' )
 			 </iterator>
 			 }
-	  
-
 	</select>
 	
 </sparqlMap>

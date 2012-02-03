@@ -620,6 +620,9 @@ public class ResultBindingProcessor {
 		switch (part) {
 			case LOCALNAME: {
 				result = rdfNode.asNode().getLocalName();
+				if(StringUtils.isBlank(result)){
+					result = StringUtils.substringAfterLast(rdfNode.asNode().getURI(), "/");
+				}
 				break;
 			}
 			case URI: {
