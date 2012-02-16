@@ -3,12 +3,20 @@
 	xmlns="http://mayo.edu/twinkql" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
+	
+	<compositeResultMap id="testNested" resultClass="edu.mayo.twinkql.result.TestResultNested">
+		<tripleMap var="p" varType="localName" predicateUri="asdf" beanProperty="test.bean.prop"/>
+	</compositeResultMap>
 
 	<compositeResultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
 		<discriminator var="p" varType="localName" predicateUri="asdf">
 			<case value="1" resultMapping="mapping1"/>
 			<case value="2" resultMapping="mapping2"/>
 		</discriminator>
+		<nestedResultMap resultMap="testNested" beanProperty="test.bean.nested"/>
+		<if function="dsaf" param="p">
+			<nestedResultMap resultMap="testNested" beanProperty="test.bean.nested"/>
+		</if>
 		<tripleMap var="p" varType="localName" predicateUri="asdf" beanProperty="test.bean.prop"/>	
 		<tripleMap var="p" varType="localName" predicateUri="asdf" callbackId="callbackId"/>	
 		<if function="dsaf" param="p">

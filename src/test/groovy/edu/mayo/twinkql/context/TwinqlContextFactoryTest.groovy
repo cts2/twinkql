@@ -57,7 +57,7 @@ public class TwinqlContextFactoryTest {
 				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/testMap.xml"));
 		
 		
-		def select = map.getSparqlMapItem(1).getSparqlMapChoice().getSparqlMapChoiceItem(0).getSelect()
+		def select = map.getSparqlMapItem(2).getSparqlMapChoice().getSparqlMapChoiceItem(0).getSelect()
 		
 		assertEquals "myTestQuery", select.getId()
 		

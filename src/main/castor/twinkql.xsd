@@ -61,18 +61,20 @@
 	<xsd:complexType name="compositeResultMap">
 		<xsd:complexContent>
 			<xsd:extension base="resultMap">
-				<xsd:sequence>
-					<xsd:element name="tripleMap" type="tripleMap" maxOccurs="unbounded" />
-					<xsd:element name="if" type="conditional" minOccurs="0" maxOccurs="unbounded" />
-				</xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="tripleMap" type="tripleMap" />
+					<xsd:element name="if" type="conditional" minOccurs="0" />
+				</xsd:choice>
+				<xsd:attribute name="predicateVar" type="xsd:string" default="p" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType abstract="true" name="resultMap">
-		<xsd:sequence>
-			<xsd:element name="discriminator" type="discriminator" minOccurs="0" />
-		</xsd:sequence>
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="discriminator" type="discriminator" />
+			<xsd:element name="nestedResultMap" type="nestedResultMap" />
+		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="extends" type="xsd:string" />
 		<xsd:attribute name="resultClass" type="xsd:string" />
@@ -96,13 +98,17 @@
 			<xsd:enumeration value="literalValue" />
 		</xsd:restriction>
 	</xsd:simpleType>
+	
+	<xsd:complexType name="nestedResultMap">
+		<xsd:attribute name="resultMap" type="xsd:string" />
+		<xsd:attribute name="beanProperty" type="xsd:string" />
+	</xsd:complexType>
 
 	<xsd:complexType name="rowMap">
 		<xsd:attribute name="var" type="xsd:string" />
 		<xsd:attribute name="varType" type="bindingPart" />
 		<xsd:attribute name="beanProperty" type="xsd:string" />
 		<xsd:attribute name="callbackId" type="xsd:string" />
-		<xsd:attribute name="resultMapping" type="xsd:string" />
 		<xsd:attribute name="modifier" type="xsd:string" />
 	</xsd:complexType>
 
@@ -121,9 +127,10 @@
 	</xsd:complexType>
 	
 	<xsd:complexType name="conditional">
-		<xsd:sequence>
-			<xsd:element name="tripleMap" type="tripleMap"  maxOccurs="unbounded"/>
-		</xsd:sequence>
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="tripleMap" type="tripleMap" />
+			<xsd:element name="nestedResultMap" type="nestedResultMap" />
+		</xsd:choice>
 		<xsd:attribute name="function" type="xsd:string" use="required" />
 		<xsd:attribute name="param" type="xsd:string" use="required" />
 	</xsd:complexType>
