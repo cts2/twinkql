@@ -419,14 +419,18 @@ public class ResultBindingProcessor {
 			Set<TripleMap> tripleMaps = predicateUriMatcher.getTripleMapSet(querySolution, predicateUri);
 
 			if(CollectionUtils.isEmpty(tripleMaps)){
-				tripleMaps = predicateUriMatcher.getTripleMapSet(querySolution, "*");
+				Set<TripleMap> allOtherMaps = predicateUriMatcher.getTripleMapSet(querySolution, "*");
+				if(! CollectionUtils.isEmpty(allOtherMaps)){
+					tripleMaps.addAll(allOtherMaps);
+				}
 			}
-	
+
 			if(CollectionUtils.isEmpty(tripleMaps)){
 				tripleMaps = new HashSet<TripleMap>();
 			}
 			
 			Set<TripleMap> extended = predicateUriMatcher.getTripleMapSet(querySolution, "->");
+			
 			if(! CollectionUtils.isEmpty(extended)){
 				tripleMaps.addAll(extended);
 			}
@@ -441,6 +445,13 @@ public class ResultBindingProcessor {
 					String composite = tripleMap.getResultMapping();
 					
 					List<CompositeResultMap> compositeList = this.compositeResultMap.get(Qname.toQname(composite));
+					
+					if(tripleMap.getPredicateUri().equals("->")){
+						PredicateUriMatcher matcher = this.getMapForTriplesMap(compositeList);
+						if(CollectionUtils.isEmpty(matcher.getTripleMapSet(querySolution, predicateUri))){
+							continue;
+						}
+					}
 					
 					String property = tripleMap.getBeanProperty();
 					
@@ -480,6 +491,13 @@ public class ResultBindingProcessor {
 							this.getMapForTriplesMap(compositeList), 
 							collectionTracker,
 							callbackParams);
+					
+					if(StringUtils.isNotBlank(compositeList.get(0).getAfterMap())){
+						this.fireAfterResultBindingCallback(
+								compositeObject, 
+								compositeList.get(0), 
+								callbackParams);
+					}
 					
 					if(forceSet){
 						this.propertySetter.setBeanProperty(
@@ -531,7 +549,7 @@ public class ResultBindingProcessor {
 				}
 			}
 	}
-	
+
 	protected String addIndexToProperty(String property, int index){
 		return StringUtils.replace(property, "[]", "[" + Integer.toString(index) + "]");
 	}
