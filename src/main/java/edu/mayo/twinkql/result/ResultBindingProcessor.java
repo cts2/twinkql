@@ -689,10 +689,13 @@ public class ResultBindingProcessor {
 		
 		public Set<TripleMap> getTripleMapSet(QuerySolution solution, String predicateUri) {
 			Set<TripleMap> foundSet = tripleMapSet.get(predicateUri);
+			
+			Set<TripleMap> returnSet;
 			if(foundSet == null){
-				return null;
+				returnSet = new HashSet<TripleMap>();
+			} else {
+				returnSet = new HashSet<TripleMap>(foundSet);
 			}
-			Set<TripleMap> returnSet = new HashSet<TripleMap>(foundSet);
 			
 			for(Conditional conditional : conditionals){
 				
