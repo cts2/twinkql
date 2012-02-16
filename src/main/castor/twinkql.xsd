@@ -52,7 +52,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="resultMap">
 				<xsd:sequence>
-					<xsd:element name="rowMap" type="rowMap" maxOccurs="unbounded" />
+					<xsd:element name="rowMap" type="rowMap" minOccurs="0" maxOccurs="unbounded" />
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>
@@ -62,7 +62,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="resultMap">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="tripleMap" type="tripleMap" />
+					<xsd:element name="tripleMap" type="tripleMap" minOccurs="0" />
 					<xsd:element name="if" type="conditional" minOccurs="0" />
 				</xsd:choice>
 				<xsd:attribute name="predicateVar" type="xsd:string" default="p" />
@@ -105,8 +105,8 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="rowMap">
-		<xsd:attribute name="var" type="xsd:string" />
-		<xsd:attribute name="varType" type="bindingPart" />
+		<xsd:attribute name="var" use="required" type="xsd:string" />
+		<xsd:attribute name="varType" use="required" type="bindingPart" />
 		<xsd:attribute name="beanProperty" type="xsd:string" />
 		<xsd:attribute name="callbackId" type="xsd:string" />
 		<xsd:attribute name="modifier" type="xsd:string" />
