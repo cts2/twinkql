@@ -25,11 +25,8 @@ package edu.mayo.twinkql.result;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,8 +35,8 @@ import java.util.Set;
 import jodd.bean.BeanUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.hp.hpl.jena.query.QuerySolution;
@@ -54,6 +51,8 @@ import edu.mayo.twinkql.model.Conditional;
 import edu.mayo.twinkql.model.ConditionalItem;
 import edu.mayo.twinkql.model.NestedResultMap;
 import edu.mayo.twinkql.model.PerRowResultMap;
+import edu.mayo.twinkql.model.PerRowResultMapItem;
+import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.ResultMapItem;
 import edu.mayo.twinkql.model.RowMap;
 import edu.mayo.twinkql.model.SparqlMap;
@@ -64,6 +63,7 @@ import edu.mayo.twinkql.model.TwinkqlConfigItem;
 import edu.mayo.twinkql.model.types.BindingPart;
 import edu.mayo.twinkql.result.callback.AfterResultBinding;
 import edu.mayo.twinkql.result.callback.CallbackInstantiator;
+import edu.mayo.twinkql.result.callback.ConditionalTest;
 import edu.mayo.twinkql.result.callback.Modifier;
 
 /**
@@ -72,6 +72,8 @@ import edu.mayo.twinkql.result.callback.Modifier;
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 public class ResultBindingProcessor {
+	
+	private static final String MATCH_ALL_OTHERS = "*";
 
 	private CallbackInstantiator callbackInstantiator;
 
@@ -93,6 +95,9 @@ public class ResultBindingProcessor {
 		this.initCaches();
 	}
 
+	/**
+	 * Adds the in declared namespaces.
+	 */
 	protected void addInDeclaredNamespaces() {
 		Map<String, String> namespaceMap = this
 				.getNamespaceMap(this.twinkqlContext.getTwinkqlConfig());
@@ -129,6 +134,12 @@ public class ResultBindingProcessor {
 		}
 	}
 
+	/**
+	 * Gets the namespace map.
+	 *
+	 * @param config the config
+	 * @return the namespace map
+	 */
 	private Map<String, String> getNamespaceMap(TwinkqlConfig config) {
 		if (config == null) {
 			return null;
@@ -145,6 +156,82 @@ public class ResultBindingProcessor {
 		}
 
 		return returnMap;
+	}
+	
+	/**
+	 * Handle row maps.
+	 *
+	 * @param binding the binding
+	 * @param querySolution the query solution
+	 * @param perRowResultMapItems the per row result map items
+	 * @param callbackParams the callback params
+	 */
+	protected void handleRowMaps(
+			Object binding, 
+			QuerySolution querySolution,
+			PerRowResultMap perRowResultMap,
+			Tracker tracker) {
+
+		for (PerRowResultMapItem item : perRowResultMap
+				.getPerRowResultMapItem()) {
+			for (RowMap rowMap : item.getRowMap()) {
+
+				RDFNode node = querySolution.get(rowMap.getVar());
+
+				String value = this.getResultFromQuerySolution(node, rowMap);
+
+				this.setProperty(binding, value, rowMap, tracker);
+			}
+		}
+		
+		for (ResultMapItem item : perRowResultMap.getResultMapItem()) {
+			NestedResultMap nestedResultMap = item.getNestedResultMap();
+
+			PerRowResultMap resultMap = 
+					this.perRowResultMaps.get(Qname.toQname(nestedResultMap.getResultMap()));
+			
+			Object result = this.processOneRow(querySolution, resultMap, tracker);
+			
+			this.setProperty(binding, result, nestedResultMap.getBeanProperty(), null, tracker);
+		}
+	}
+	
+	/**
+	 * Process one row.
+	 *
+	 * @param querySolution the query solution
+	 * @param resultMaps the result maps
+	 * @param callbackParams the callback params
+	 * @return the object
+	 */
+	protected Object processOneRow(
+			QuerySolution querySolution, 
+			PerRowResultMap resultMaps, 
+			Tracker tracker){
+		Object instance;
+
+		String className = resultMaps.getResultClass();
+		try {
+			instance = Class.forName(className).newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+			this.handleRowMaps(
+					instance, 
+					querySolution, 
+					resultMaps,
+					tracker);
+		
+			
+			this.fireAfterResultBindingCallback(
+					instance, 
+					resultMaps, 
+					tracker.getCallbackParams());
+
+	
+		
+		return instance;
 	}
 
 	/**
@@ -166,8 +253,8 @@ public class ResultBindingProcessor {
 				if (sparqlMapItem.getPerRowResultMap() != null) {
 					PerRowResultMap perRowMap = sparqlMapItem
 							.getPerRowResultMap();
-					perRowResultMaps.put(Qname.toQname(perRowMap.getId()),
-							perRowMap);
+					perRowResultMaps.put(Qname.toQname(perRowMap.getId(),
+							sparqlMap.getNamespace()), perRowMap);
 				}
 			}
 
@@ -175,94 +262,311 @@ public class ResultBindingProcessor {
 			this.perRowResultMaps = perRowResultMaps;
 		}
 
-		for (Entry<Qname, CompositeResultMap> entry : compositeResultMaps
-				.entrySet()) {
-			CompositeResultMap map = entry.getValue();
+		this.processExtendedResultSets(compositeResultMaps, new GetExtendingParent<CompositeResultMap>(){
+
+			public CompositeResultMap getExtendingParent(CompositeResultMap extended) {
+				return new ExtendedCompositeResultMap(extended);
+			}
+			
+		});
+		
+		this.processExtendedResultSets(perRowResultMaps, new GetExtendingParent<PerRowResultMap>(){
+
+			public PerRowResultMap getExtendingParent(PerRowResultMap extended) {
+				return new ExtendedPerRowResultMap(extended);
+			}
+			
+		});
+		
+	}
+	
+	protected <T extends ResultMap> void processExtendedResultSets(
+			Map<Qname,T> resultsSets, 
+			GetExtendingParent<T> getExtendingParent){
+		for (Entry<Qname, T> entry : resultsSets.entrySet()) {
+			T map = entry.getValue();
 			if (StringUtils.isNotBlank(map.getExtends())) {
-				CompositeResultMap extended = compositeResultMaps.get(Qname
+				T extended = resultsSets.get(Qname
 						.toQname(map.getExtends()));
 
-				ExtendedCompositeResultMap parent = new ExtendedCompositeResultMap();
+				T parent = getExtendingParent.getExtendingParent(extended);
+				
 				try {
 					BeanUtils.copyProperties(parent, map);
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
-				parent.setExtending(extended);
 
-				compositeResultMaps.put(entry.getKey(), parent);
+				resultsSets.put(entry.getKey(), parent);
 			}
 		}
 	}
-
-	private static class ExtendedCompositeResultMap extends CompositeResultMap {
-
-		private static final long serialVersionUID = -6125562115832012024L;
-
-		private CompositeResultMap extending;
-
-		private ExtendedCompositeResultMap() {
-			super();
-		}
-
-		private ExtendedCompositeResultMap(CompositeResultMap extending) {
-			this.extending = extending;
-		}
-
-		public void setExtending(CompositeResultMap extending) {
-			this.extending = extending;
-		}
-
-		@Override
-		public Enumeration<? extends CompositeResultMapItem> enumerateCompositeResultMapItem() {
-			return Collections.enumeration(Arrays.asList(this
-					.getCompositeResultMapItem()));
-		}
-
-		@Override
-		public CompositeResultMapItem getCompositeResultMapItem(int index)
-				throws IndexOutOfBoundsException {
-			return this.getCompositeResultMapItem()[index];
-		}
-
-		@Override
-		public CompositeResultMapItem[] getCompositeResultMapItem() {
-			return (CompositeResultMapItem[]) ArrayUtils.addAll(
-					super.getCompositeResultMapItem(),
-					this.extending.getCompositeResultMapItem());
-		}
-
-		@Override
-		public int getCompositeResultMapItemCount() {
-			return this.getCompositeResultMapItem().length;
-		}
-
-		@Override
-		public Iterator<? extends CompositeResultMapItem> iterateCompositeResultMapItem() {
-			return Arrays.asList(this.getCompositeResultMapItem()).iterator();
-		}
+	
+	private interface GetExtendingParent<T extends ResultMap> {
+		
+		public T getExtendingParent(T extended);
 	}
 
+	/**
+	 * Bind for list.
+	 *
+	 * @param resultSet the result set
+	 * @param resultMap the result map
+	 * @return the list
+	 */
+	public List<Object> bindForList(ResultSet resultSet, Qname resultMap) {
+		PerRowResultMap perRowResultMap = this.perRowResultMaps.get(resultMap);
+		
+		Assert.notNull(perRowResultMap);
+		
+		return this.bindToRows(resultSet, perRowResultMap);
+
+	}
+	
+	/**
+	 * Bind to rows.
+	 *
+	 * @param resultSet the result set
+	 * @param result the result
+	 * @return the list
+	 */
+	protected List<Object> bindToRows(ResultSet resultSet, PerRowResultMap result) {
+
+		List<Object> returnList = new ArrayList<Object>();
+
+		while (resultSet.hasNext()) {
+			Tracker tracker = new Tracker();
+			
+			Object instance = this.processOneRow(resultSet.next(), result, tracker);
+
+			returnList.add(instance);
+		}
+
+		return returnList;
+	}
+	
+	/**
+	 * Bind for object.
+	 *
+	 * @param resultSet the result set
+	 * @param resultMap the result map
+	 * @return the object
+	 */
 	public Object bindForObject(ResultSet resultSet, Qname resultMap) {
 		CompositeResultMap compositeResultMap = this.compositeResultMaps
 				.get(resultMap);
 
 		List<QuerySolution> solutions = new ArrayList<QuerySolution>();
-		
+	
 		while(resultSet.hasNext()){
 			solutions.add(resultSet.next());
 		}
 		
-		return this.procesTriples(solutions, compositeResultMap);
+		return this.procesTriples(solutions, 
+				new CompositeTracker(this.getExplicitlyRequestedPredicates(compositeResultMap)), 
+				compositeResultMap);
 	}
+	
+	/**
+	 * Sets the property.
+	 *
+	 * @param targetObj the target obj
+	 * @param result the result
+	 * @param rowMap the row map
+	 * @param callbacks the callbacks
+	 */
+	private void setProperty(Object targetObj, Object result, TripleMap rowMap, CompositeTracker tracker){
+		String callbackId = rowMap.getCallbackId();
+		String property = rowMap.getBeanProperty();
+		
+		if(this.isIndexedProperty(property)){
+			Integer index = tracker.getCollectionTracker().get(property);
+			if(index == null){
+				index = 0;
+			}
+			String indexedProperty = this.addIndexToProperty(property, index);
+			
+			tracker.getCollectionTracker().put(property, ++index);
+			
+			property = indexedProperty;
+		}
+		
+		this.setProperty(targetObj, result, property, callbackId, tracker);
+	}
+	
+	private void setProperty(Object targetObj, Object result, RowMap rowMap, Tracker tracker){
+		String callbackId = rowMap.getCallbackId();
+		String property = rowMap.getBeanProperty();
+		
+		this.setProperty(targetObj, result, property, callbackId, tracker);
+	}
+	
+	private void setProperty(
+			Object targetObj, 
+			Object result, 
+			String property, 
+			String callbackId, 
+			Tracker tracker){
 
-	protected Object procesTriples(List<QuerySolution> querySolutions,
+		if(StringUtils.isNotBlank(callbackId)){
+			tracker.getCallbackParams().put(callbackId, result);
+		}
+		
+		if(StringUtils.isNotBlank(property)){
+			BeanUtil.setPropertyForced(targetObj,
+					property, result);
+		}	
+	}
+	
+	/**
+	 * Proces triples for list.
+	 *
+	 * @param querySolutions the query solutions
+	 * @param tracker the tracker
+	 * @param compositeResultMap the composite result map
+	 * @return the list
+	 */
+	protected List<Object> procesTriplesForList(
+			List<QuerySolution> querySolutions,
+			CompositeTracker tracker,
+			CompositeResultMap compositeResultMap) {
+		List<Object> returnList = new ArrayList<Object>();
+
+		for (QuerySolution solution : querySolutions) {
+			
+			String predicateUri = solution.get(
+					compositeResultMap.getPredicateVar()).asNode().getURI();
+			
+			Object targetObj = null;
+			
+
+			for (CompositeResultMapItem item : compositeResultMap
+					.getCompositeResultMapItem()) {
+
+				if (item.getTripleMap() != null) {
+					TripleMap tripleMap = item.getTripleMap();
+					
+					if(! this.isMatch(
+							predicateUri, 
+							tripleMap.getPredicateUri(), 
+							tracker.getRequestedPredicateUris())){
+						continue;
+					}
+					
+					if(targetObj == null){
+					try{
+						   targetObj = Class.forName(compositeResultMap.getResultClass()).newInstance();
+							} catch (Exception e) {
+								throw new IllegalStateException(e);
+							} 
+					}
+					
+					String result = this.getResultFromQuerySolution(
+							solution.get(tripleMap.getVar()), tripleMap);
+	
+					this.setProperty(
+							targetObj, 
+							result, 
+							tripleMap, 
+							tracker);
+				}
+
+				if (item.getIf() != null) {
+					Conditional conditional = item.getIf();
+
+					handleConditional(targetObj, solution, predicateUri,
+							conditional, tracker);
+				}
+			}
+			
+			if(targetObj != null){
+				this.fireAfterResultBindingCallback(
+						targetObj, 
+						compositeResultMap, 
+						tracker.getCallbackParams());
+				
+				returnList.add(targetObj);
+			}
+		}
+		
+		for (ResultMapItem item : compositeResultMap.getResultMapItem()) {
+			
+			if (item.getNestedResultMap() != null) {
+				throw new UnsupportedOperationException("ResultSetMappings on Nested indexed properties not supported.");
+			}
+		}
+		
+		return returnList;
+	}
+	
+	/**
+	 * Checks if is match.
+	 *
+	 * @param queryResultPredicateUri the query result predicate uri
+	 * @param resultMappingPredicateUri the result mapping predicate uri
+	 * @param explicitlyRequestedPredicateUris the explicitly requested predicate uris
+	 * @return true, if is match
+	 */
+	private boolean isMatch(
+			String queryResultPredicateUri, 
+			String resultMappingPredicateUri, 
+			Set<String> explicitlyRequestedPredicateUris){
+		if(queryResultPredicateUri.equals(resultMappingPredicateUri)){
+			return true;
+		}
+		
+		if(resultMappingPredicateUri.equals(MATCH_ALL_OTHERS)){
+			if(! explicitlyRequestedPredicateUris.contains(queryResultPredicateUri)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Process triple map.
+	 *
+	 * @param targetObj the target obj
+	 * @param tripleMap the triple map
+	 * @param solution the solution
+	 * @param predicateUri the predicate uri
+	 * @param tracker the tracker
+	 */
+	protected void processTripleMap(
+			Object targetObj,
+			TripleMap tripleMap, 
+			QuerySolution solution, 
+			String predicateUri, 
+			CompositeTracker tracker){
+		
+		if(! this.isMatch(
+				predicateUri, 
+				tripleMap.getPredicateUri(), 
+				tracker.getRequestedPredicateUris())){
+			return;
+		}
+		
+		String result = this.getResultFromQuerySolution(
+				solution.get(tripleMap.getVar()), tripleMap);
+
+		this.setProperty(targetObj, result, tripleMap, tracker);
+	}
+	
+	/**
+	 * Proces triples.
+	 *
+	 * @param querySolutions the query solutions
+	 * @param tracker the tracker
+	 * @param compositeResultMap the composite result map
+	 * @return the object
+	 */
+	protected Object procesTriples(
+			List<QuerySolution> querySolutions,
+			CompositeTracker tracker,
 			CompositeResultMap compositeResultMap) {
 		Object targetObj;
-		
-		Map<String,Object> callbackParams = new HashMap<String,Object>();
-		Map<String,Integer> collectionTracker = new HashMap<String,Integer>();
-		
+
 		try {
 			targetObj = Class.forName(compositeResultMap.getResultClass()).newInstance();
 		} catch (Exception e) {
@@ -280,57 +584,144 @@ public class ResultBindingProcessor {
 				if (item.getTripleMap() != null) {
 					TripleMap tripleMap = item.getTripleMap();
 					
-					if(! tripleMap.getPredicateUri().equals(predicateUri)){
-						continue;
-					}
-					
-					String result = this.getResultFromQuerySolution(
-							solution.get(tripleMap.getVar()), tripleMap);
+					this.processTripleMap(targetObj, tripleMap, solution,
+							predicateUri, tracker);
+				}
 
-					String property = tripleMap.getBeanProperty();
-					
-					if(this.isIndexedProperty(property)){
-						Integer index = collectionTracker.get(property);
-						if(index == null){
-							index = 0;
-						}
-						String indexedProperty = this.addIndexToProperty(property, index);
-						
-						collectionTracker.put(property, ++index);
-						
-						property = indexedProperty;
-					}
-					
-					BeanUtil.setPropertyForced(targetObj,
-							property, result);
+				if (item.getIf() != null) {
+					Conditional conditional = item.getIf();
+
+					handleConditional(targetObj, solution, predicateUri,
+							conditional, tracker);
 				}
 			}
 		}
 		
 		for (ResultMapItem item : compositeResultMap.getResultMapItem()) {
-
+			
 			if (item.getNestedResultMap() != null) {
 				NestedResultMap nestedResultMap = item.getNestedResultMap();
 				
-				CompositeResultMap nestedCompositeResultMap = 
-						this.compositeResultMaps.get(Qname.toQname(nestedResultMap.getResultMap()));
-				
-				Object nestedObj = this.procesTriples(
-						new ArrayList<QuerySolution>(querySolutions), nestedCompositeResultMap);
-				
-				BeanUtil.setPropertyForced(targetObj,
-						nestedResultMap.getBeanProperty(), nestedObj);
+				this.processNestedResultMap(
+						targetObj, 
+						nestedResultMap, 
+						querySolutions, 
+						tracker);
 			}
 		}
 		
-		this.fireAfterResultBindingCallback(targetObj, compositeResultMap, callbackParams);
+		this.fireAfterResultBindingCallback(
+				targetObj, 
+				compositeResultMap, 
+				tracker.getCallbackParams());
 
 		return targetObj;
 	}
+
+	/**
+	 * Handle conditional.
+	 *
+	 * @param targetObj the target obj
+	 * @param solution the solution
+	 * @param predicateUri the predicate uri
+	 * @param conditional the conditional
+	 * @param tracker the tracker
+	 */
+	protected void handleConditional(
+			Object targetObj, 
+			QuerySolution solution,
+			String predicateUri, 
+			Conditional conditional, 
+			CompositeTracker tracker) {
+		@SuppressWarnings("unchecked")
+		ConditionalTest<Object> test = this.callbackInstantiator
+				.instantiateCallback(conditional.getFunction(),
+						ConditionalTest.class);
+
+		String parameter = conditional.getParam();
+
+		if (test.test(solution.get(parameter))) {
+
+			for (ConditionalItem conditionalItem : conditional
+					.getConditionalItem()) {
+				if (conditionalItem.getTripleMap() != null) {
+
+					TripleMap tripleMap = conditionalItem.getTripleMap();
+
+					this.processTripleMap(
+							targetObj, 
+							tripleMap,
+							solution, 
+							predicateUri, 
+							tracker);
+				}
+				if (conditionalItem.getNestedResultMap() != null) {
+					NestedResultMap nestedResultMap = conditionalItem
+							.getNestedResultMap();
+
+					this.processNestedResultMap(targetObj,
+							nestedResultMap,
+							Arrays.asList(solution), tracker);			
+				}
+			}
+		}
+	}
 	
+	
+	/**
+	 * Process nested result map.
+	 *
+	 * @param targetObj the target obj
+	 * @param nestedResultMap the nested result map
+	 * @param querySolutions the query solutions
+	 * @param tracker the tracker
+	 */
+	protected void processNestedResultMap(
+			Object targetObj,
+			NestedResultMap nestedResultMap, 
+			List<QuerySolution> querySolutions,
+			CompositeTracker tracker){
+		CompositeResultMap nestedCompositeResultMap = 
+				this.compositeResultMaps.get(Qname.toQname(nestedResultMap.getResultMap()));
+
+		String property = nestedResultMap.getBeanProperty();
+		if(this.isIndexedProperty(property)){
+			List<Object> returnList = this.procesTriplesForList(
+					new ArrayList<QuerySolution>(querySolutions), 
+					tracker, 
+					nestedCompositeResultMap);
+			
+			Integer index = tracker.getCollectionTracker().get(property);
+			if(index == null){
+				index = 0;
+			}
+
+			for(Object nestedObj : returnList){
+				String indexedProperty = this.addIndexToProperty(property, index);
+				
+				tracker.getCollectionTracker().put(property, ++index);
+				
+				BeanUtil.setPropertyForced(targetObj, indexedProperty, nestedObj);
+			}
+			
+		} else {
+			Object nestedObj = this.procesTriples(
+					new ArrayList<QuerySolution>(querySolutions), tracker, nestedCompositeResultMap);
+			
+			BeanUtil.setPropertyForced(targetObj, property, nestedObj);
+		}	
+	}
+	
+	/**
+	 * Fire after result binding callback.
+	 *
+	 * @param instance the instance
+	 * @param resultMap the result map
+	 * @param callbackParams the callback params
+	 */
 	protected void fireAfterResultBindingCallback(
 			Object instance, 
-			CompositeResultMap resultMap, 
+			ResultMap resultMap, 
 			Map<String,Object> callbackParams){
 		if(StringUtils.isNotBlank(resultMap.getAfterMap())){
 			
@@ -346,60 +737,96 @@ public class ResultBindingProcessor {
 	}
 	
 	
+	/**
+	 * Adds the index to property.
+	 *
+	 * @param property the property
+	 * @param index the index
+	 * @return the string
+	 */
 	protected String addIndexToProperty(String property, int index){
 		return StringUtils.replace(property, "[]", "[" + Integer.toString(index) + "]");
 	}
 	
+	/**
+	 * Checks if is indexed property.
+	 *
+	 * @param property the property
+	 * @return true, if is indexed property
+	 */
 	protected boolean isIndexedProperty(String property){
-		return StringUtils.contains(property, '[') && StringUtils.contains(property, ']');
+		return StringUtils.contains(property, "[]");
+	}
+	
+	/**
+	 * Adds the explicitly requested predicates.
+	 *
+	 * @param set the set
+	 * @param predicateUri the predicate uri
+	 */
+	private void addExplicitlyRequestedPredicates(Set<String> set, String predicateUri){
+		if(! predicateUri.equals(MATCH_ALL_OTHERS)){
+			set.add(predicateUri);
+		}
 	}
 
-/*
-	public Set<String> getRequestedPredicates(
+	/**
+	 * Gets the explicitly requested predicates.
+	 *
+	 * @param compositeResultMap the composite result map
+	 * @return the explicitly requested predicates
+	 */
+	private Set<String> getExplicitlyRequestedPredicates(
 			CompositeResultMap compositeResultMap) {
 		Set<String> requested = new HashSet<String>();
 		for (CompositeResultMapItem item : compositeResultMap
 				.getCompositeResultMapItem()) {
-			TripleMap tripleMap = item.getTripleMap();
-			NestedResultMap nestedResultMap = item.getNestedResultMap();
-			if (tripleMap != null) {
-				requested.add(tripleMap.getPredicateUri());
+			
+			if (item.getTripleMap() != null) {
+				TripleMap tripleMap = item.getTripleMap();
+				this.addExplicitlyRequestedPredicates(requested, tripleMap.getPredicateUri());
 			}
-			if (nestedResultMap != null) {
-				CompositeResultMap nestedCompositeResultMap = this.compositeResultMaps
-						.get(Qname.toQname(nestedResultMap.getResultMap()));
-
-				requested.addAll(this
-						.getRequestedPredicates(nestedCompositeResultMap));
-			}
-			Conditional conditional = item.getIf();
-			if (conditional != null) {
+		
+			if (item.getIf() != null) {
+				Conditional conditional = item.getIf();
 				for (ConditionalItem conditionalItem : conditional
 						.getConditionalItem()) {
-					TripleMap conditionalTripleMap = conditionalItem
-							.getTripleMap();
-					NestedResultMap conditionalNestedResultMap = item
-							.getNestedResultMap();
-					if (conditionalTripleMap != null) {
-						requested.add(conditionalTripleMap.getPredicateUri());
+					if(conditionalItem.getTripleMap() != null){
+						TripleMap tripleMap = conditionalItem.getTripleMap();
+						this.addExplicitlyRequestedPredicates(requested, tripleMap.getPredicateUri());
 					}
-					if (conditionalNestedResultMap != null) {
-						CompositeResultMap nestedCompositeResultMap = this.compositeResultMaps
-								.get(Qname.toQname(nestedResultMap
-										.getResultMap()));
-
-						requested
-								.addAll(this
-										.getRequestedPredicates(nestedCompositeResultMap));
+					
+					if(conditionalItem.getNestedResultMap() != null){
+						NestedResultMap nestedResultMap = conditionalItem.getNestedResultMap();
+						CompositeResultMap nested = this.compositeResultMaps.get(
+								Qname.toQname(nestedResultMap.getResultMap()));
+						
+						requested.addAll(this.getExplicitlyRequestedPredicates(nested));
 					}
 				}
 			}
-
+		}
+		
+		for(ResultMapItem item : compositeResultMap.getResultMapItem()){
+			if(item.getNestedResultMap() != null){
+				NestedResultMap nestedResultMap = item.getNestedResultMap();
+				CompositeResultMap nested = this.compositeResultMaps.get(
+						Qname.toQname(nestedResultMap.getResultMap()));
+				
+				requested.addAll(this.getExplicitlyRequestedPredicates(nested));
+			}
 		}
 
 		return requested;
 	}
-*/
+
+	/**
+	 * Gets the result from query solution.
+	 *
+	 * @param rdfNode the rdf node
+	 * @param rowMap the row map
+	 * @return the result from query solution
+	 */
 	private String getResultFromQuerySolution(RDFNode rdfNode, RowMap rowMap) {
 		if (rdfNode == null) {
 			return null;

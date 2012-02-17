@@ -317,15 +317,14 @@ public class TwinkqlTemplate implements InitializingBean {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> selectForList(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
-		/*
+
 		return this.doBind(namespace, selectId, parameters, new DoBind<List<T>>(){
 
 			public List<T> doBind(ResultSet resultSet, Qname resultMap) {
 				return (List<T>) resultBindingProcessor.bindForList(resultSet, resultMap);
 			}	
 		});
-		*/
-		throw new UnsupportedOperationException();
+
 	}
 	
 	/**

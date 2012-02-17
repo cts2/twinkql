@@ -27,8 +27,8 @@
 	<perRowResultMap id="codeSystemVersionReferenceResultMap" 
 		resultClass="edu.mayo.cts2.framework.model.core.CodeSystemVersionReference"
 		afterMap="spring:codeSystemVersionReferenceHrefCallback">
-		<nestedResultMap beanProperty="version" resultMap="codeSystem:currentVersionVersionNameAndMeaningReferenceResultMap"/>
-		<nestedResultMap beanProperty="codeSystem" resultMap="codeSystem:currentVersionCodeSystemNameAndMeaningReferenceResultMap"/>
+		<nestedResultMap beanProperty="version" resultMap="myTestNamespace:test"/>
+		<nestedResultMap beanProperty="codeSystem" resultMap="myTestNamespace:test"/>
 	</perRowResultMap>
 
 	<select id="myTestQuery">

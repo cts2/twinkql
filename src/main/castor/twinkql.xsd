@@ -51,8 +51,8 @@
 	<xsd:complexType name="perRowResultMap">
 		<xsd:complexContent>
 			<xsd:extension base="resultMap">
-				<xsd:sequence>
-					<xsd:element name="rowMap" type="rowMap" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="rowMap" type="rowMap" maxOccurs="unbounded" />
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>

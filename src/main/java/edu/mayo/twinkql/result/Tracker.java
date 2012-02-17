@@ -1,5 +1,5 @@
 /*
- * Copyright: (c) 2004-2011 Mayo Foundation for Medical Education and 
+ * Copyright: (c) 2004-2012 Mayo Foundation for Medical Education and 
  * Research (MFMER). All rights reserved. MAYO, MAYO CLINIC, and the
  * triple-shield Mayo logo are trademarks and service marks of MFMER.
  *
@@ -21,48 +21,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context
+package edu.mayo.twinkql.result;
 
-import java.io.IOException;
-import static org.junit.Assert.*
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource
-
-import edu.mayo.twinkql.model.SparqlMap
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * The Class TwinqlContextFactoryTest.
+ * The Class Tracker.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public class TwinqlContextFactoryTest {
-	
-	@Test
-	void testLoadSparqlMappings() throws IOException{
-		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
-		
-		def map = 
-				sparqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/testMap.xml"));
-		
-		assertNotNull map;
-		
-		assertEquals "myTestNamespace", map.getNamespace()
-	}
-	
-	@Test
-	public void testLoadSparqlMap() throws IOException{
-		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
-		
-		SparqlMap map = 
-				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/testMap.xml"));
-		
-		
-		def select = map.getSparqlMapItem(3).getSparqlMapChoice().getSparqlMapChoiceItem(0).getSelect()
-		
-		assertEquals "myTestQuery", select.getId()
-		
-		assertNotNull select.getContent()
-		
-	}
+class Tracker {
+	Map<String, Object> callbackParams = new HashMap<String, Object>();
 
+	public Map<String, Object> getCallbackParams() {
+		return callbackParams;
+	}
 }
