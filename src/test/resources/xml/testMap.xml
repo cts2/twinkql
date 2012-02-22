@@ -49,9 +49,18 @@
 			   ?p ?o
 			
 			  }
+			  
+			 <isNotNull property="someProp1">
+			 	This is a not Null test
+			 </isNotNull>
+			 something
 			 <iterator property="myCollection" collection="." open="FILTER(" close=")" separator="&amp;&amp;">
 			 	REGEX( ?#{item.var}, '#{item.text}' )
 			 </iterator>
+			 else
+			 <isNotNull property="someProp2">
+			 	DO something else..
+			 </isNotNull>
 			 }
 	</select>
 	

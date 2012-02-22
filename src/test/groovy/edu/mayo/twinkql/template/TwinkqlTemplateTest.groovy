@@ -66,7 +66,51 @@ public class TwinkqlTemplateTest {
 		println  template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
 			myCollection:[
 				new TestQuery(var:"var1", text:"someText1"), new TestQuery(var:"var2", text:"someText2")]
-			])
+		 ])
+	}
+	
+	@Test
+	void TestQueryForStringParameterSubstitutionWithNotNull(){
+			
+		TwinkqlContextFactory factory = new TwinkqlContextFactory()
+		SparqlMap map = factory.loadSparqlMap(new ClassPathResource("xml/testMap.xml"))
+		
+		def twinkqlContext = [
+			getSparqlMaps : {-> [map] as Set},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
+	
+		def template = new TwinkqlTemplate(twinkqlContext)
+	
+		def query = template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
+			someProp1:"imNotNull"])
+		
+		println query
+		
+		assertTrue query.contains("This is a not Null test")
+		
+	}
+	
+	@Test
+	void TestQueryForStringParameterSubstitutionWithNotNullNull(){
+			
+		TwinkqlContextFactory factory = new TwinkqlContextFactory()
+		SparqlMap map = factory.loadSparqlMap(new ClassPathResource("xml/testMap.xml"))
+		
+		def twinkqlContext = [
+			getSparqlMaps : {-> [map] as Set},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
+	
+		def template = new TwinkqlTemplate(twinkqlContext)
+	
+		def query = template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
+			someProp1:null])
+		
+		println query
+		
+		assertFalse query.contains("This is a not Null test")
+		
 	}
 	
 	

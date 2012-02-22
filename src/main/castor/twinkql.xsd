@@ -29,9 +29,10 @@
 	</xsd:element>
 
 	<xsd:complexType name="select" mixed="true">
-		<xsd:sequence>
-			<xsd:element name="iterator" type="iterator" minOccurs="0" maxOccurs="unbounded"/>
-		</xsd:sequence>
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="iterator" type="iterator" />
+			<xsd:element name="isNotNull" type="isNotNull" />
+		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="resultMap" type="xsd:string" />
 	</xsd:complexType>
@@ -44,6 +45,16 @@
 				<xsd:attribute name="open" type="xsd:string" />
 				<xsd:attribute name="separator" type="xsd:string" />
 				<xsd:attribute name="close" type="xsd:string" />
+				<xsd:attribute name="id" use="prohibited" type="xsd:string" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="isNotNull">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="property" type="xsd:string" use="required" />
+				<xsd:attribute name="id" use="prohibited" type="xsd:string" />
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>

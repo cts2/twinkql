@@ -48,9 +48,11 @@ import com.hp.hpl.jena.query.Syntax;
 
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.model.IsNotNull;
 import edu.mayo.twinkql.model.Iterator;
 import edu.mayo.twinkql.model.NamespaceDefinition;
 import edu.mayo.twinkql.model.Select;
+import edu.mayo.twinkql.model.SelectItem;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.SparqlMapChoiceItem;
 import edu.mayo.twinkql.model.SparqlMapItem;
@@ -61,82 +63,91 @@ import edu.mayo.twinkql.result.ResultBindingProcessor;
 
 /**
  * The Class TwinkqlTemplate.
- *
+ * 
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 public class TwinkqlTemplate implements InitializingBean {
 
 	private TwinkqlContext twinkqlContext;
-	
-	private ResultBindingProcessor resultBindingProcessor ;
-	
-	private Map<Qname,Select> selectMap = new HashMap<Qname,Select>();
-	
+
+	private ResultBindingProcessor resultBindingProcessor;
+
+	private Map<Qname, Select> selectMap = new HashMap<Qname, Select>();
+
 	private Set<String> prefixes = new HashSet<String>();
-	
+
 	/**
 	 * Instantiates a new twinkql template.
-	 *
+	 * 
 	 */
-	public TwinkqlTemplate(){
+	public TwinkqlTemplate() {
 		super();
 	}
-	
+
 	/**
 	 * Instantiates a new twinkql template.
-	 *
-	 * @param twinkqlContext the twinkql context
+	 * 
+	 * @param twinkqlContext
+	 *            the twinkql context
 	 */
-	public TwinkqlTemplate(TwinkqlContext twinkqlContext){
+	public TwinkqlTemplate(TwinkqlContext twinkqlContext) {
 		this.resultBindingProcessor = new ResultBindingProcessor(twinkqlContext);
 		this.twinkqlContext = twinkqlContext;
 		this.initCaches();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(this.twinkqlContext, "The property 'twinkqlContext' must be set!");
-		this.resultBindingProcessor = new ResultBindingProcessor(this.twinkqlContext);
+		Assert.notNull(this.twinkqlContext,
+				"The property 'twinkqlContext' must be set!");
+		this.resultBindingProcessor = new ResultBindingProcessor(
+				this.twinkqlContext);
 		this.initPrefixes(this.twinkqlContext.getTwinkqlConfig());
 		this.initCaches();
 	}
-	
-	
-	public void initPrefixes(TwinkqlConfig config){
-		if(config == null){
+
+	public void initPrefixes(TwinkqlConfig config) {
+		if (config == null) {
 			return;
 		}
 
-		if(config.getTwinkqlConfigItem() != null){
-			for(TwinkqlConfigItem item : config.getTwinkqlConfigItem()){
-				if(item.getNamespace() != null){
+		if (config.getTwinkqlConfigItem() != null) {
+			for (TwinkqlConfigItem item : config.getTwinkqlConfigItem()) {
+				if (item.getNamespace() != null) {
 					this.prefixes.add(this.buildPrefix(item.getNamespace()));
 				}
 			}
 		}
 	}
-	
-	protected String buildPrefix(NamespaceDefinition def){
+
+	protected String buildPrefix(NamespaceDefinition def) {
 		String uri = def.getUri();
 		String prefix = def.getPrefix();
-		
+
 		return "PREFIX " + prefix + ": <" + uri + ">";
 	}
+
 	/**
 	 * Inits the caches.
 	 */
-	protected void initCaches(){
-		for(SparqlMap map : this.twinkqlContext.getSparqlMaps()){
-			
-			if(map.getSparqlMapItem() != null){
-				for(SparqlMapItem item : map.getSparqlMapItem()){
-					if(item.getSparqlMapChoice() != null){
-						for(SparqlMapChoiceItem choice : item.getSparqlMapChoice().getSparqlMapChoiceItem()){
+	protected void initCaches() {
+		for (SparqlMap map : this.twinkqlContext.getSparqlMaps()) {
+
+			if (map.getSparqlMapItem() != null) {
+				for (SparqlMapItem item : map.getSparqlMapItem()) {
+					if (item.getSparqlMapChoice() != null) {
+						for (SparqlMapChoiceItem choice : item
+								.getSparqlMapChoice().getSparqlMapChoiceItem()) {
 							Select select = choice.getSelect();
-							if(select != null){
-								this.selectMap.put(new Qname(map.getNamespace(), select.getId()), select);
+							if (select != null) {
+								this.selectMap.put(new Qname(
+										map.getNamespace(), select.getId()),
+										select);
 							}
 						}
 					}
@@ -144,154 +155,184 @@ public class TwinkqlTemplate implements InitializingBean {
 			}
 		}
 	}
-	
+
 	/**
 	 * Query for string.
-	 *
-	 * @param namespace the namespace
-	 * @param selectId the select id
-	 * @param parameters the parameters
+	 * 
+	 * @param namespace
+	 *            the namespace
+	 * @param selectId
+	 *            the select id
+	 * @param parameters
+	 *            the parameters
 	 * @return the string
 	 */
-	public String getSelectQueryString(
-			String namespace, 
-			String selectId, 
-			Map<String,Object> parameters){
-		
-		Select select = this.selectMap.get(new Qname(namespace,selectId));
-		
-		if(select == null){
-			throw new MappingException("SELECT Statement Namespace: " + namespace + ", ID: " + selectId +  " was not found.");
+	public String getSelectQueryString(String namespace, String selectId,
+			Map<String, Object> parameters) {
+
+		Select select = this.selectMap.get(new Qname(namespace, selectId));
+
+		if (select == null) {
+			throw new MappingException("SELECT Statement Namespace: "
+					+ namespace + ", ID: " + selectId + " was not found.");
 		}
-		
+
 		String queryString = this.doGetSparqlQueryString(select, parameters);
-		
+
 		return queryString;
 	}
 
-	protected String addInKnownPrefixes(String query){
+	protected String addInKnownPrefixes(String query) {
 		StringBuilder sb = new StringBuilder();
-		for(String prefix : this.prefixes){
+		for (String prefix : this.prefixes) {
 			sb.append(prefix);
 			sb.append("\n");
 		}
 
 		sb.append(query);
-		
+
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Do get sparql query string.
-	 *
-	 * @param select the select
-	 * @param parameters the parameters
+	 * 
+	 * @param select
+	 *            the select
+	 * @param parameters
+	 *            the parameters
 	 * @return the string
 	 */
-	protected String doGetSparqlQueryString(Select select, Map<String,Object> parameters){
+	protected String doGetSparqlQueryString(
+			Select select,
+			Map<String, Object> parameters) {
 		String query = select.getContent();
-		
+
 		query = this.addInKnownPrefixes(query);
-		
-		
-		
-		if(!CollectionUtils.isEmpty(parameters)){
+
+		if (!CollectionUtils.isEmpty(parameters)) {
 			List<String> preSetParams = this.getVariables(query);
-			for(String presetParam : preSetParams){
-				
-				String strippedVariable = this.stripVariableWrapping(presetParam);
-				
+			for (String presetParam : preSetParams) {
+
+				String strippedVariable = this
+						.stripVariableWrapping(presetParam);
+
 				String key = StringUtils.substringBefore(strippedVariable, ".");
-				
+
 				Object varObject = parameters.get(key);
-				
+
 				String path = StringUtils.substringAfter(strippedVariable, ".");
-				
+
 				String value;
-				if(StringUtils.isNotBlank(path)){
-					value = (String) BeanUtil.getSimpleProperty(varObject, path, true);
+				if (StringUtils.isNotBlank(path)) {
+					value = (String) BeanUtil.getSimpleProperty(varObject,
+							path, true);
 				} else {
 					value = varObject.toString();
 				}
-			
-				query = query.replace(
-						presetParam, value);
-			
+
+				query = query.replace(presetParam, value);
+
 			}
 		}
-		
-		for(Iterator itr : select.getIterator()){
 
-			String paramProp = itr.getProperty();
-			String collectionPath = itr.getCollection();
-			
-			Object iterableParam = parameters.get(paramProp);
-			//return fast if emtpy collection
-			if(iterableParam == null){
-				query = this.replaceIteratorMarker(query, "");
-				continue;
-			}
-			
-			Collection<?> collection;
-			if(collectionPath.equals(".")){
-				collection = (Collection<?>) iterableParam;
-			} else {
-				collection = (Collection<?>) BeanUtil.getProperty(iterableParam, collectionPath);
-			}
-	
-			//return fast if emtpy collection
-			if(CollectionUtils.isEmpty(collection)){
-				query = this.replaceIteratorMarker(query, "");
-				continue;
-			}
+		for (SelectItem selectItem : select.getSelectItem()) {
 
-			StringBuilder totalContent = new StringBuilder();
-			
-			totalContent.append(itr.getOpen());
-
-			int counter = 0;
-			for(Object item : collection){
-				String content = itr.getContent();
+			if (selectItem.getIsNotNull() != null) {
+				IsNotNull isNotNull = selectItem.getIsNotNull();
 				
-				List<String> variables = this.getVariables(content);
-
-				for(String variable : variables){
-					String value = (String)BeanUtil.getProperty(item, this.stripVariableWrappingForIterator(variable));
-					content = StringUtils.replace(content, variable, value);
-				}
+				String param = isNotNull.getProperty();
 				
-				totalContent.append(content);
+				String id = isNotNull.getId();
 				
-				if(++counter < collection.size()){
-					totalContent.append(itr.getSeparator());
+				if(parameters.get(param) != null){
+					query = this.replaceMarker(id, query, isNotNull.getContent());
+				} else {
+					query = this.replaceMarker(id, query, "");
 				}
 			}
-			
-			totalContent.append(itr.getClose());
-			
-			query = this.replaceIteratorMarker(query, totalContent.toString());
+
+			if (selectItem.getIterator() != null) {
+				Iterator itr = selectItem.getIterator();
+				
+				String id = itr.getId();
+
+				String paramProp = itr.getProperty();
+				String collectionPath = itr.getCollection();
+
+				Object iterableParam = parameters.get(paramProp);
+				// return fast if emtpy collection
+				if (iterableParam == null) {
+					query = this.replaceMarker(id, query, "");
+					continue;
+				}
+
+				Collection<?> collection;
+				if (collectionPath.equals(".")) {
+					collection = (Collection<?>) iterableParam;
+				} else {
+					collection = (Collection<?>) BeanUtil.getProperty(
+							iterableParam, collectionPath);
+				}
+
+				// return fast if emtpy collection
+				if (CollectionUtils.isEmpty(collection)) {
+					query = this.replaceMarker(id, query, "");
+					continue;
+				}
+
+				StringBuilder totalContent = new StringBuilder();
+
+				totalContent.append(itr.getOpen());
+
+				int counter = 0;
+				for (Object item : collection) {
+					String content = itr.getContent();
+
+					List<String> variables = this.getVariables(content);
+
+					for (String variable : variables) {
+						String value = (String) BeanUtil
+								.getProperty(
+										item,
+										this.stripVariableWrappingForIterator(variable));
+						content = StringUtils.replace(content, variable, value);
+					}
+
+					totalContent.append(content);
+
+					if (++counter < collection.size()) {
+						totalContent.append(itr.getSeparator());
+					}
+				}
+
+				totalContent.append(itr.getClose());
+
+				query = this.replaceMarker(id, query, totalContent.toString());
+			}
 		}
-		
+
 		return query;
 	}
-	
-	private String replaceIteratorMarker(String query, String replacement){
-		return StringUtils.replaceOnce(query, "{iteratorMarker}", replacement);
+
+	private String replaceMarker(String id, String query, String replacement) {
+		return StringUtils.replaceOnce(query, id, replacement);
 	}
-	
-	private String stripVariableWrapping(String variable){
+
+	private String stripVariableWrapping(String variable) {
 		variable = StringUtils.removeStart(variable, "#{");
 		variable = StringUtils.removeEnd(variable, "}");
-		
+
 		return variable;
 	}
-	
-	private String stripVariableWrappingForIterator(String variable){
-		variable = StringUtils.removeStart(this.stripVariableWrapping(variable), "item.");
-		
+
+	private String stripVariableWrappingForIterator(String variable) {
+		variable = StringUtils.removeStart(
+				this.stripVariableWrapping(variable), "item.");
+
 		return variable;
 	}
-	
+
 	private List<String> getVariables(String text) {
 		List<String> returnList = new ArrayList<String>();
 
@@ -304,105 +345,131 @@ public class TwinkqlTemplate implements InitializingBean {
 
 		return returnList;
 	}
-	
+
 	/**
 	 * Select for list.
-	 *
-	 * @param <T> the generic type
-	 * @param namespace the namespace
-	 * @param selectId the select id
-	 * @param parameters the parameters
-	 * @param requiredType the required type
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param namespace
+	 *            the namespace
+	 * @param selectId
+	 *            the select id
+	 * @param parameters
+	 *            the parameters
+	 * @param requiredType
+	 *            the required type
 	 * @return the list
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> List<T> selectForList(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
+	public <T> List<T> selectForList(String namespace, String selectId,
+			Map<String, Object> parameters, Class<T> requiredType) {
 
-		return this.doBind(namespace, selectId, parameters, new DoBind<List<T>>(){
+		return this.doBind(namespace, selectId, parameters,
+				new DoBind<List<T>>() {
 
-			public List<T> doBind(ResultSet resultSet, Qname resultMap) {
-				return (List<T>) resultBindingProcessor.bindForList(resultSet, resultMap);
-			}	
-		});
+					public List<T> doBind(ResultSet resultSet, Qname resultMap) {
+						return (List<T>) resultBindingProcessor.bindForList(
+								resultSet, resultMap);
+					}
+				});
 
 	}
-	
+
 	/**
 	 * Select for object.
-	 *
-	 * @param <T> the generic type
-	 * @param namespace the namespace
-	 * @param selectId the select id
-	 * @param parameters the parameters
-	 * @param requiredType the required type
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param namespace
+	 *            the namespace
+	 * @param selectId
+	 *            the select id
+	 * @param parameters
+	 *            the parameters
+	 * @param requiredType
+	 *            the required type
 	 * @return the t
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T selectForObject(String namespace, String selectId, Map<String,Object> parameters, Class<T> requiredType){	
-		return this.doBind(namespace, selectId, parameters, new DoBind<T>(){
+	public <T> T selectForObject(String namespace, String selectId,
+			Map<String, Object> parameters, Class<T> requiredType) {
+		return this.doBind(namespace, selectId, parameters, new DoBind<T>() {
 
 			public T doBind(ResultSet resultSet, Qname resultMap) {
-				return (T) resultBindingProcessor.bindForObject(resultSet, resultMap);
+				return (T) resultBindingProcessor.bindForObject(resultSet,
+						resultMap);
 			}
-			
+
 		});
 	}
-	
+
 	/**
 	 * The Interface DoBind.
-	 *
-	 * @param <T> the generic type
+	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
 	 */
 	private interface DoBind<T> {
-		
+
 		/**
 		 * Do bind.
-		 *
-		 * @param resultSet the result set
-		 * @param resultMap the result map
+		 * 
+		 * @param resultSet
+		 *            the result set
+		 * @param resultMap
+		 *            the result map
 		 * @return the t
 		 */
 		public T doBind(ResultSet resultSet, Qname resultMap);
 	}
-	
+
 	/**
 	 * Do bind.
-	 *
-	 * @param <T> the generic type
-	 * @param namespace the namespace
-	 * @param selectId the select id
-	 * @param parameters the parameters
-	 * @param doBind the do bind
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param namespace
+	 *            the namespace
+	 * @param selectId
+	 *            the select id
+	 * @param parameters
+	 *            the parameters
+	 * @param doBind
+	 *            the do bind
 	 * @return the t
 	 */
-	public <T> T doBind(String namespace, String selectId, Map<String,Object> parameters, DoBind<T> doBind){	
-		Select select = this.selectMap.get(new Qname(namespace,selectId));
-		
-		String queryString = this.getSelectQueryString(namespace, selectId, parameters);
-		
-		//Query query = this.doCreateQuery(queryString);
-		
-		QueryExecution queryExecution = 
-				this.twinkqlContext.getQueryExecution(queryString);
-		
+	public <T> T doBind(String namespace, String selectId,
+			Map<String, Object> parameters, DoBind<T> doBind) {
+		Select select = this.selectMap.get(new Qname(namespace, selectId));
+
+		String queryString = this.getSelectQueryString(namespace, selectId,
+				parameters);
+
+		// Query query = this.doCreateQuery(queryString);
+
+		QueryExecution queryExecution = this.twinkqlContext
+				.getQueryExecution(queryString);
+
 		ResultSet resultSet = queryExecution.execSelect();
-		
+
 		Qname resultQname = Qname.toQname(select.getResultMap(), namespace);
-			
+
 		return doBind.doBind(resultSet, resultQname);
 	}
-	
+
 	/**
 	 * Do create query.
-	 *
-	 * @param queryString the query string
+	 * 
+	 * @param queryString
+	 *            the query string
 	 * @return the query
 	 */
-	protected Query doCreateQuery(String queryString){
+	protected Query doCreateQuery(String queryString) {
 		return QueryFactory.create(queryString, Syntax.syntaxARQ);
 	}
-	
+
 	public TwinkqlContext getTwinkqlContext() {
 		return twinkqlContext;
 	}

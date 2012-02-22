@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -36,7 +37,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
+import edu.mayo.twinkql.model.IsNotNull;
+import edu.mayo.twinkql.model.Iterator;
+import edu.mayo.twinkql.model.Select;
+import edu.mayo.twinkql.model.SelectItem;
 import edu.mayo.twinkql.model.SparqlMap;
+import edu.mayo.twinkql.model.SparqlMapChoice;
+import edu.mayo.twinkql.model.SparqlMapChoiceItem;
+import edu.mayo.twinkql.model.SparqlMapItem;
 import edu.mayo.twinkql.model.TwinkqlConfig;
 
 /**
@@ -151,7 +159,66 @@ public class TwinkqlContextFactory {
 	protected SparqlMap loadSparqlMap(Resource resource) {
 		try {
 			String xml = IOUtils.toString(resource.getInputStream());
-			return SparqlMap.unmarshalSparqlMap(new StringReader(this.decorateXml(xml)));
+			SparqlMap map = SparqlMap.unmarshalSparqlMap(new StringReader(this.decorateXml(xml)));
+			
+			for(SparqlMapItem item : map.getSparqlMapItem()){
+				SparqlMapChoice choice = item.getSparqlMapChoice();
+				
+				if(choice == null){
+					continue;
+				}
+				for(SparqlMapChoiceItem choiceItem : choice.getSparqlMapChoiceItem()){
+					Select select = choiceItem.getSelect();
+					
+					String content = select.getContent();
+					
+					String[] newContents = 
+							StringUtils.substringsBetween(content, "{iteratorMarker}", "{iteratorMarker}");
+					
+					if(newContents != null){
+						for(String newContent : newContents){
+							String adjustedContent = "<iterator " + newContent + "</iterator>";
+							
+							adjustedContent = StringUtils.replace(adjustedContent, "&", "&amp;");
+							
+							Iterator itr = Iterator.unmarshalIterator(new StringReader(adjustedContent));
+							SelectItem newSelectItem = new SelectItem();
+							newSelectItem.setIterator(itr);
+							select.addSelectItem(newSelectItem);
+							
+							String uuid = "{"+UUID.randomUUID().toString()+"}";
+							
+							content = StringUtils.replaceOnce(content, "{iteratorMarker}"+ newContent +"{iteratorMarker}", uuid);
+							itr.setId(uuid);
+						}
+					}
+					
+					newContents = 
+							StringUtils.substringsBetween(content, "{isNotNullMarker}", "{isNotNullMarker}");
+					
+					if(newContents != null){
+						for(String newContent : newContents){
+							String adjustedContent  = "<isNotNull " + newContent + "</isNotNull>";
+							
+							adjustedContent = StringUtils.replace(adjustedContent, "&", "&amp;");
+							
+							IsNotNull isNotNull = IsNotNull.unmarshalIsNotNull(new StringReader(adjustedContent));
+							SelectItem newSelectItem = new SelectItem();
+							newSelectItem.setIsNotNull(isNotNull);
+							select.addSelectItem(newSelectItem);
+							
+							String uuid = "{"+UUID.randomUUID().toString()+"}";
+							
+							content = StringUtils.replaceOnce(content, "{isNotNullMarker}"+ newContent +"{isNotNullMarker}", uuid);
+							isNotNull.setId(uuid);
+						}
+					}
+
+					select.setContent(content);
+				}
+			}
+			
+			return map;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -167,7 +234,12 @@ public class TwinkqlContextFactory {
 	}
 	
 	protected String decorateXml(String xml){
-		return StringUtils.replace(xml, "<iterator", "{iteratorMarker}<iterator");
+		xml = xml.replaceAll("<iterator", "{iteratorMarker}");
+		xml = xml.replaceAll("</iterator>", "{iteratorMarker}");
+		xml = xml.replaceAll("<isNotNull", "{isNotNullMarker}");
+		xml = xml.replaceAll("</isNotNull>", "{isNotNullMarker}");
+
+		return xml;
 	}
 
 	public String getMappingFiles() {
