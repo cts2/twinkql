@@ -83,11 +83,12 @@ public class TwinkqlTemplateTest {
 		def template = new TwinkqlTemplate(twinkqlContext)
 	
 		def query = template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
+			sub:"something",
 			someProp1:"imNotNull"])
 		
 		println query
 		
-		assertTrue query.contains("This is a not Null test")
+		assertTrue query.contains("Test for inner something")
 		
 	}
 	
@@ -113,7 +114,26 @@ public class TwinkqlTemplateTest {
 		
 	}
 	
+	@Test
+	void TestQueryForStringParameterSubstitutionWithNotNullNestedSubstitution(){
+			
+		TwinkqlContextFactory factory = new TwinkqlContextFactory()
+		SparqlMap map = factory.loadSparqlMap(new ClassPathResource("xml/testMap.xml"))
+		
+		def twinkqlContext = [
+			getSparqlMaps : {-> [map] as Set},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
 	
+		def template = new TwinkqlTemplate(twinkqlContext)
+	
+		def query = template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
+			sub:"value",
+			someProp1:"test"])
+
+		assertTrue query.contains("Test for inner value")
+		
+	}
 }
 
 class TestQuery {

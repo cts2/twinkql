@@ -59,7 +59,7 @@ public class TwinqlContextFactoryTest {
 		
 		def select = map.getSparqlMapItem(3).getSparqlMapChoice().getSparqlMapChoiceItem(0).getSelect()
 		
-		assertEquals "myTestQuery", select.getId()
+		assertEquals "getAssociationDirectoryEntrySummaries", select.getId()
 		
 		assertNotNull select.getContent()
 		

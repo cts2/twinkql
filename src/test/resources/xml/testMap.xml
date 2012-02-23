@@ -30,6 +30,44 @@
 		<nestedResultMap beanProperty="version" resultMap="myTestNamespace:test"/>
 		<nestedResultMap beanProperty="codeSystem" resultMap="myTestNamespace:test"/>
 	</perRowResultMap>
+	
+	<select id="getAssociationDirectoryEntrySummaries" resultMap="associationDirectoryEntryResultMap">
+		<![CDATA[
+		SELECT ?s ?p ?o
+		WHERE {	
+		<isNotNull property="restrictToCodeSystemVersion">
+		    GRAPH bpOntologies:#{restrictToCodeSystemVersion} {	
+		    ?s ?p ?o .
+      		FILTER (isIRI(?s))
+      		FILTER (isIRI(?p))
+      		FILTER (isIRI(?o))
+      		}
+		</isNotNull>
+      	<isNotNull property="restrictToSourceEntityName">
+      		FILTER (CONTAINS( UCASE(str(?s)), UCASE( '#{restrictToSourceEntityName}')))
+		</isNotNull>	
+      	<isNotNull property="restrictToTargetEntityName">
+      		FILTER (CONTAINS( UCASE(str(?t)), UCASE( '#{restrictToTargetEntityName}')))
+		</isNotNull>	
+		<isNotNull property="restrictToPredicateName">
+      		FILTER (CONTAINS( UCASE(str(?p)), UCASE( '#{restrictToPredicateName}')))
+		</isNotNull>
+		<isNotNull property="restrictToSourceEntityUri">
+      		FILTER (?s = <#{restrictToSourceEntityUri}>)
+		</isNotNull>	
+      	<isNotNull property="restrictToTargetEntityUri">
+      		FILTER (?t = <#{restrictToTargetEntityUri}>)
+		</isNotNull>	
+		<isNotNull property="restrictToPredicateUri">
+      		FILTER (?p = <#{restrictToPredicateUri}>)
+		</isNotNull>		
+		} 
+		LIMIT 10
+	    
+		
+		]]>
+	</select>
+	
 
 	<select id="myTestQuery">
 	SELECT DISTINCT ?p ?o
@@ -51,7 +89,7 @@
 			  }
 			  
 			 <isNotNull property="someProp1">
-			 	This is a not Null test
+			 	Test for inner #{sub}
 			 </isNotNull>
 			 something
 			 <iterator property="myCollection" collection="." open="FILTER(" close=")" separator="&amp;&amp;">

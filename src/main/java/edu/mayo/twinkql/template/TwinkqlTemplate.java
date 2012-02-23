@@ -36,15 +36,14 @@ import java.util.regex.Pattern;
 import jodd.bean.BeanUtil;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.Syntax;
 
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
@@ -67,6 +66,8 @@ import edu.mayo.twinkql.result.ResultBindingProcessor;
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 public class TwinkqlTemplate implements InitializingBean {
+	
+	protected final Log log = LogFactory.getLog(getClass().getName());
 
 	private TwinkqlContext twinkqlContext;
 
@@ -179,6 +180,10 @@ public class TwinkqlTemplate implements InitializingBean {
 
 		String queryString = this.doGetSparqlQueryString(select, parameters);
 
+		if(log.isDebugEnabled()){
+			log.debug(queryString);
+		}
+
 		return queryString;
 	}
 
@@ -210,32 +215,6 @@ public class TwinkqlTemplate implements InitializingBean {
 
 		query = this.addInKnownPrefixes(query);
 
-		if (!CollectionUtils.isEmpty(parameters)) {
-			List<String> preSetParams = this.getVariables(query);
-			for (String presetParam : preSetParams) {
-
-				String strippedVariable = this
-						.stripVariableWrapping(presetParam);
-
-				String key = StringUtils.substringBefore(strippedVariable, ".");
-
-				Object varObject = parameters.get(key);
-
-				String path = StringUtils.substringAfter(strippedVariable, ".");
-
-				String value;
-				if (StringUtils.isNotBlank(path)) {
-					value = (String) BeanUtil.getSimpleProperty(varObject,
-							path, true);
-				} else {
-					value = varObject.toString();
-				}
-
-				query = query.replace(presetParam, value);
-
-			}
-		}
-
 		for (SelectItem selectItem : select.getSelectItem()) {
 
 			if (selectItem.getIsNotNull() != null) {
@@ -261,7 +240,7 @@ public class TwinkqlTemplate implements InitializingBean {
 				String collectionPath = itr.getCollection();
 
 				Object iterableParam = parameters.get(paramProp);
-				// return fast if emtpy collection
+				// return fast if empty collection
 				if (iterableParam == null) {
 					query = this.replaceMarker(id, query, "");
 					continue;
@@ -309,6 +288,36 @@ public class TwinkqlTemplate implements InitializingBean {
 				totalContent.append(itr.getClose());
 
 				query = this.replaceMarker(id, query, totalContent.toString());
+			}
+		}
+		
+		if (!CollectionUtils.isEmpty(parameters)) {
+			List<String> preSetParams = this.getVariables(query);
+			for (String presetParam : preSetParams) {
+
+				String strippedVariable = this
+						.stripVariableWrapping(presetParam);
+
+				String key = StringUtils.substringBefore(strippedVariable, ".");
+
+				Object varObject = parameters.get(key);
+				
+				if(varObject == null){
+					throw new MappingException("Parameter: " + presetParam + " was defined in the Mapping but no substitution value was found.");
+				}
+
+				String path = StringUtils.substringAfter(strippedVariable, ".");
+
+				String value;
+				if (StringUtils.isNotBlank(path)) {
+					value = (String) BeanUtil.getSimpleProperty(varObject,
+							path, true);
+				} else {
+					value = varObject.toString();
+				}
+
+				query = query.replace(presetParam, value);
+
 			}
 		}
 
@@ -447,8 +456,6 @@ public class TwinkqlTemplate implements InitializingBean {
 		String queryString = this.getSelectQueryString(namespace, selectId,
 				parameters);
 
-		// Query query = this.doCreateQuery(queryString);
-
 		QueryExecution queryExecution = this.twinkqlContext
 				.getQueryExecution(queryString);
 
@@ -457,17 +464,6 @@ public class TwinkqlTemplate implements InitializingBean {
 		Qname resultQname = Qname.toQname(select.getResultMap(), namespace);
 
 		return doBind.doBind(resultSet, resultQname);
-	}
-
-	/**
-	 * Do create query.
-	 * 
-	 * @param queryString
-	 *            the query string
-	 * @return the query
-	 */
-	protected Query doCreateQuery(String queryString) {
-		return QueryFactory.create(queryString, Syntax.syntaxARQ);
 	}
 
 	public TwinkqlContext getTwinkqlContext() {

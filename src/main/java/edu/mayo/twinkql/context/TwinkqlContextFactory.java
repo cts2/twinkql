@@ -177,9 +177,9 @@ public class TwinkqlContextFactory {
 					
 					if(newContents != null){
 						for(String newContent : newContents){
-							String adjustedContent = "<iterator " + newContent + "</iterator>";
+							String excapedContent = this.excapeInnerXml(newContent);
 							
-							adjustedContent = StringUtils.replace(adjustedContent, "&", "&amp;");
+							String adjustedContent = "<iterator " + excapedContent + "</iterator>";
 							
 							Iterator itr = Iterator.unmarshalIterator(new StringReader(adjustedContent));
 							SelectItem newSelectItem = new SelectItem();
@@ -198,10 +198,10 @@ public class TwinkqlContextFactory {
 					
 					if(newContents != null){
 						for(String newContent : newContents){
-							String adjustedContent  = "<isNotNull " + newContent + "</isNotNull>";
+							String excapedContent = this.excapeInnerXml(newContent);
 							
-							adjustedContent = StringUtils.replace(adjustedContent, "&", "&amp;");
-							
+							String adjustedContent  = "<isNotNull " + excapedContent + "</isNotNull>";
+			
 							IsNotNull isNotNull = IsNotNull.unmarshalIsNotNull(new StringReader(adjustedContent));
 							SelectItem newSelectItem = new SelectItem();
 							newSelectItem.setIsNotNull(isNotNull);
@@ -222,6 +222,31 @@ public class TwinkqlContextFactory {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	private String excapeInnerXml(String xml){
+		String newXml = StringUtils.replace(xml, "&", "&amp;");
+		newXml = StringUtils.replace(newXml, "<", "&lt;");
+		
+		StringBuilder sb = new StringBuilder();
+		
+		char[] chars = newXml.toCharArray();
+		boolean pastFirst = false;
+		for(int i=0;i<chars.length;i++){
+			if(chars[i] == '>'){
+				if(!pastFirst){
+					sb.append(chars[i]);
+					pastFirst = true;
+				} else {
+					sb.append("&gt;");
+				}
+			} else {
+				sb.append(chars[i]);
+			}
+		}
+		newXml = sb.toString();
+		
+		return newXml;
 	}
 	
 	protected TwinkqlConfig loadTwinkqlConfig(Resource resource) {
