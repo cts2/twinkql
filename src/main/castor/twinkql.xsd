@@ -62,9 +62,10 @@
 	<xsd:complexType name="perRowResultMap">
 		<xsd:complexContent>
 			<xsd:extension base="resultMap">
-				<xsd:sequence minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="rowMap" type="rowMap" maxOccurs="unbounded" />
-				</xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="rowMap" type="rowMap" minOccurs="0" />
+					<xsd:element name="if" type="perRowConditional" minOccurs="0" />
+				</xsd:choice>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -74,7 +75,7 @@
 			<xsd:extension base="resultMap">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="tripleMap" type="tripleMap" minOccurs="0" />
-					<xsd:element name="if" type="conditional" minOccurs="0" />
+					<xsd:element name="if" type="compositeConditional" minOccurs="0" />
 				</xsd:choice>
 				<xsd:attribute name="predicateVar" type="xsd:string" default="p" />
 			</xsd:extension>
@@ -137,13 +138,32 @@
 		<xsd:attribute name="resultMapping" type="xsd:string" />
 	</xsd:complexType>
 	
-	<xsd:complexType name="conditional">
+	<xsd:complexType name="conditional" abstract="true">
 		<xsd:choice maxOccurs="unbounded">
-			<xsd:element name="tripleMap" type="tripleMap" />
 			<xsd:element name="nestedResultMap" type="nestedResultMap" />
 		</xsd:choice>
 		<xsd:attribute name="function" type="xsd:string" use="required" />
 		<xsd:attribute name="param" type="xsd:string" use="required" />
 	</xsd:complexType>
-
+	
+	<xsd:complexType name="perRowConditional">
+		<xsd:complexContent>
+			<xsd:extension base="conditional" >
+				<xsd:choice minOccurs="1" maxOccurs="unbounded">
+					<xsd:element name="rowMap" type="rowMap" />
+				</xsd:choice>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="compositeConditional">
+		<xsd:complexContent>
+			<xsd:extension base="conditional">
+				<xsd:choice minOccurs="1" maxOccurs="unbounded">
+					<xsd:element name="tripleMap" type="tripleMap" />
+				</xsd:choice>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
 </xsd:schema>
