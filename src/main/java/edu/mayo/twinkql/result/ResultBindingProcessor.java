@@ -45,11 +45,14 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.model.CompositeConditional;
+import edu.mayo.twinkql.model.CompositeConditionalItem;
 import edu.mayo.twinkql.model.CompositeResultMap;
 import edu.mayo.twinkql.model.CompositeResultMapItem;
-import edu.mayo.twinkql.model.Conditional;
 import edu.mayo.twinkql.model.ConditionalItem;
 import edu.mayo.twinkql.model.NestedResultMap;
+import edu.mayo.twinkql.model.PerRowConditional;
+import edu.mayo.twinkql.model.PerRowConditionalItem;
 import edu.mayo.twinkql.model.PerRowResultMap;
 import edu.mayo.twinkql.model.PerRowResultMapItem;
 import edu.mayo.twinkql.model.ResultMap;
@@ -174,7 +177,8 @@ public class ResultBindingProcessor {
 
 		for (PerRowResultMapItem item : perRowResultMap
 				.getPerRowResultMapItem()) {
-			for (RowMap rowMap : item.getRowMap()) {
+			if(item.getRowMap() != null) {
+				RowMap rowMap = item.getRowMap();
 
 				RDFNode node = querySolution.get(rowMap.getVar());
 
@@ -182,18 +186,66 @@ public class ResultBindingProcessor {
 
 				this.setProperty(binding, value, rowMap, tracker);
 			}
+			
+			if(item.getIf() != null){
+				PerRowConditional conditional = item.getIf();
+				
+				@SuppressWarnings("unchecked")
+				ConditionalTest<Object> test = this.callbackInstantiator
+						.instantiateCallback(conditional.getFunction(),
+								ConditionalTest.class);
+
+				String parameter = conditional.getParam();
+
+				if (test.test(querySolution.get(parameter))) {
+					for(PerRowConditionalItem conditionalItem : 
+						conditional.getPerRowConditionalItem()){
+					
+						if(conditionalItem.getRowMap() != null){
+							RowMap rowMap = conditionalItem.getRowMap();
+							
+							RDFNode node = querySolution.get(rowMap.getVar());
+
+							String value = this.getResultFromQuerySolution(node, rowMap);
+
+							this.setProperty(binding, value, rowMap, tracker);
+							
+						}
+					}
+					
+					for(ConditionalItem conditionalItem : 
+						conditional.getConditionalItem()){
+						if(conditionalItem.getNestedResultMap() != null){
+							NestedResultMap nestedResultMap = 
+								conditionalItem.getNestedResultMap();
+							
+							this.handleNestedPerRowMap(binding, querySolution, tracker,
+									nestedResultMap);
+						}
+					}
+				}
+			}
 		}
 		
 		for (ResultMapItem item : perRowResultMap.getResultMapItem()) {
 			NestedResultMap nestedResultMap = item.getNestedResultMap();
 
-			PerRowResultMap resultMap = 
-					this.perRowResultMaps.get(Qname.toQname(nestedResultMap.getResultMap()));
-			
-			Object result = this.processOneRow(querySolution, resultMap, tracker);
-			
-			this.setProperty(binding, result, nestedResultMap.getBeanProperty(), null, tracker);
+			this.handleNestedPerRowMap(binding, querySolution, tracker,
+					nestedResultMap);
 		}
+	}
+
+	protected void handleNestedPerRowMap(
+			Object binding,
+			QuerySolution querySolution, 
+			Tracker tracker,
+			NestedResultMap nestedResultMap) {
+		PerRowResultMap resultMap = 
+				this.perRowResultMaps.get(Qname.toQname(nestedResultMap.getResultMap()));
+		
+		Object result = this.processOneRow(querySolution, resultMap, tracker);
+		
+		this.setProperty(binding, result, nestedResultMap.getBeanProperty(), null, tracker);
 	}
 	
 	/**
@@ -472,7 +524,7 @@ public class ResultBindingProcessor {
 				}
 
 				if (item.getIf() != null) {
-					Conditional conditional = item.getIf();
+					CompositeConditional conditional = item.getIf();
 
 					handleConditional(targetObj, solution, predicateUri,
 							conditional, tracker);
@@ -589,7 +641,7 @@ public class ResultBindingProcessor {
 				}
 
 				if (item.getIf() != null) {
-					Conditional conditional = item.getIf();
+					CompositeConditional conditional = item.getIf();
 
 					handleConditional(targetObj, solution, predicateUri,
 							conditional, tracker);
@@ -631,7 +683,7 @@ public class ResultBindingProcessor {
 			Object targetObj, 
 			QuerySolution solution,
 			String predicateUri, 
-			Conditional conditional, 
+			CompositeConditional conditional, 
 			CompositeTracker tracker) {
 		@SuppressWarnings("unchecked")
 		ConditionalTest<Object> test = this.callbackInstantiator
@@ -641,11 +693,10 @@ public class ResultBindingProcessor {
 		String parameter = conditional.getParam();
 
 		if (test.test(solution.get(parameter))) {
-
-			for (ConditionalItem conditionalItem : conditional
-					.getConditionalItem()) {
+			for (CompositeConditionalItem conditionalItem : 
+				conditional.getCompositeConditionalItem()){
+				
 				if (conditionalItem.getTripleMap() != null) {
-
 					TripleMap tripleMap = conditionalItem.getTripleMap();
 
 					this.processTripleMap(
@@ -655,6 +706,11 @@ public class ResultBindingProcessor {
 							predicateUri, 
 							tracker);
 				}
+			}
+		
+			for (ConditionalItem conditionalItem : conditional
+					.getConditionalItem()) {
+				
 				if (conditionalItem.getNestedResultMap() != null) {
 					NestedResultMap nestedResultMap = conditionalItem
 							.getNestedResultMap();
@@ -786,15 +842,21 @@ public class ResultBindingProcessor {
 				TripleMap tripleMap = item.getTripleMap();
 				this.addExplicitlyRequestedPredicates(requested, tripleMap.getPredicateUri());
 			}
-		
+
 			if (item.getIf() != null) {
-				Conditional conditional = item.getIf();
-				for (ConditionalItem conditionalItem : conditional
-						.getConditionalItem()) {
+				CompositeConditional conditional = item.getIf();
+				
+				for(CompositeConditionalItem conditionalItem : 
+					conditional.getCompositeConditionalItem()){
+					
 					if(conditionalItem.getTripleMap() != null){
 						TripleMap tripleMap = conditionalItem.getTripleMap();
 						this.addExplicitlyRequestedPredicates(requested, tripleMap.getPredicateUri());
 					}
+				}
+				
+				for (ConditionalItem conditionalItem : conditional
+						.getConditionalItem()) {
 					
 					if(conditionalItem.getNestedResultMap() != null){
 						NestedResultMap nestedResultMap = conditionalItem.getNestedResultMap();
