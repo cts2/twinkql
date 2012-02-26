@@ -460,10 +460,14 @@ public class TwinkqlTemplate implements InitializingBean {
 				.getQueryExecution(queryString);
 
 		ResultSet resultSet = queryExecution.execSelect();
-
-		Qname resultQname = Qname.toQname(select.getResultMap(), namespace);
-
-		return doBind.doBind(resultSet, resultQname);
+		
+		if(! resultSet.hasNext()){
+			return null;
+		} else {
+			Qname resultQname = Qname.toQname(select.getResultMap(), namespace);
+	
+			return doBind.doBind(resultSet, resultQname);
+		}
 	}
 
 	public TwinkqlContext getTwinkqlContext() {
