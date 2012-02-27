@@ -33,8 +33,18 @@ import java.util.Map;
  */
 class Tracker {
 	Map<String, Object> callbackParams = new HashMap<String, Object>();
+	Map<String, Object> queryParams = new HashMap<String, Object>();
 
 	public Map<String, Object> getCallbackParams() {
 		return callbackParams;
 	}
+
+	public Map<String, Object> getQueryParams() {
+		return queryParams;
+	}
+
+	public void setQueryParams(Map<String, Object> queryParams) {
+		this.queryParams = queryParams;
+	}
+
 }

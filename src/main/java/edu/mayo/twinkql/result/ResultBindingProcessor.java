@@ -65,6 +65,7 @@ import edu.mayo.twinkql.model.TwinkqlConfig;
 import edu.mayo.twinkql.model.TwinkqlConfigItem;
 import edu.mayo.twinkql.model.types.BindingPart;
 import edu.mayo.twinkql.result.callback.AfterResultBinding;
+import edu.mayo.twinkql.result.callback.CallbackContext;
 import edu.mayo.twinkql.result.callback.CallbackInstantiator;
 import edu.mayo.twinkql.result.callback.ConditionalTest;
 import edu.mayo.twinkql.result.callback.Modifier;
@@ -279,7 +280,7 @@ public class ResultBindingProcessor {
 			this.fireAfterResultBindingCallback(
 					instance, 
 					resultMaps, 
-					tracker.getCallbackParams());
+					tracker);
 
 	
 		
@@ -363,15 +364,19 @@ public class ResultBindingProcessor {
 	 * Bind for list.
 	 *
 	 * @param resultSet the result set
+	 * @param parameters 
 	 * @param resultMap the result map
 	 * @return the list
 	 */
-	public List<Object> bindForList(ResultSet resultSet, Qname resultMap) {
+	public List<Object> bindForList(
+			ResultSet resultSet, 
+			Map<String, Object> parameters, 
+			Qname resultMap) {
 		PerRowResultMap perRowResultMap = this.perRowResultMaps.get(resultMap);
 		
 		Assert.notNull(perRowResultMap);
 		
-		return this.bindToRows(resultSet, perRowResultMap);
+		return this.bindToRows(resultSet, parameters, perRowResultMap);
 
 	}
 	
@@ -379,15 +384,20 @@ public class ResultBindingProcessor {
 	 * Bind to rows.
 	 *
 	 * @param resultSet the result set
+	 * @param parameters 
 	 * @param result the result
 	 * @return the list
 	 */
-	protected List<Object> bindToRows(ResultSet resultSet, PerRowResultMap result) {
+	protected List<Object> bindToRows(
+			ResultSet resultSet, 
+			Map<String, Object> parameters, 
+			PerRowResultMap result) {
 
 		List<Object> returnList = new ArrayList<Object>();
 
 		while (resultSet.hasNext()) {
 			Tracker tracker = new Tracker();
+			tracker.setQueryParams(parameters);
 			
 			Object instance = this.processOneRow(resultSet.next(), result, tracker);
 
@@ -401,10 +411,14 @@ public class ResultBindingProcessor {
 	 * Bind for object.
 	 *
 	 * @param resultSet the result set
+	 * @param parameters 
 	 * @param resultMap the result map
 	 * @return the object
 	 */
-	public Object bindForObject(ResultSet resultSet, Qname resultMap) {
+	public Object bindForObject(
+			ResultSet resultSet, 
+			Map<String, Object> parameters, 
+			Qname resultMap) {
 		CompositeResultMap compositeResultMap = this.compositeResultMaps
 				.get(resultMap);
 
@@ -414,8 +428,12 @@ public class ResultBindingProcessor {
 			solutions.add(resultSet.next());
 		}
 		
-		return this.procesTriples(solutions, 
-				new CompositeTracker(this.getExplicitlyRequestedPredicates(compositeResultMap)), 
+		CompositeTracker tracker = new CompositeTracker(this.getExplicitlyRequestedPredicates(compositeResultMap));
+		tracker.setQueryParams(parameters);
+		
+		return this.procesTriples(
+				solutions, 
+				tracker, 
 				compositeResultMap);
 	}
 	
@@ -535,7 +553,7 @@ public class ResultBindingProcessor {
 				this.fireAfterResultBindingCallback(
 						targetObj, 
 						compositeResultMap, 
-						tracker.getCallbackParams());
+						tracker);
 				
 				returnList.add(targetObj);
 			}
@@ -665,7 +683,7 @@ public class ResultBindingProcessor {
 		this.fireAfterResultBindingCallback(
 				targetObj, 
 				compositeResultMap, 
-				tracker.getCallbackParams());
+				tracker);
 
 		return targetObj;
 	}
@@ -778,7 +796,7 @@ public class ResultBindingProcessor {
 	protected void fireAfterResultBindingCallback(
 			Object instance, 
 			ResultMap resultMap, 
-			Map<String,Object> callbackParams){
+			Tracker tracker){
 		if(StringUtils.isNotBlank(resultMap.getAfterMap())){
 			
 			for(String callback : StringUtils.split(resultMap.getAfterMap(), ',')){
@@ -787,7 +805,11 @@ public class ResultBindingProcessor {
 					this.callbackInstantiator.instantiateCallback(
 							callback, AfterResultBinding.class);
 				
-				afterCallback.afterBinding(instance, callbackParams);
+				CallbackContext context = new CallbackContext();
+				context.setCallbackIds(tracker.getCallbackParams());
+				context.setQueryParams(tracker.getQueryParams());
+
+				afterCallback.afterBinding(instance, context);
 			}
 		}
 	}

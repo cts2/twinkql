@@ -17,11 +17,17 @@ import edu.mayo.twinkql.context.TwinkqlContext
 import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator
 import edu.mayo.twinkql.model.CompositeResultMap
 import edu.mayo.twinkql.model.CompositeResultMapItem
+import edu.mayo.twinkql.model.NestedResultMap
+import edu.mayo.twinkql.model.PerRowResultMap
+import edu.mayo.twinkql.model.PerRowResultMapItem
+import edu.mayo.twinkql.model.ResultMapItem
+import edu.mayo.twinkql.model.RowMap
 import edu.mayo.twinkql.model.SparqlMap
 import edu.mayo.twinkql.model.SparqlMapItem
 import edu.mayo.twinkql.model.TripleMap
 import edu.mayo.twinkql.model.types.BindingPart
 import edu.mayo.twinkql.result.callback.AfterResultBinding
+import edu.mayo.twinkql.result.callback.CallbackContext
 
 
 
@@ -161,7 +167,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals "my value", r.oneProp;
 	
@@ -227,7 +233,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals "my value", r.oneProp;
 	
@@ -292,7 +298,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals 1, r.list.size()
 		assertEquals "my value", r.list.get(0)
@@ -358,7 +364,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals 1, r.compositeList.size()
 		assertEquals "my value", r.compositeList.get(0).threeProp
@@ -441,7 +447,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals 2, r.list.size()
 		assertEquals "my value 1", r.list.get(0)
@@ -510,7 +516,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals "Modified!!", r.oneProp;
 	
@@ -611,13 +617,13 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, Qname.toQname("ns:resultMap1"))
+		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultMap1"))
 	
 		assertEquals "my value", r.oneProp;
 		assertEquals "my extended value", r.twoProp;
 	
 	}
-/*
+
 	@Test
 	void testBindForRows(){
 
@@ -641,11 +647,13 @@ class ResultBindingProcessorTest {
 		def result = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
-			rowMap:[
-					new RowMap(
-						beanProperty:"oneProp",
-						var:"var1",
-						varType:BindingPart.LITERALVALUE
+			perRowResultMapItem:[
+				new PerRowResultMapItem(
+					rowMap: new RowMap(
+							beanProperty:"oneProp",
+							var:"var1",
+							varType:BindingPart.LITERALVALUE
+						)
 					)
 				]
 		);
@@ -667,7 +675,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForList(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForList(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals 1, r.size()
 		assertEquals "my value", r.get(0).oneProp;
@@ -698,13 +706,15 @@ class ResultBindingProcessorTest {
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
 			afterMap:"edu.mayo.twinkql.result.TestAfterBinding",
-			rowMap:[
-					new RowMap(
-						beanProperty:"oneProp",
-						var:"var1",
-						varType:BindingPart.LITERALVALUE
-					)
-				]
+			perRowResultMapItem: [ 
+				new PerRowResultMapItem(
+					rowMap: new RowMap(
+								beanProperty:"oneProp",
+								var:"var1",
+								varType:BindingPart.LITERALVALUE
+							)
+				)
+			]
 		);
 	
 		def twinkqlContext = [
@@ -725,7 +735,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForList(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bindForList(resultset, null, Qname.toQname("ns:resultId"))
 
 		assertEquals 1, r.size()
 		assertEquals "Modified!!", r.get(0).oneProp
@@ -760,15 +770,21 @@ class ResultBindingProcessorTest {
 		def result1 = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultMap1",
-			rowMap:[
-					new RowMap(
-						beanProperty:"oneProp",
-						var:"var1",
-						varType:BindingPart.LITERALVALUE
-					),
-					new RowMap(
+			perRowResultMapItem: [
+				new PerRowResultMapItem(
+					rowMap:new RowMap(
+								beanProperty:"oneProp",
+								var:"var1",
+								varType:BindingPart.LITERALVALUE
+							)
+					)
+				],
+			resultMapItem: [
+				new ResultMapItem(
+					nestedResultMap: new NestedResultMap(
 						beanProperty:"testResult2",
-						resultMapping:"ns:resultMap2"
+						resultMap:"ns:resultMap2"
+					)
 				)
 				]
 		);
@@ -776,11 +792,13 @@ class ResultBindingProcessorTest {
 		def result2 = new PerRowResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult2",
 			id: "resultMap2",
-			rowMap:[
-					new RowMap(
-						beanProperty:"threeProp",
-						var:"var3",
-						varType:BindingPart.LITERALVALUE
+			perRowResultMapItem: [
+				new PerRowResultMapItem(
+					rowMap:new RowMap(
+								beanProperty:"threeProp",
+								var:"var3",
+								varType:BindingPart.LITERALVALUE
+							)
 					)
 				]
 		);
@@ -805,14 +823,14 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForList(resultset, Qname.toQname("ns:resultMap1"))
+		def r = binding.bindForList(resultset, null, Qname.toQname("ns:resultMap1"))
 
 		assertEquals 1, r.size()
 		assertEquals "my value 1", r.get(0).oneProp
 		assertNotNull r.get(0).testResult2
 		assertEquals "my value 3", r.get(0).testResult2.threeProp
 	}
-	
+/*	
 	@Test
 	void testBindForRowsWithDoubleCompositeResultMap(){
 
@@ -912,7 +930,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForList(resultset, Qname.toQname("ns:resultMap1"))
+		def r = binding.bindForList(resultset, null, Qname.toQname("ns:resultMap1"))
 
 		assertEquals 1, r.size()
 		assertEquals "my value 1", r.get(0).oneProp
@@ -921,12 +939,12 @@ class ResultBindingProcessorTest {
 		assertNotNull r.get(0).testResult2.testResult3
 		assertEquals "my value 4", r.get(0).testResult2.testResult3.fourProp
 	}
-	*/
+*/
 }
 
 class TestAfterBinding implements AfterResultBinding {
 
-	public void afterBinding(bindingResult, Map callbackParams) {
+	public void afterBinding(bindingResult, CallbackContext callbackParams) {
 		bindingResult.oneProp = "Modified!!"
 	}
 	

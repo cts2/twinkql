@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.mayo</groupId>
 	<artifactId>twinkql</artifactId>
-	<version>0.2.5</version>
+	<version>0.2.6</version>
 	<name>twinkql</name>
 	<description>SPARQL with a Twist! tiwnkql A SPARQL query building tool that lets you
 	specify your SPARQL queries in XML, instead of in your code.</description>

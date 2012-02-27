@@ -371,15 +371,20 @@ public class TwinkqlTemplate implements InitializingBean {
 	 * @return the list
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> List<T> selectForList(String namespace, String selectId,
-			Map<String, Object> parameters, Class<T> requiredType) {
+	public <T> List<T> selectForList(
+			String namespace, 
+			String selectId,
+			final Map<String, Object> parameters, 
+			Class<T> requiredType) {
 
 		return this.doBind(namespace, selectId, parameters,
 				new DoBind<List<T>>() {
 
 					public List<T> doBind(ResultSet resultSet, Qname resultMap) {
 						return (List<T>) resultBindingProcessor.bindForList(
-								resultSet, resultMap);
+								resultSet, 
+								parameters,
+								resultMap);
 					}
 				});
 
@@ -401,12 +406,17 @@ public class TwinkqlTemplate implements InitializingBean {
 	 * @return the t
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T selectForObject(String namespace, String selectId,
-			Map<String, Object> parameters, Class<T> requiredType) {
+	public <T> T selectForObject(
+			String namespace, 
+			String selectId,
+			final Map<String, Object> parameters, 
+			Class<T> requiredType) {
 		return this.doBind(namespace, selectId, parameters, new DoBind<T>() {
 
 			public T doBind(ResultSet resultSet, Qname resultMap) {
-				return (T) resultBindingProcessor.bindForObject(resultSet,
+				return (T) resultBindingProcessor.bindForObject(
+						resultSet,
+						parameters,
 						resultMap);
 			}
 

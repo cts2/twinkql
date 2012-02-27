@@ -23,7 +23,6 @@
  */
 package edu.mayo.twinkql.result.callback;
 
-import java.util.Map;
 
 /**
  * The Interface AfterResultBinding.
@@ -39,6 +38,7 @@ public interface AfterResultBinding<T> extends Callback {
 	 * @param bindingResult the binding result
 	 * @return the t
 	 */
-	public void afterBinding(T bindingResult, Map<String,Object> callbackParams);
+	public void afterBinding(T bindingResult, CallbackContext context);
+	
 
 }
