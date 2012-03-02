@@ -139,7 +139,7 @@
 	</xsd:complexType>
 	
 	<xsd:complexType name="conditional" abstract="true">
-		<xsd:choice maxOccurs="unbounded">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="nestedResultMap" type="nestedResultMap" />
 		</xsd:choice>
 		<xsd:attribute name="function" type="xsd:string" use="required" />
@@ -159,7 +159,7 @@
 	<xsd:complexType name="compositeConditional">
 		<xsd:complexContent>
 			<xsd:extension base="conditional">
-				<xsd:choice minOccurs="1" maxOccurs="unbounded">
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="tripleMap" type="tripleMap" />
 				</xsd:choice>
 			</xsd:extension>
