@@ -935,6 +935,10 @@ public class ResultBindingProcessor {
 		}
 		case NAMESPACE: {
 			result = rdfNode.asNode().getNameSpace();
+			if (StringUtils.equals(result, rdfNode.asNode().getURI())) {
+				result = StringUtils.substringBeforeLast(rdfNode.asNode()
+						.getURI(), "/") + "/";
+			}
 			break;
 		}
 		case LITERALVALUE: {
