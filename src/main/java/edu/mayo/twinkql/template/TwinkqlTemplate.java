@@ -75,7 +75,7 @@ public class TwinkqlTemplate implements InitializingBean {
 
 	private Map<Qname, Select> selectMap = new HashMap<Qname, Select>();
 
-	private Set<String> prefixes = new HashSet<String>();
+	private Set<NamespaceDefinition> prefixes = new HashSet<NamespaceDefinition>();
 
 	/**
 	 * Instantiates a new twinkql template.
@@ -120,7 +120,7 @@ public class TwinkqlTemplate implements InitializingBean {
 		if (config.getTwinkqlConfigItem() != null) {
 			for (TwinkqlConfigItem item : config.getTwinkqlConfigItem()) {
 				if (item.getNamespace() != null) {
-					this.prefixes.add(this.buildPrefix(item.getNamespace()));
+					this.prefixes.add(item.getNamespace());
 				}
 			}
 		}
@@ -187,11 +187,17 @@ public class TwinkqlTemplate implements InitializingBean {
 		return queryString;
 	}
 
+	//TODO: This method searches for prefixes in the query
+	//This would most likely be more efficient with a regex of
+	//of some kind.
 	protected String addInKnownPrefixes(String query) {
+		
 		StringBuilder sb = new StringBuilder();
-		for (String prefix : this.prefixes) {
-			sb.append(prefix);
-			sb.append("\n");
+		for (NamespaceDefinition namespace : this.prefixes) {
+			if(query.contains(namespace.getPrefix() + ":")){
+				sb.append(this.buildPrefix(namespace));
+				sb.append("\n");
+			}
 		}
 
 		sb.append(query);
@@ -468,7 +474,7 @@ public class TwinkqlTemplate implements InitializingBean {
 
 		QueryExecution queryExecution = this.twinkqlContext
 				.getQueryExecution(queryString);
-
+	
 		ResultSet resultSet = queryExecution.execSelect();
 		
 		if(! resultSet.hasNext()){

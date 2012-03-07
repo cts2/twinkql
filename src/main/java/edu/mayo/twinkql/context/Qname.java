@@ -61,7 +61,9 @@ public class Qname {
 	public static Qname toQname(String qualifiedName){
 		String[] names = StringUtils.split(qualifiedName, ":");
 		
-		Assert.isTrue(names.length == 2);
+		Assert.isTrue(names.length == 2, 
+				"Error parsing Qualified Name: " + qualifiedName + ". A QualifiedName" +
+						" must be in the format '[namespace]:[localname].");
 
 		return new Qname(names[0], names[1]);
 	}
