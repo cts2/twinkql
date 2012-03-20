@@ -1,12 +1,18 @@
 package edu.mayo.twinkql.instance;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
 
 public class AbstractInstantiatingBean {
 	
+	@Autowired
 	private TwinkqlContext twinkqlContext;
+	
+	protected AbstractInstantiatingBean(){
+		super();
+	}
 	
 	protected AbstractInstantiatingBean(TwinkqlContext twinkqlContext){
 		super();
@@ -27,5 +33,12 @@ public class AbstractInstantiatingBean {
 		
 		return null;
 	}
-	
+
+	public TwinkqlContext getTwinkqlContext() {
+		return twinkqlContext;
+	}
+
+	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
+		this.twinkqlContext = twinkqlContext;
+	}
 }

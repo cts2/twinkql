@@ -33,6 +33,7 @@ import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
 import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.TwinkqlConfig;
+import edu.mayo.twinkql.template.TwinkqlTemplate;
 
 /**
  * The Class DefaultTwinkqlContext.
@@ -106,4 +107,26 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	public TwinkqlConfig getTwinkqlConfig() {
 		return this.twinkqlConfig;
 	}
+
+	public QueryExecutionProvider getQueryExecutionProvider() {
+		return queryExecutionProvider;
+	}
+
+	public void setQueryExecutionProvider(
+			QueryExecutionProvider queryExecutionProvider) {
+		this.queryExecutionProvider = queryExecutionProvider;
+	}
+
+	public void setSparqlMaps(Set<SparqlMap> sparqlMaps) {
+		this.sparqlMaps = sparqlMaps;
+	}
+
+	public void setInstantiators(Set<Instantiator> instantiators) {
+		this.instantiators = instantiators;
+	}
+
+	public void setTwinkqlConfig(TwinkqlConfig twinkqlConfig) {
+		this.twinkqlConfig = twinkqlConfig;
+	}
+	
 }

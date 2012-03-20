@@ -39,6 +39,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -65,36 +67,40 @@ import edu.mayo.twinkql.result.ResultBindingProcessor;
  * 
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
+@Component
 public class TwinkqlTemplate implements InitializingBean {
 	
 	protected final Log log = LogFactory.getLog(getClass().getName());
 
+	@Autowired
 	private TwinkqlContext twinkqlContext;
 
+	@Autowired
 	private ResultBindingProcessor resultBindingProcessor;
 
 	private Map<Qname, Select> selectMap = new HashMap<Qname, Select>();
 
 	private Set<NamespaceDefinition> prefixes = new HashSet<NamespaceDefinition>();
 
-	/**
-	 * Instantiates a new twinkql template.
-	 * 
-	 */
-	public TwinkqlTemplate() {
+	public TwinkqlTemplate(){
 		super();
 	}
-
+	
 	/**
 	 * Instantiates a new twinkql template.
 	 * 
 	 * @param twinkqlContext
 	 *            the twinkql context
 	 */
-	public TwinkqlTemplate(TwinkqlContext twinkqlContext) {
-		this.resultBindingProcessor = new ResultBindingProcessor(twinkqlContext);
+	public TwinkqlTemplate(TwinkqlContext twinkqlContext, ResultBindingProcessor resultBindingProcessor) {
 		this.twinkqlContext = twinkqlContext;
-		this.initCaches();
+		this.resultBindingProcessor = resultBindingProcessor;
+		
+		this.init();
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		this.init();
 	}
 
 	/*
@@ -103,11 +109,10 @@ public class TwinkqlTemplate implements InitializingBean {
 	 * @see
 	 * org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
-	public void afterPropertiesSet() throws Exception {
+	protected void init() {
 		Assert.notNull(this.twinkqlContext,
 				"The property 'twinkqlContext' must be set!");
-		this.resultBindingProcessor = new ResultBindingProcessor(
-				this.twinkqlContext);
+	
 		this.initPrefixes(this.twinkqlContext.getTwinkqlConfig());
 		this.initCaches();
 	}
@@ -133,6 +138,11 @@ public class TwinkqlTemplate implements InitializingBean {
 		return "PREFIX " + prefix + ": <" + uri + ">";
 	}
 
+	public void reinitCaches(){
+		this.selectMap.clear();
+		this.initCaches();
+	}
+	
 	/**
 	 * Inits the caches.
 	 */
@@ -218,8 +228,6 @@ public class TwinkqlTemplate implements InitializingBean {
 			Select select,
 			Map<String, Object> parameters) {
 		String query = select.getContent();
-
-		query = this.addInKnownPrefixes(query);
 
 		for (SelectItem selectItem : select.getSelectItem()) {
 
@@ -326,6 +334,8 @@ public class TwinkqlTemplate implements InitializingBean {
 
 			}
 		}
+
+		query = this.addInKnownPrefixes(query);
 
 		return query;
 	}
@@ -502,4 +512,6 @@ public class TwinkqlTemplate implements InitializingBean {
 			ResultBindingProcessor resultBindingProcessor) {
 		this.resultBindingProcessor = resultBindingProcessor;
 	}
+	
+	
 }

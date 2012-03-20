@@ -44,7 +44,7 @@ public class TwinkqlTemplateTest {
 			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
-		def template = new TwinkqlTemplate(twinkqlContext)
+		def template = new TwinkqlTemplate(twinkqlContext, null)
 	
 		assertEquals "test sub substitution",
 			 template.getSelectQueryString("ns", "test", ["param":"sub"])
@@ -61,7 +61,7 @@ public class TwinkqlTemplateTest {
 			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
-		def template = new TwinkqlTemplate(twinkqlContext)
+		def template = new TwinkqlTemplate(twinkqlContext, null)
 	
 		println  template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
 			myCollection:[
@@ -80,7 +80,7 @@ public class TwinkqlTemplateTest {
 			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
-		def template = new TwinkqlTemplate(twinkqlContext)
+		def template = new TwinkqlTemplate(twinkqlContext, null)
 	
 		def query = template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
 			sub:"something",
@@ -103,7 +103,7 @@ public class TwinkqlTemplateTest {
 			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
-		def template = new TwinkqlTemplate(twinkqlContext)
+		def template = new TwinkqlTemplate(twinkqlContext, null)
 	
 		def query = template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
 			someProp1:null])
@@ -125,7 +125,7 @@ public class TwinkqlTemplateTest {
 			getTwinkqlConfig : {null}
 		] as TwinkqlContext
 	
-		def template = new TwinkqlTemplate(twinkqlContext)
+		def template = new TwinkqlTemplate(twinkqlContext, null)
 	
 		def query = template.getSelectQueryString("myTestNamespace", "testIterativeQuery", [
 			sub:"value",

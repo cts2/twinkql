@@ -97,9 +97,16 @@
 	<xsd:complexType name="tripleMap">
 		<xsd:complexContent>
 			<xsd:extension base="rowMap">
+				<xsd:sequence>
+					<xsd:element name="reasoning" type="reasoning" minOccurs="0" maxOccurs="unbounded" />
+				</xsd:sequence>
 				<xsd:attribute name="predicateUri" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="reasoning">
+		<xsd:attribute name="uri" type="xsd:string" />
 	</xsd:complexType>
 
 	<xsd:simpleType name="bindingPart">

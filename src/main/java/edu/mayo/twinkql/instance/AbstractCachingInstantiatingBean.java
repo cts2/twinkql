@@ -7,6 +7,10 @@ import edu.mayo.twinkql.context.TwinkqlContext;
 
 public class AbstractCachingInstantiatingBean extends AbstractInstantiatingBean {
 	
+	protected AbstractCachingInstantiatingBean() {
+		super();
+	}
+	
 	protected AbstractCachingInstantiatingBean(TwinkqlContext twinkqlContext) {
 		super(twinkqlContext);
 	}

@@ -24,6 +24,7 @@
 package edu.mayo.twinkql.result.callback;
 
 import org.apache.commons.lang.ClassUtils;
+import org.springframework.stereotype.Component;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
 import edu.mayo.twinkql.instance.AbstractCachingInstantiatingBean;
@@ -33,8 +34,12 @@ import edu.mayo.twinkql.instance.AbstractCachingInstantiatingBean;
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
+@Component
 public class CallbackInstantiator extends AbstractCachingInstantiatingBean {
 	
+	public CallbackInstantiator(){
+		super();
+	}
 	
 	public CallbackInstantiator(TwinkqlContext twinkqlContext){
 		super(twinkqlContext);

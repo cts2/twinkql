@@ -36,6 +36,9 @@ import jodd.bean.BeanUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -55,6 +58,7 @@ import edu.mayo.twinkql.model.PerRowConditional;
 import edu.mayo.twinkql.model.PerRowConditionalItem;
 import edu.mayo.twinkql.model.PerRowResultMap;
 import edu.mayo.twinkql.model.PerRowResultMapItem;
+import edu.mayo.twinkql.model.Reasoning;
 import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.ResultMapItem;
 import edu.mayo.twinkql.model.RowMap;
@@ -64,6 +68,7 @@ import edu.mayo.twinkql.model.TripleMap;
 import edu.mayo.twinkql.model.TwinkqlConfig;
 import edu.mayo.twinkql.model.TwinkqlConfigItem;
 import edu.mayo.twinkql.model.types.BindingPart;
+import edu.mayo.twinkql.result.beans.reasoning.PropertyReasoner;
 import edu.mayo.twinkql.result.callback.AfterResultBinding;
 import edu.mayo.twinkql.result.callback.CallbackContext;
 import edu.mayo.twinkql.result.callback.CallbackInstantiator;
@@ -75,26 +80,49 @@ import edu.mayo.twinkql.result.callback.Modifier;
  * 
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public class ResultBindingProcessor {
+@Component
+public class ResultBindingProcessor implements InitializingBean {
 	
 	private static final String MATCH_ALL_OTHERS = "*";
 
+	@Autowired
 	private CallbackInstantiator callbackInstantiator;
 
+	@Autowired
 	private TwinkqlContext twinkqlContext;
+	
+	@Autowired
+	private PropertyReasoner propertyReasoner;
 
 	private Map<Qname, CompositeResultMap> compositeResultMaps = new HashMap<Qname, CompositeResultMap>();
 	private Map<Qname, PerRowResultMap> perRowResultMaps = new HashMap<Qname, PerRowResultMap>();
 
+	public ResultBindingProcessor() {
+		super();
+	}
+	
+	public ResultBindingProcessor(TwinkqlContext twinkqlContext) {
+		this(twinkqlContext, null);
+	}
+	
 	/**
 	 * Instantiates a new result binding processor.
 	 * 
 	 * @param twinkqlContext
 	 *            the twinkql context
 	 */
-	public ResultBindingProcessor(TwinkqlContext twinkqlContext) {
+	public ResultBindingProcessor(TwinkqlContext twinkqlContext, PropertyReasoner propertyReasoner) {
 		this.twinkqlContext = twinkqlContext;
+		this.propertyReasoner = propertyReasoner;
 		this.callbackInstantiator = new CallbackInstantiator(twinkqlContext);
+	
+		this.afterPropertiesSet();
+	}
+
+	public void afterPropertiesSet() {
+		Assert.notNull(this.twinkqlContext);
+		Assert.notNull(this.callbackInstantiator);
+		
 		this.addInDeclaredNamespaces();
 		this.initCaches();
 	}
@@ -517,6 +545,7 @@ public class ResultBindingProcessor {
 					TripleMap tripleMap = item.getTripleMap();
 					
 					if(! this.isMatch(
+							tripleMap.getReasoning(),
 							predicateUri, 
 							tripleMap.getPredicateUri(), 
 							tracker.getRequestedPredicateUris())){
@@ -578,10 +607,29 @@ public class ResultBindingProcessor {
 	 * @return true, if is match
 	 */
 	private boolean isMatch(
+			Reasoning[] reasoning,
 			String queryResultPredicateUri, 
 			String resultMappingPredicateUri, 
 			Set<String> explicitlyRequestedPredicateUris){
 		if(queryResultPredicateUri.equals(resultMappingPredicateUri)){
+			return true;
+		}
+		
+		Set<String> reasonedPossibleResults = new HashSet<String>();
+		
+		if(reasoning != null){
+			for(Reasoning reason : reasoning){
+				String predicateUri = reason.getUri();
+				
+				reasonedPossibleResults.addAll(
+					this.propertyReasoner.reason(
+						predicateUri, 
+						resultMappingPredicateUri));
+			}
+		}
+		
+		if(reasonedPossibleResults.contains(
+				queryResultPredicateUri)){
 			return true;
 		}
 		
@@ -611,6 +659,7 @@ public class ResultBindingProcessor {
 			CompositeTracker tracker){
 		
 		if(! this.isMatch(
+				tripleMap.getReasoning(),
 				predicateUri, 
 				tripleMap.getPredicateUri(), 
 				tracker.getRequestedPredicateUris())){
@@ -960,6 +1009,30 @@ public class ResultBindingProcessor {
 			result = modifierObject.beforeSetting(result);
 		}
 		return result;
+	}
+
+	public CallbackInstantiator getCallbackInstantiator() {
+		return callbackInstantiator;
+	}
+
+	public void setCallbackInstantiator(CallbackInstantiator callbackInstantiator) {
+		this.callbackInstantiator = callbackInstantiator;
+	}
+
+	public TwinkqlContext getTwinkqlContext() {
+		return twinkqlContext;
+	}
+
+	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
+		this.twinkqlContext = twinkqlContext;
+	}
+
+	public PropertyReasoner getPropertyReasoner() {
+		return propertyReasoner;
+	}
+
+	public void setPropertyReasoner(PropertyReasoner propertyReasoner) {
+		this.propertyReasoner = propertyReasoner;
 	}
 
 }

@@ -59,12 +59,12 @@ public class TwinkqlContextFactory {
 	private String configurationFile = "classpath:twinkql/configuration.xml";
 
 	private QueryExecutionProvider queryExecutionProvider;
-
+	
 	/**
 	 * The Constructor.
 	 */
 	public TwinkqlContextFactory() {
-		super();
+		this(null);
 	}
 
 	/**
@@ -92,6 +92,7 @@ public class TwinkqlContextFactory {
 		if (StringUtils.isNotBlank(mappingFiles)) {
 			this.mappingFiles = mappingFiles;
 		}
+		
 	}
 
 	public TwinkqlContext getTwinkqlContext() throws Exception {
@@ -102,12 +103,15 @@ public class TwinkqlContextFactory {
 	}
 	
 	protected TwinkqlContext doCreateTwinkqlContext(){
-		return new DefaultTwinkqlContext(
-				this.loadConfigurationFile(),
-				this.queryExecutionProvider,
-				this.loadMappingFiles());
+		DefaultTwinkqlContext context = new DefaultTwinkqlContext();
+		
+		context.setTwinkqlConfig(this.loadConfigurationFile());
+		context.setQueryExecutionProvider(this.queryExecutionProvider);
+		context.setSparqlMaps(this.loadMappingFiles());
+		
+		return context;
 	}
-
+	
 	/**
 	 * Load mapping files.
 	 * 
