@@ -21,13 +21,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.result.callback;
+package edu.mayo.twinkql.instance;
 
 import org.apache.commons.lang.ClassUtils;
 import org.springframework.stereotype.Component;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
-import edu.mayo.twinkql.instance.AbstractCachingInstantiatingBean;
 
 /**
  * The Class CallbackInstantiator.
@@ -35,13 +34,13 @@ import edu.mayo.twinkql.instance.AbstractCachingInstantiatingBean;
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 @Component
-public class CallbackInstantiator extends AbstractCachingInstantiatingBean {
+public class BeanInstantiator extends AbstractCachingInstantiatingBean {
 	
-	public CallbackInstantiator(){
+	public BeanInstantiator(){
 		super();
 	}
 	
-	public CallbackInstantiator(TwinkqlContext twinkqlContext){
+	public BeanInstantiator(TwinkqlContext twinkqlContext){
 		super(twinkqlContext);
 	}
 	
@@ -52,7 +51,7 @@ public class CallbackInstantiator extends AbstractCachingInstantiatingBean {
 	 * @return the after result binding
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Callback> T instantiateCallback(String className, Class<T> requiredType) {
+	public <T> T instantiateCallback(String className, Class<T> requiredType) {
 		Object callback = this.instantiate(className);
 			
 		if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){

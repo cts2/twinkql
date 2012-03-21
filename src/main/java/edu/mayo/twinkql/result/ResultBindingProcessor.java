@@ -48,6 +48,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.instance.BeanInstantiator;
 import edu.mayo.twinkql.model.CompositeConditional;
 import edu.mayo.twinkql.model.CompositeConditionalItem;
 import edu.mayo.twinkql.model.CompositeResultMap;
@@ -58,7 +59,8 @@ import edu.mayo.twinkql.model.PerRowConditional;
 import edu.mayo.twinkql.model.PerRowConditionalItem;
 import edu.mayo.twinkql.model.PerRowResultMap;
 import edu.mayo.twinkql.model.PerRowResultMapItem;
-import edu.mayo.twinkql.model.Reasoning;
+import edu.mayo.twinkql.model.Reasoner;
+import edu.mayo.twinkql.model.ReasonerDefinition;
 import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.ResultMapItem;
 import edu.mayo.twinkql.model.RowMap;
@@ -71,7 +73,6 @@ import edu.mayo.twinkql.model.types.BindingPart;
 import edu.mayo.twinkql.result.beans.reasoning.PropertyReasoner;
 import edu.mayo.twinkql.result.callback.AfterResultBinding;
 import edu.mayo.twinkql.result.callback.CallbackContext;
-import edu.mayo.twinkql.result.callback.CallbackInstantiator;
 import edu.mayo.twinkql.result.callback.ConditionalTest;
 import edu.mayo.twinkql.result.callback.Modifier;
 
@@ -86,23 +87,18 @@ public class ResultBindingProcessor implements InitializingBean {
 	private static final String MATCH_ALL_OTHERS = "*";
 
 	@Autowired
-	private CallbackInstantiator callbackInstantiator;
+	private BeanInstantiator beanInstantiator;
 
 	@Autowired
 	private TwinkqlContext twinkqlContext;
-	
-	@Autowired
-	private PropertyReasoner propertyReasoner;
 
 	private Map<Qname, CompositeResultMap> compositeResultMaps = new HashMap<Qname, CompositeResultMap>();
 	private Map<Qname, PerRowResultMap> perRowResultMaps = new HashMap<Qname, PerRowResultMap>();
+	
+	private Map<String,PropertyReasoner> reasoners;
 
 	public ResultBindingProcessor() {
 		super();
-	}
-	
-	public ResultBindingProcessor(TwinkqlContext twinkqlContext) {
-		this(twinkqlContext, null);
 	}
 	
 	/**
@@ -111,22 +107,26 @@ public class ResultBindingProcessor implements InitializingBean {
 	 * @param twinkqlContext
 	 *            the twinkql context
 	 */
-	public ResultBindingProcessor(TwinkqlContext twinkqlContext, PropertyReasoner propertyReasoner) {
+	public ResultBindingProcessor(TwinkqlContext twinkqlContext) {
 		this.twinkqlContext = twinkqlContext;
-		this.propertyReasoner = propertyReasoner;
-		this.callbackInstantiator = new CallbackInstantiator(twinkqlContext);
+		this.beanInstantiator = new BeanInstantiator(twinkqlContext);
 	
 		this.afterPropertiesSet();
 	}
 
 	public void afterPropertiesSet() {
 		Assert.notNull(this.twinkqlContext);
-		Assert.notNull(this.callbackInstantiator);
+		Assert.notNull(this.beanInstantiator);
 		
 		this.addInDeclaredNamespaces();
 		this.initCaches();
+		this.initReasoners();
 	}
 
+	protected void initReasoners(){
+		this.reasoners = this.getReasonerMap();
+	}
+	
 	/**
 	 * Adds the in declared namespaces.
 	 */
@@ -148,21 +148,37 @@ public class ResultBindingProcessor implements InitializingBean {
 							TripleMap tripleMap = compositeItem.getTripleMap();
 							String uri = tripleMap.getPredicateUri();
 
-							if (uri.contains(":")) {
-								String namespace = StringUtils.substringBefore(
-										uri, ":");
-
-								if (StringUtils.isNotBlank(namespace)) {
-									String localPart = StringUtils
-											.substringAfter(uri, ":");
-									tripleMap.setPredicateUri(namespaceMap
-											.get(namespace) + localPart);
-								}
-							}
+							tripleMap.setPredicateUri(this.expandPrefix(uri, namespaceMap));	
 						}
 					}
 				}
 			}
+		}
+	}
+	
+	private String expandPrefix(String uri, Map<String, String> namespaceMap){
+		if (uri.contains(":")) {
+			String namespace = StringUtils.substringBefore(
+					uri, ":");
+
+			if (StringUtils.isNotBlank(namespace)) {
+				String localPart = StringUtils
+						.substringAfter(uri, ":");
+				
+				String namespaceMapping = namespaceMap.get(namespace);
+				
+				if(StringUtils.isNotBlank(namespaceMapping)){
+					String ns = namespaceMapping + localPart;
+				
+					return ns;
+				} else {
+					return uri;
+				}
+			} else {
+				return uri;
+			}
+		} else {
+			return uri;
 		}
 	}
 
@@ -220,7 +236,7 @@ public class ResultBindingProcessor implements InitializingBean {
 				PerRowConditional conditional = item.getIf();
 				
 				@SuppressWarnings("unchecked")
-				ConditionalTest<Object> test = this.callbackInstantiator
+				ConditionalTest<Object> test = this.beanInstantiator
 						.instantiateCallback(conditional.getFunction(),
 								ConditionalTest.class);
 
@@ -545,7 +561,7 @@ public class ResultBindingProcessor implements InitializingBean {
 					TripleMap tripleMap = item.getTripleMap();
 					
 					if(! this.isMatch(
-							tripleMap.getReasoning(),
+							tripleMap.getReasoner(),
 							predicateUri, 
 							tripleMap.getPredicateUri(), 
 							tracker.getRequestedPredicateUris())){
@@ -607,7 +623,7 @@ public class ResultBindingProcessor implements InitializingBean {
 	 * @return true, if is match
 	 */
 	private boolean isMatch(
-			Reasoning[] reasoning,
+			Reasoner[] reasoning,
 			String queryResultPredicateUri, 
 			String resultMappingPredicateUri, 
 			Set<String> explicitlyRequestedPredicateUris){
@@ -618,13 +634,13 @@ public class ResultBindingProcessor implements InitializingBean {
 		Set<String> reasonedPossibleResults = new HashSet<String>();
 		
 		if(reasoning != null){
-			for(Reasoning reason : reasoning){
-				String predicateUri = reason.getUri();
+			for(Reasoner reason : reasoning){
+				String reasonerId = reason.getId();
+				
+				PropertyReasoner reasoner = this.reasoners.get(reasonerId);
 				
 				reasonedPossibleResults.addAll(
-					this.propertyReasoner.reason(
-						predicateUri, 
-						resultMappingPredicateUri));
+						reasoner.reason(resultMappingPredicateUri));
 			}
 		}
 		
@@ -659,7 +675,7 @@ public class ResultBindingProcessor implements InitializingBean {
 			CompositeTracker tracker){
 		
 		if(! this.isMatch(
-				tripleMap.getReasoning(),
+				tripleMap.getReasoner(),
 				predicateUri, 
 				tripleMap.getPredicateUri(), 
 				tracker.getRequestedPredicateUris())){
@@ -753,7 +769,7 @@ public class ResultBindingProcessor implements InitializingBean {
 			CompositeConditional conditional, 
 			CompositeTracker tracker) {
 		@SuppressWarnings("unchecked")
-		ConditionalTest<Object> test = this.callbackInstantiator
+		ConditionalTest<Object> test = this.beanInstantiator
 				.instantiateCallback(conditional.getFunction(),
 						ConditionalTest.class);
 
@@ -851,7 +867,7 @@ public class ResultBindingProcessor implements InitializingBean {
 			for(String callback : StringUtils.split(resultMap.getAfterMap(), ',')){
 				@SuppressWarnings("unchecked")
 				AfterResultBinding<Object> afterCallback = 
-					this.callbackInstantiator.instantiateCallback(
+					this.beanInstantiator.instantiateCallback(
 							callback, AfterResultBinding.class);
 				
 				CallbackContext context = new CallbackContext();
@@ -952,6 +968,29 @@ public class ResultBindingProcessor implements InitializingBean {
 
 		return requested;
 	}
+	
+	private Map<String,PropertyReasoner> getReasonerMap(){
+		Map<String,PropertyReasoner> returnMap = new HashMap<String,PropertyReasoner>();
+		
+		if(this.twinkqlContext == null ||
+				this.twinkqlContext.getTwinkqlConfig() == null){
+			return returnMap;
+		}
+		
+		for(TwinkqlConfigItem item : 
+			this.twinkqlContext.getTwinkqlConfig().getTwinkqlConfigItem()){
+			if(item.getReasoner() != null){
+				ReasonerDefinition reasoner = item.getReasoner();
+
+				returnMap.put(reasoner.getId(), 
+					this.beanInstantiator.instantiateCallback(
+						reasoner.getClazz(), 
+						PropertyReasoner.class));
+			}
+		}
+		
+		return returnMap;
+	}
 
 	/**
 	 * Gets the result from query solution.
@@ -1003,20 +1042,12 @@ public class ResultBindingProcessor implements InitializingBean {
 
 		if (StringUtils.isNotBlank(modifier)) {
 			@SuppressWarnings("unchecked")
-			Modifier<String> modifierObject = this.callbackInstantiator
+			Modifier<String> modifierObject = this.beanInstantiator
 					.instantiateCallback(modifier, Modifier.class);
 
 			result = modifierObject.beforeSetting(result);
 		}
 		return result;
-	}
-
-	public CallbackInstantiator getCallbackInstantiator() {
-		return callbackInstantiator;
-	}
-
-	public void setCallbackInstantiator(CallbackInstantiator callbackInstantiator) {
-		this.callbackInstantiator = callbackInstantiator;
 	}
 
 	public TwinkqlContext getTwinkqlContext() {
@@ -1026,13 +1057,4 @@ public class ResultBindingProcessor implements InitializingBean {
 	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
 		this.twinkqlContext = twinkqlContext;
 	}
-
-	public PropertyReasoner getPropertyReasoner() {
-		return propertyReasoner;
-	}
-
-	public void setPropertyReasoner(PropertyReasoner propertyReasoner) {
-		this.propertyReasoner = propertyReasoner;
-	}
-
 }

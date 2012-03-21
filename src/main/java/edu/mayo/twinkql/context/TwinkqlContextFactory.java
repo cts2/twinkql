@@ -105,7 +105,8 @@ public class TwinkqlContextFactory {
 	protected TwinkqlContext doCreateTwinkqlContext(){
 		DefaultTwinkqlContext context = new DefaultTwinkqlContext();
 		
-		context.setTwinkqlConfig(this.loadConfigurationFile());
+		TwinkqlConfig twinkqlConfig = this.loadConfigurationFile();
+		context.setTwinkqlConfig(twinkqlConfig);
 		context.setQueryExecutionProvider(this.queryExecutionProvider);
 		context.setSparqlMaps(this.loadMappingFiles());
 		
@@ -114,6 +115,7 @@ public class TwinkqlContextFactory {
 	
 	/**
 	 * Load mapping files.
+	 * @param twinkqlConfig 
 	 * 
 	 * @return the iterable
 	 */
@@ -153,9 +155,10 @@ public class TwinkqlContextFactory {
 	protected PathMatchingResourcePatternResolver createPathMatchingResourcePatternResolver(){
 		return new PathMatchingResourcePatternResolver();
 	}
-
+	
 	/**
 	 * Load sparql mappings.
+	 * @param twinkqlConfig 
 	 *
 	 * @param resource the resource
 	 * @return the sparql mappings
@@ -163,6 +166,7 @@ public class TwinkqlContextFactory {
 	protected SparqlMap loadSparqlMap(Resource resource) {
 		try {
 			String xml = IOUtils.toString(resource.getInputStream());
+			
 			SparqlMap map = SparqlMap.unmarshalSparqlMap(new StringReader(this.decorateXml(xml)));
 			
 			for(SparqlMapItem item : map.getSparqlMapItem()){
@@ -221,7 +225,7 @@ public class TwinkqlContextFactory {
 					select.setContent(content);
 				}
 			}
-			
+
 			return map;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

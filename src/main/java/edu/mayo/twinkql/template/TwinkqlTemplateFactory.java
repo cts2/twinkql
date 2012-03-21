@@ -22,8 +22,6 @@ public class TwinkqlTemplateFactory implements FactoryBean<TwinkqlTemplate> {
 
 	public TwinkqlTemplate getObject() throws Exception {
 		
-		this.twinkqlContext.getSparqlMaps().add(this.createInteralSparqlMap());
-		
 		DefaultListableBeanFactory parentBeanFactory = new DefaultListableBeanFactory();
 		
 		parentBeanFactory.registerSingleton("twinkqlContext", this.twinkqlContext);

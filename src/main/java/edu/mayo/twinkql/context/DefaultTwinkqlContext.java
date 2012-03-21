@@ -33,7 +33,7 @@ import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
 import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.TwinkqlConfig;
-import edu.mayo.twinkql.template.TwinkqlTemplate;
+import edu.mayo.twinkql.result.beans.reasoning.PropertyReasoner;
 
 /**
  * The Class DefaultTwinkqlContext.
@@ -49,6 +49,8 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	private Set<Instantiator> instantiators;
 	
 	private TwinkqlConfig twinkqlConfig;
+	
+	private Set<PropertyReasoner> propertyReasoners;
 	
 	/**
 	 * Instantiates a new default twinkql context.
@@ -127,6 +129,14 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 
 	public void setTwinkqlConfig(TwinkqlConfig twinkqlConfig) {
 		this.twinkqlConfig = twinkqlConfig;
+	}
+
+	public Set<PropertyReasoner> getPropertyReasoners() {
+		return propertyReasoners;
+	}
+
+	public void setPropertyReasoners(Set<PropertyReasoner> propertyReasoners) {
+		this.propertyReasoners = propertyReasoners;
 	}
 	
 }

@@ -18,7 +18,7 @@
 			<nestedResultMap resultMap="testNested" beanProperty="test.bean.nested"/>
 		</if>
 		<tripleMap var="p" varType="localName" predicateUri="asdf" beanProperty="test.bean.prop">
-			<reasoning uri="rdfs:subPropertyOf" />
+			<reasoner id="test.Reasoner" />
 		</tripleMap>	
 		<tripleMap var="p" varType="localName" predicateUri="asdf" callbackId="callbackId"/>	
 		<if function="dsaf" param="p">

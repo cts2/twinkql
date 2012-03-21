@@ -6,6 +6,7 @@
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<xsd:element name="namespace" type="namespaceDefinition"/>
+				<xsd:element name="reasoner" type="reasonerDefinition"/>
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
@@ -13,6 +14,11 @@
 	<xsd:complexType name="namespaceDefinition" >
 		<xsd:attribute name="prefix" type="xsd:string" use="required" />
 		<xsd:attribute name="uri" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="reasonerDefinition" >
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+		<xsd:attribute name="class" type="xsd:string" use="required" />
 	</xsd:complexType>
 
 	<xsd:element name="sparqlMap">
@@ -98,15 +104,15 @@
 		<xsd:complexContent>
 			<xsd:extension base="rowMap">
 				<xsd:sequence>
-					<xsd:element name="reasoning" type="reasoning" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element name="reasoner" type="reasoner" minOccurs="0" maxOccurs="unbounded" />
 				</xsd:sequence>
 				<xsd:attribute name="predicateUri" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
 	
-	<xsd:complexType name="reasoning">
-		<xsd:attribute name="uri" type="xsd:string" />
+	<xsd:complexType name="reasoner">
+		<xsd:attribute name="id" type="xsd:string" />
 	</xsd:complexType>
 
 	<xsd:simpleType name="bindingPart">

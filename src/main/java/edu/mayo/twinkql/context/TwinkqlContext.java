@@ -30,7 +30,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.TwinkqlConfig;
-import edu.mayo.twinkql.template.TwinkqlTemplate;
+import edu.mayo.twinkql.result.beans.reasoning.PropertyReasoner;
 
 /**
  * The Interface TwinkqlContext.
@@ -58,4 +58,6 @@ public interface TwinkqlContext {
 	public TwinkqlConfig getTwinkqlConfig();
 	
 	public Set<Instantiator> getInstantiators();
+	
+	public Set<PropertyReasoner> getPropertyReasoners();
 }

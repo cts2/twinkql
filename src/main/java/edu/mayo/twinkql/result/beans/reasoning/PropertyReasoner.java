@@ -4,6 +4,6 @@ import java.util.Set;
 
 public interface PropertyReasoner {
 	
-	public Set<String> reason(String predicateUri, String objectUri);
+	public Set<String> reason(String uri);
 
 }
