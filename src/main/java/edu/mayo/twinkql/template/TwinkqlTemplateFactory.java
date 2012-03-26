@@ -1,20 +1,11 @@
 package edu.mayo.twinkql.template;
 
-import java.io.IOException;
-import java.io.StringReader;
-
-import org.apache.commons.io.IOUtils;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
-import edu.mayo.twinkql.model.SparqlMap;
 
 public class TwinkqlTemplateFactory implements FactoryBean<TwinkqlTemplate> {
 	
@@ -31,7 +22,8 @@ public class TwinkqlTemplateFactory implements FactoryBean<TwinkqlTemplate> {
 		
 		parentContext.refresh();
 		
-		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = 
+			this.decorateContext(new AnnotationConfigApplicationContext());
         annotationConfigApplicationContext.setParent(parentContext);
         annotationConfigApplicationContext.scan("edu.mayo.twinkql");
         annotationConfigApplicationContext.refresh();
@@ -40,14 +32,11 @@ public class TwinkqlTemplateFactory implements FactoryBean<TwinkqlTemplate> {
 		
 		return template;
 	}
-	
-	public SparqlMap createInteralSparqlMap() throws IOException, MarshalException, ValidationException  {
-		Resource resource = new ClassPathResource("internal/reasoning.xml");
-		String xml = IOUtils.toString(resource.getInputStream());
-		
-		SparqlMap map = SparqlMap.unmarshalSparqlMap(new StringReader(xml));
-		
-		return map;
+
+	protected AnnotationConfigApplicationContext decorateContext(
+			AnnotationConfigApplicationContext applicationContext) {
+		//for subclasses
+		return applicationContext;
 	}
 
 	public Class<?> getObjectType() {
