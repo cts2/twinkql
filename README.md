@@ -12,6 +12,7 @@ _**Twinkql has a few simple goals**_
 
 ### A Simple Select 
 For example, say I want to find all of the labels and comments from all the owl Ontologies. In Twinkql, I can specify that query in XML, keeping it separate from the rest of my program code.
+
 ```xml
 <select id="myTestQuery">
 SELECT ?label ?note
@@ -25,6 +26,7 @@ SELECT ?label ?note
 
 ### Passing in a variable 
 What if there is a query parameter in my search? Twinkql can handle that with Parameter Substitution.
+
 ```xml
 <select id="myTestQuery">
 SELECT ?label ?note
@@ -41,6 +43,7 @@ In this case, when I execute my query, I simply pass in a Map with a key of 'myQ
 
 ### Binding Results to a Bean 
 In many applications, the SPARQL query is just part of the architecture. Results from a SPARQL query may need to be manipulated further, passed into a messaging queue, processed into a different format, etc. Twinql allows you to bind beans to SPARQL query results via 'ResultMaps'. Result maps simply take a variable from the SPARQL query (the 'var' attribute) and map it to a property on your result bean (the 'beanProperty' attribute).
+
 ```xml
 <perRowResultMap id="myTestResultMap" 
     resultClass="com.sample.twinkql.Bean">
