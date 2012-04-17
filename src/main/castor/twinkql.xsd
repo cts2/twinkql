@@ -38,6 +38,7 @@
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="iterator" type="iterator" />
 			<xsd:element name="isNotNull" type="isNotNull" />
+			<xsd:element name="test" type="test" />
 		</xsd:choice>
 		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="resultMap" type="xsd:string" />
@@ -64,6 +65,23 @@
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
+	
+	<xsd:complexType name="test">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="property" type="xsd:string" use="required" />
+				<xsd:attribute name="testType" type="testType" use="required" />
+				<xsd:attribute name="id" use="prohibited" type="xsd:string" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<xsd:simpleType name="testType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="IS_NULL" />
+			<xsd:enumeration value="IS_NOT_NULL" />
+		</xsd:restriction>
+	</xsd:simpleType>
 	
 	<xsd:complexType name="perRowResultMap">
 		<xsd:complexContent>

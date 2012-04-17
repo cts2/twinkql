@@ -33,6 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.exolab.castor.xml.Unmarshaller;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
@@ -45,6 +46,7 @@ import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.SparqlMapChoice;
 import edu.mayo.twinkql.model.SparqlMapChoiceItem;
 import edu.mayo.twinkql.model.SparqlMapItem;
+import edu.mayo.twinkql.model.Test;
 import edu.mayo.twinkql.model.TwinkqlConfig;
 
 /**
@@ -175,60 +177,99 @@ public class TwinkqlContextFactory {
 				if(choice == null){
 					continue;
 				}
+				
 				for(SparqlMapChoiceItem choiceItem : choice.getSparqlMapChoiceItem()){
 					Select select = choiceItem.getSelect();
 					
-					String content = select.getContent();
-					
-					String[] newContents = 
-							StringUtils.substringsBetween(content, "{iteratorMarker}", "{iteratorMarker}");
-					
-					if(newContents != null){
-						for(String newContent : newContents){
-							String excapedContent = this.excapeInnerXml(newContent);
-							
-							String adjustedContent = "<iterator " + excapedContent + "</iterator>";
-							
-							Iterator itr = Iterator.unmarshalIterator(new StringReader(adjustedContent));
-							SelectItem newSelectItem = new SelectItem();
-							newSelectItem.setIterator(itr);
-							select.addSelectItem(newSelectItem);
-							
-							String uuid = "{"+UUID.randomUUID().toString()+"}";
-							
-							content = StringUtils.replaceOnce(content, "{iteratorMarker}"+ newContent +"{iteratorMarker}", uuid);
-							itr.setId(uuid);
-						}
-					}
-					
-					newContents = 
-							StringUtils.substringsBetween(content, "{isNotNullMarker}", "{isNotNullMarker}");
-					
-					if(newContents != null){
-						for(String newContent : newContents){
-							String excapedContent = this.excapeInnerXml(newContent);
-							
-							String adjustedContent  = "<isNotNull " + excapedContent + "</isNotNull>";
-			
-							IsNotNull isNotNull = IsNotNull.unmarshalIsNotNull(new StringReader(adjustedContent));
-							SelectItem newSelectItem = new SelectItem();
-							newSelectItem.setIsNotNull(isNotNull);
-							select.addSelectItem(newSelectItem);
-							
-							String uuid = "{"+UUID.randomUUID().toString()+"}";
-							
-							content = StringUtils.replaceOnce(content, "{isNotNullMarker}"+ newContent +"{isNotNullMarker}", uuid);
-							isNotNull.setId(uuid);
-						}
-					}
+					this.replaceMarkers(new AddToSelectItem(){
 
-					select.setContent(content);
+						public void addToSelectItem(Object object,
+								SelectItem selectItem) {
+							selectItem.setIterator((Iterator)object);
+						}
+
+						public void setId(Object object, String id) {
+							((Iterator)object).setId(id);
+						}
+						
+					}, Iterator.class, select, "<iterator ", "</iterator>", "{iteratorMarker}");
+					
+					this.replaceMarkers(new AddToSelectItem(){
+
+						public void addToSelectItem(Object object,
+								SelectItem selectItem) {
+							selectItem.setIsNotNull((IsNotNull)object);
+						}
+
+						public void setId(Object object, String id) {
+							((IsNotNull)object).setId(id);
+						}
+						
+					}, IsNotNull.class, select, "<isNotNull ", "</isNotNull>", "{isNotNullMarker}");
+		
+					this.replaceMarkers(new AddToSelectItem(){
+
+						public void addToSelectItem(Object object,
+								SelectItem selectItem) {
+							selectItem.setTest((Test)object);
+						}
+
+						public void setId(Object object, String id) {
+							((Test)object).setId(id);
+						}
+						
+					}, Test.class, select, "<test ", "</test>", "{testMarker}");
+					
 				}
 			}
 
 			return map;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+	
+	private interface AddToSelectItem {
+		public void addToSelectItem(Object object, SelectItem selectItem);
+		public void setId(Object object, String id);
+	}
+	
+	private void replaceMarkers(
+			AddToSelectItem adder, 
+			Class<?> clazz, 
+			Select select, 
+			String xmlStart, 
+			String xmlEnd, 
+			String marker){
+		String content = select.getContent();
+		
+		String[] newContents = 
+				StringUtils.substringsBetween(content, marker, marker);
+		
+		if(newContents != null){
+			for(String newContent : newContents){
+				String excapedContent = this.excapeInnerXml(newContent);
+				
+				String adjustedContent = xmlStart + excapedContent + xmlEnd;
+				
+				Object obj;
+				try {
+					obj = Unmarshaller.unmarshal(clazz, new StringReader(adjustedContent));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				} 
+				
+				SelectItem newSelectItem = new SelectItem();
+				adder.addToSelectItem(obj, newSelectItem);
+				select.addSelectItem(newSelectItem);
+				
+				String uuid = "{"+UUID.randomUUID().toString()+"}";
+				
+				content = StringUtils.replaceOnce(content, marker + newContent + marker, uuid);
+				adder.setId(obj, uuid);
+			}
+			
+			select.setContent(content);
 		}
 	}
 	
@@ -271,6 +312,8 @@ public class TwinkqlContextFactory {
 		xml = xml.replaceAll("</iterator>", "{iteratorMarker}");
 		xml = xml.replaceAll("<isNotNull", "{isNotNullMarker}");
 		xml = xml.replaceAll("</isNotNull>", "{isNotNullMarker}");
+		xml = xml.replaceAll("<test", "{testMarker}");
+		xml = xml.replaceAll("</test>", "{testMarker}");
 
 		return xml;
 	}

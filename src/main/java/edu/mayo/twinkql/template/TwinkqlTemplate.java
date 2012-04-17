@@ -57,8 +57,10 @@ import edu.mayo.twinkql.model.SelectItem;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.SparqlMapChoiceItem;
 import edu.mayo.twinkql.model.SparqlMapItem;
+import edu.mayo.twinkql.model.Test;
 import edu.mayo.twinkql.model.TwinkqlConfig;
 import edu.mayo.twinkql.model.TwinkqlConfigItem;
+import edu.mayo.twinkql.model.types.TestType;
 import edu.mayo.twinkql.result.MappingException;
 import edu.mayo.twinkql.result.ResultBindingProcessor;
 
@@ -71,6 +73,8 @@ import edu.mayo.twinkql.result.ResultBindingProcessor;
 public class TwinkqlTemplate implements InitializingBean {
 	
 	protected final Log log = LogFactory.getLog(getClass().getName());
+	
+	private static Pattern VAR_PATTERN = Pattern.compile("#\\{[^\\}]+\\}");
 
 	@Autowired
 	private TwinkqlContext twinkqlContext;
@@ -191,7 +195,7 @@ public class TwinkqlTemplate implements InitializingBean {
 		String queryString = this.doGetSparqlQueryString(select, parameters);
 
 		if(log.isDebugEnabled()){
-			log.debug(queryString);
+			log.debug("\n" + queryString);
 		}
 
 		return queryString;
@@ -213,6 +217,20 @@ public class TwinkqlTemplate implements InitializingBean {
 		sb.append(query);
 
 		return sb.toString();
+	}
+	
+	private boolean doesTestPass(Object param, TestType testType){
+		switch(testType) {
+			case IS_NULL :{
+				return testType == null;
+			}
+			case IS_NOT_NULL :{
+				return testType != null;
+			}
+			default : {
+				throw new IllegalStateException();
+			}
+		}
 	}
 
 	/**
@@ -240,6 +258,22 @@ public class TwinkqlTemplate implements InitializingBean {
 				
 				if(parameters.get(param) != null){
 					query = this.replaceMarker(id, query, isNotNull.getContent());
+				} else {
+					query = this.replaceMarker(id, query, "");
+				}
+			}
+			
+			if (selectItem.getTest() != null) {
+				Test test = selectItem.getTest();
+				
+				String param = test.getProperty();
+				
+				String id = test.getId();
+				
+				TestType testType = test.getTestType();
+				
+				if(this.doesTestPass(parameters.get(param), testType)){
+					query = this.replaceMarker(id, query, test.getContent());
 				} else {
 					query = this.replaceMarker(id, query, "");
 				}
@@ -361,9 +395,7 @@ public class TwinkqlTemplate implements InitializingBean {
 	private List<String> getVariables(String text) {
 		List<String> returnList = new ArrayList<String>();
 
-		Pattern pattern = Pattern.compile("#\\{[^\\}]+\\}");
-
-		Matcher matcher = pattern.matcher(text);
+		Matcher matcher = VAR_PATTERN.matcher(text);
 		while (matcher.find()) {
 			returnList.add(matcher.group());
 		}
