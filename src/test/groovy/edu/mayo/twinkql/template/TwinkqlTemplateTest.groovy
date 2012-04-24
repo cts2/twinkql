@@ -11,6 +11,7 @@ import edu.mayo.twinkql.model.SparqlMap
 import edu.mayo.twinkql.model.SparqlMapChoice
 import edu.mayo.twinkql.model.SparqlMapChoiceItem
 import edu.mayo.twinkql.model.SparqlMapItem
+import edu.mayo.twinkql.model.types.TestType
 import static org.junit.Assert.*
 
 
@@ -133,6 +134,54 @@ public class TwinkqlTemplateTest {
 
 		assertTrue query.contains("Test for inner value")
 		
+	}
+	
+	@Test
+	void TestDoesTestPassIsNullTrue(){
+		
+		def template = new TwinkqlTemplate(null, null){
+			protected void init(){
+				//
+			}
+		}
+	
+		assertTrue template.doesTestPass(null, TestType.IS_NULL)	
+	}
+	
+	@Test
+	void TestDoesTestPassIsNullFalse(){
+		
+		def template = new TwinkqlTemplate(null, null){
+			protected void init(){
+				//
+			}
+		}
+	
+		assertFalse template.doesTestPass("hi", TestType.IS_NULL)
+	}
+	
+	@Test
+	void TestDoesTestPassIsNotNullNullTrue(){
+		
+		def template = new TwinkqlTemplate(null, null){
+			protected void init(){
+				//
+			}
+		}
+	
+		assertTrue template.doesTestPass("hi", TestType.IS_NOT_NULL)
+	}
+	
+	@Test
+	void TestDoesTestPassIsNotNullNullFalse(){
+		
+		def template = new TwinkqlTemplate(null, null){
+			protected void init(){
+				//
+			}
+		}
+	
+		assertFalse template.doesTestPass(null, TestType.IS_NOT_NULL)
 	}
 }
 

@@ -219,13 +219,13 @@ public class TwinkqlTemplate implements InitializingBean {
 		return sb.toString();
 	}
 	
-	private boolean doesTestPass(Object param, TestType testType){
+	protected boolean doesTestPass(Object param, TestType testType){
 		switch(testType) {
 			case IS_NULL :{
-				return testType == null;
+				return param == null;
 			}
 			case IS_NOT_NULL :{
-				return testType != null;
+				return param != null;
 			}
 			default : {
 				throw new IllegalStateException();
