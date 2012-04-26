@@ -425,7 +425,7 @@ public class TwinkqlTemplate implements InitializingBean {
 			final Map<String, Object> parameters, 
 			Class<T> requiredType) {
 
-		return this.doBind(namespace, selectId, parameters,
+		List<T> result = this.doBind(namespace, selectId, parameters,
 				new DoBind<List<T>>() {
 
 					public List<T> doBind(ResultSet resultSet, Qname resultMap) {
@@ -436,6 +436,12 @@ public class TwinkqlTemplate implements InitializingBean {
 					}
 				});
 
+		//return the empty list instead of null
+		if(result == null){
+			result = new ArrayList<T>();
+		}
+		
+		return result;
 	}
 
 	/**
