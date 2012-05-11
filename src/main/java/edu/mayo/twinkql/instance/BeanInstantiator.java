@@ -24,6 +24,7 @@
 package edu.mayo.twinkql.instance;
 
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
@@ -52,6 +53,8 @@ public class BeanInstantiator extends AbstractCachingInstantiatingBean {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T instantiateCallback(String className, Class<T> requiredType) {
+		className = StringUtils.strip(className);
+		
 		Object callback = this.instantiate(className);
 			
 		if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
