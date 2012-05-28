@@ -4,34 +4,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
 	
-	<compositeResultMap id="testNested" resultClass="edu.mayo.twinkql.result.TestResultNested">
-		<tripleMap var="p" varType="localName" predicateUri="asdf" beanProperty="test.bean.prop"/>
-	</compositeResultMap>
-
-	<compositeResultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
-		<discriminator var="p" varType="localName" predicateUri="asdf">
-			<case value="1" resultMapping="mapping1"/>
-			<case value="2" resultMapping="mapping2"/>
-		</discriminator>
+	<resultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
+		<uniqueResult>uri</uniqueResult>
 		<nestedResultMap resultMap="testNested" beanProperty="test.bean.nested"/>
-		<if function="dsaf" param="p">
-			<nestedResultMap resultMap="testNested" beanProperty="test.bean.nested"/>
-		</if>
-		<tripleMap var="p" varType="localName" predicateUri="asdf" beanProperty="test.bean.prop">
-			<reasoner id="test.Reasoner" />
-		</tripleMap>	
-		<tripleMap var="p" varType="localName" predicateUri="asdf" callbackId="callbackId"/>	
-		<if function="dsaf" param="p">
-			<tripleMap var="p" varType="localName" predicateUri="asdf" callbackId="callbackId"/>	
-		</if>
-	</compositeResultMap>
-	
-	<perRowResultMap id="codeSystemVersionReferenceResultMap" 
-		resultClass="edu.mayo.cts2.framework.model.core.CodeSystemVersionReference"
-		afterMap="spring:codeSystemVersionReferenceHrefCallback">
-		<nestedResultMap beanProperty="version" resultMap="myTestNamespace:test"/>
-		<nestedResultMap beanProperty="codeSystem" resultMap="myTestNamespace:test"/>
-	</perRowResultMap>
+		<rowMap  var="a" varType="uri" beanProperty="asdf1" match="?p = foaf:name"/>
+		<rowMap beanProperty="asdf2" var="p" varType="uri"/>
+	</resultMap>
 	
 	<select id="getAssociationDirectoryEntrySummaries" resultMap="associationDirectoryEntryResultMap">
 		<![CDATA[

@@ -80,6 +80,14 @@ public class Qname {
 		this.localName = localName;
 	}
 
+	public String getNamespace() {
+		return namespace;
+	}
+
+	public String getLocalName() {
+		return localName;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

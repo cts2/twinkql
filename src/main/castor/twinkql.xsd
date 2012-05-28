@@ -24,8 +24,8 @@
 	<xsd:element name="sparqlMap">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:element name="perRowResultMap" type="perRowResultMap" />
-				<xsd:element name="compositeResultMap" type="compositeResultMap" />
+				<xsd:element name="resultMap" type="resultMap" />
+				
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="select" type="select" />
 				</xsd:choice>
@@ -83,50 +83,23 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<xsd:complexType name="perRowResultMap">
-		<xsd:complexContent>
-			<xsd:extension base="resultMap">
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="rowMap" type="rowMap" minOccurs="0" />
-					<xsd:element name="if" type="perRowConditional" minOccurs="0" />
-				</xsd:choice>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
 	
-	<xsd:complexType name="compositeResultMap">
-		<xsd:complexContent>
-			<xsd:extension base="resultMap">
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="tripleMap" type="tripleMap" minOccurs="0" />
-					<xsd:element name="if" type="compositeConditional" minOccurs="0" />
-				</xsd:choice>
-				<xsd:attribute name="predicateVar" type="xsd:string" default="p" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType abstract="true" name="resultMap">
+	<xsd:complexType name="resultMap">
+		<xsd:sequence>
+		<xsd:element name="uniqueResult" type="xsd:string" minOccurs="0"/>
+		
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="discriminator" type="discriminator" />
+			
 			<xsd:element name="nestedResultMap" type="nestedResultMap" />
+			<xsd:element name="rowMap" type="rowMap" />
+			<xsd:element name="if" type="conditional" />
 		</xsd:choice>
+		</xsd:sequence>
 		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="extends" type="xsd:string" />
 		<xsd:attribute name="resultClass" type="xsd:string" />
 		<xsd:attribute name="afterMap" type="xsd:string" />
 		<xsd:attribute name="beforeMap" type="xsd:string" />
-	</xsd:complexType>
-
-	<xsd:complexType name="tripleMap">
-		<xsd:complexContent>
-			<xsd:extension base="rowMap">
-				<xsd:sequence>
-					<xsd:element name="reasoner" type="reasoner" minOccurs="0" maxOccurs="unbounded" />
-				</xsd:sequence>
-				<xsd:attribute name="predicateUri" type="xsd:string" />
-			</xsd:extension>
-		</xsd:complexContent>
 	</xsd:complexType>
 	
 	<xsd:complexType name="reasoner">
@@ -150,20 +123,12 @@
 	<xsd:complexType name="rowMap">
 		<xsd:attribute name="var" use="required" type="xsd:string" />
 		<xsd:attribute name="varType" use="required" type="bindingPart" />
+		<xsd:attribute name="match" type="xsd:string" />
 		<xsd:attribute name="beanProperty" type="xsd:string" />
 		<xsd:attribute name="callbackId" type="xsd:string" />
 		<xsd:attribute name="modifier" type="xsd:string" />
 	</xsd:complexType>
 
-	<xsd:complexType name="discriminator">
-		<xsd:sequence>
-			<xsd:element name="case" type="case" minOccurs="2" maxOccurs="unbounded"/>
-		</xsd:sequence>
-		<xsd:attribute name="var" type="xsd:string" />
-		<xsd:attribute name="varType" type="bindingPart" />
-		<xsd:attribute name="predicateUri" type="xsd:string" />
-	</xsd:complexType>
-	
 	<xsd:complexType name="case">
 		<xsd:attribute name="value" type="xsd:string" />
 		<xsd:attribute name="resultMapping" type="xsd:string" />
@@ -172,29 +137,10 @@
 	<xsd:complexType name="conditional" abstract="true">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="nestedResultMap" type="nestedResultMap" />
+			<xsd:element name="rowMap" type="rowMap" />
 		</xsd:choice>
 		<xsd:attribute name="function" type="xsd:string" use="required" />
 		<xsd:attribute name="param" type="xsd:string" use="required" />
-	</xsd:complexType>
-	
-	<xsd:complexType name="perRowConditional">
-		<xsd:complexContent>
-			<xsd:extension base="conditional" >
-				<xsd:choice minOccurs="1" maxOccurs="unbounded">
-					<xsd:element name="rowMap" type="rowMap" />
-				</xsd:choice>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-	
-	<xsd:complexType name="compositeConditional">
-		<xsd:complexContent>
-			<xsd:extension base="conditional">
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="tripleMap" type="tripleMap" />
-				</xsd:choice>
-			</xsd:extension>
-		</xsd:complexContent>
 	</xsd:complexType>
 	
 </xsd:schema>
