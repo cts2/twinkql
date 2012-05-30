@@ -1,5 +1,7 @@
 package edu.mayo.twinkql.template;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -9,6 +11,7 @@ import edu.mayo.twinkql.context.TwinkqlContext;
 
 public class TwinkqlTemplateFactory implements FactoryBean<TwinkqlTemplate> {
 	
+	@Resource
 	private TwinkqlContext twinkqlContext;
 
 	public TwinkqlTemplate getObject() throws Exception {

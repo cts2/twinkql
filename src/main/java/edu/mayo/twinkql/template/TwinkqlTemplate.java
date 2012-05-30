@@ -429,9 +429,9 @@ public class TwinkqlTemplate implements InitializingBean {
 				new DoBind<List<T>>() {
 
 					public List<T> doBind(ResultSet resultSet, Qname resultMap) {
-						return (List<T>) resultBindingProcessor.bindForList(
+						return (List<T>) resultBindingProcessor.bind(
 								resultSet, 
-								parameters,
+								//parameters,
 								resultMap);
 					}
 				});
@@ -468,9 +468,9 @@ public class TwinkqlTemplate implements InitializingBean {
 		return this.doBind(namespace, selectId, parameters, new DoBind<T>() {
 
 			public T doBind(ResultSet resultSet, Qname resultMap) {
-				return (T) resultBindingProcessor.bindForObject(
+				return (T) resultBindingProcessor.bind(
 						resultSet,
-						parameters,
+						//parameters,
 						resultMap);
 			}
 

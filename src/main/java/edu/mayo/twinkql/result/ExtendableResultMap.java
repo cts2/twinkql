@@ -25,6 +25,7 @@ package edu.mayo.twinkql.result;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import edu.mayo.twinkql.model.NamedResultMap;
 import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.ResultMapChoice;
 import edu.mayo.twinkql.model.ResultMapChoiceItem;
@@ -34,7 +35,7 @@ import edu.mayo.twinkql.model.ResultMapChoiceItem;
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-class ExtendableResultMap extends ResultMap {
+class ExtendableResultMap extends NamedResultMap {
 
 	private static final long serialVersionUID = -6125562115832012024L;
 

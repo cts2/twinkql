@@ -33,7 +33,7 @@ import java.util.Map.Entry;
 
 import jodd.bean.BeanUtil;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,9 @@ import com.hp.hpl.jena.query.ResultSet;
 import edu.mayo.twinkql.context.Qname;
 import edu.mayo.twinkql.context.TwinkqlContext;
 import edu.mayo.twinkql.instance.BeanInstantiator;
+import edu.mayo.twinkql.model.Association;
+import edu.mayo.twinkql.model.Conditional;
+import edu.mayo.twinkql.model.ConditionalItem;
 import edu.mayo.twinkql.model.ResultMap;
 import edu.mayo.twinkql.model.ResultMapChoice;
 import edu.mayo.twinkql.model.ResultMapChoiceItem;
@@ -53,6 +56,7 @@ import edu.mayo.twinkql.model.RowMap;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.SparqlMapItem;
 import edu.mayo.twinkql.result.beans.reasoning.PropertyReasoner;
+import edu.mayo.twinkql.result.callback.ConditionalTest;
 
 /**
  * The Class ResultBindingProcessor.
@@ -125,7 +129,7 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 	}
 
-	public <T> List<T> select(
+	public <T> List<T> bind(
 			ResultSet resultSet,
 			Qname resultMapQname) {
 		List<T> returnList = new ArrayList<T>();
@@ -169,33 +173,84 @@ public class ResultBindingProcessor implements InitializingBean {
 		for(QuerySolution solution : uniqueSet){
 			for(ResultMapChoiceItem resultMapItem : resultMapChoice.getResultMapChoiceItem()){
 				RowMap rowMap = resultMapItem.getRowMap();
-				if(rowMap == null){
-					continue;
+				if(rowMap != null){
+					this.processRowMap(
+							returnResult, 
+							rowMap,
+							solution);
+				}
+				Conditional conditional = resultMapItem.getIf();
+				if(conditional != null){
+					this.handleConditional(
+							returnResult, 
+							solution, 
+							conditional, 
+							null);
 				}
 				
-				if(this.isMatch(rowMap, solution)){
+				Association association = resultMapItem.getAssociation();
+				if(association != null){
+					Object associatedObject = 
+						this.processAssociation(association, uniqueSet);
 					
-					String result = 
-							this.querySolutionResultExtractor.
-								getResultFromQuerySolution(
-									solution.get(rowMap.getVar()), 
-									rowMap);
-					
-					this.setProperty(
-						returnResult, 
-						result, 
-						rowMap,
-						null);
-					
+					this.setProperty(returnResult, associatedObject, association, null);
 				}
 			}
 		}
 		
 		return returnResult;
 	}
+
+	private void processRowMap(Object target, RowMap rowMap, QuerySolution solution) {
+		if(this.isMatch(rowMap, solution)){
+			
+			String result = 
+					this.querySolutionResultExtractor.
+						getResultFromQuerySolution(
+							solution.get(rowMap.getVar()), 
+							rowMap);
+			
+			this.setProperty(
+				target, 
+				result, 
+				rowMap,
+				null);
+		}
+	}
 	
+	private Object processAssociation(Association association, List<QuerySolution> uniqueSet) {
+		Object returnObject;
+		if(association.isIsCollection()){
+			List<Object> returnList = new ArrayList<Object>();
+			
+			for(QuerySolution solution : uniqueSet){
+				Object result = this.processUniqueSet(Arrays.asList(solution), association);
+				returnList.add(result);
+			}
+			
+			returnObject = returnList;
+		} else {
+			returnObject = this.processUniqueSet(uniqueSet, association);
+		}
+		return returnObject;
+	}
 	
-	private void setProperty(Object targetObj, Object result, RowMap rowMap, Tracker tracker){
+	private void setProperty(
+			Object targetObj, 
+			Object result, 
+			Association association, 
+			Tracker tracker){
+		String callbackId = association.getCallbackId();
+		String property = association.getBeanProperty();
+		
+		this.setProperty(targetObj, result, property, callbackId, tracker);
+	}
+	
+	private void setProperty(
+			Object targetObj, 
+			Object result, 
+			RowMap rowMap, 
+			Tracker tracker){
 		String callbackId = rowMap.getCallbackId();
 		String property = rowMap.getBeanProperty();
 		
@@ -214,9 +269,36 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 		
 		if(StringUtils.isNotBlank(property)){
+			
+			property = this.adjustForCollection(targetObj, property);
+			
 			BeanUtil.setPropertyForced(targetObj,
 					property, result);
 		}	
+	}
+	
+	private String adjustForCollection(Object target, String property){
+		if(StringUtils.countMatches(property, "[]") > 1){
+			throw new MappingException("Cannot have more than one Collection Indicator ('[]') in a 'property' attribute.");
+		}
+		
+		String[] parts = StringUtils.split(property, '.');
+		
+		for(int i=0;i<parts.length;i++){
+			String part = parts[i];
+			if(StringUtils.endsWith(part, "[]")){
+				String propertySoFar = 
+					StringUtils.removeEnd(StringUtils.join(
+						ArrayUtils.subarray(parts, 0, i+1), '.'), "[]");
+				
+				Collection<?> collection = (Collection<?>) BeanUtil.getSimplePropertyForced(target, propertySoFar, true);
+				int index = collection.size();
+				
+				parts[i] = StringUtils.replace(part, "[]", "["+index+"]");
+			}
+		}
+		
+		return StringUtils.join(parts, '.');
 	}
 	
 	private Object createNewResult(ResultMap resultMap) {
@@ -274,6 +356,32 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 		
 		return uniqueMap.values();
+	}
+	
+	private void handleConditional(
+			Object targetObj, 
+			QuerySolution solution,
+			Conditional conditional, 
+			CompositeTracker tracker) {
+		
+		@SuppressWarnings("unchecked")
+		ConditionalTest<Object> test = this.beanInstantiator
+				.instantiateCallback(conditional.getFunction(),
+						ConditionalTest.class);
+
+		String parameter = conditional.getParam();
+
+		if (test.test(solution.get(parameter))) {
+			for (ConditionalItem conditionalItem : 
+				conditional.getConditionalItem()){
+				
+				if (conditionalItem.getRowMap() != null) {
+					RowMap rowMap = conditionalItem.getRowMap();
+
+					this.processRowMap(targetObj, rowMap, solution);
+				}
+			}
+		}
 	}
 	
 	public TwinkqlContext getTwinkqlContext() {

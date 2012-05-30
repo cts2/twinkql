@@ -24,8 +24,7 @@
 	<xsd:element name="sparqlMap">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:element name="resultMap" type="resultMap" />
-				
+				<xsd:element name="resultMap" type="namedResultMap" />
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="select" type="select" />
 				</xsd:choice>
@@ -83,23 +82,27 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	
 	<xsd:complexType name="resultMap">
 		<xsd:sequence>
-		<xsd:element name="uniqueResult" type="xsd:string" minOccurs="0"/>
-		
-		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			
-			<xsd:element name="nestedResultMap" type="nestedResultMap" />
-			<xsd:element name="rowMap" type="rowMap" />
-			<xsd:element name="if" type="conditional" />
-		</xsd:choice>
+			<xsd:element name="uniqueResult" type="xsd:string" minOccurs="0"/>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="association" type="association" />
+				<xsd:element name="rowMap" type="rowMap" />
+				<xsd:element name="if" type="conditional" />
+			</xsd:choice>
 		</xsd:sequence>
-		<xsd:attribute name="id" type="xsd:string" use="required" />
 		<xsd:attribute name="extends" type="xsd:string" />
 		<xsd:attribute name="resultClass" type="xsd:string" />
 		<xsd:attribute name="afterMap" type="xsd:string" />
 		<xsd:attribute name="beforeMap" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="namedResultMap">
+		<xsd:complexContent>
+			<xsd:extension base="resultMap">
+				<xsd:attribute name="id" type="xsd:string" use="required" />
+			</xsd:extension>
+		</xsd:complexContent>
 	</xsd:complexType>
 	
 	<xsd:complexType name="reasoner">
@@ -115,9 +118,16 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<xsd:complexType name="nestedResultMap">
-		<xsd:attribute name="resultMap" type="xsd:string" />
-		<xsd:attribute name="beanProperty" type="xsd:string" />
+	<xsd:complexType name="association">
+		<xsd:complexContent>
+			<xsd:extension base="resultMap">
+				<xsd:attribute name="isCollection" type="xsd:boolean" default="false" />
+				<xsd:attribute name="resultMap" type="xsd:string" />
+				<xsd:attribute name="beanProperty" type="xsd:string" />
+				<xsd:attribute name="callbackId" type="xsd:string" />
+				<xsd:attribute name="modifier" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="rowMap">
@@ -136,7 +146,7 @@
 	
 	<xsd:complexType name="conditional" abstract="true">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="nestedResultMap" type="nestedResultMap" />
+			<xsd:element name="association" type="association" />
 			<xsd:element name="rowMap" type="rowMap" />
 		</xsd:choice>
 		<xsd:attribute name="function" type="xsd:string" use="required" />

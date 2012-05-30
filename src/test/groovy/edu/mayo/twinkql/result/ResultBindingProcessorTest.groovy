@@ -14,6 +14,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory
 
 import edu.mayo.twinkql.context.Qname
 import edu.mayo.twinkql.context.TwinkqlContext
+import edu.mayo.twinkql.model.NamedResultMap
 import edu.mayo.twinkql.model.ResultMap
 import edu.mayo.twinkql.model.ResultMapChoice
 import edu.mayo.twinkql.model.ResultMapChoiceItem
@@ -300,7 +301,7 @@ class ResultBindingProcessorTest {
 		assertEquals "my value", r.list.get(0)
 	
 	}
-
+*/
 	@Test
 	void testBindForObjectWithTripleMappingsWithNestedCompositeList(){
 
@@ -309,7 +310,8 @@ class ResultBindingProcessorTest {
 		QuerySolution querysolution = createMock(QuerySolution)
 		
 		def predicate = [
-			asNode: { com.hp.hpl.jena.graph.Node.createURI("http://predicateUri") }
+			asNode: { com.hp.hpl.jena.graph.Node.createURI("http://predicateUri") },
+			isURIResource: { true }
 		] as RDFNode
 		
 		expect(querysolution.get("p")).andReturn(predicate)
@@ -327,20 +329,23 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new CompositeResultMap(
+		def result = new NamedResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
-			compositeResultMapItem:[
-				new CompositeResultMapItem(
-					tripleMap: 
-						new TripleMap(
-							beanProperty: "compositeList[].threeProp",
-							predicateUri: "http://predicateUri",
-							var: "o",
-							varType: BindingPart.LITERALVALUE
+			resultMapChoice:
+				new ResultMapChoice(
+					resultMapChoiceItem:[
+						new ResultMapChoiceItem(
+							rowMap: 
+								new RowMap(
+								beanProperty: "compositeList[].threeProp",
+								match: "?p = http://predicateUri",
+								var: "o",
+								varType: BindingPart.LITERALVALUE
+							)
 						)
+					]
 				)
-			]
 		);
 	
 		def twinkqlContext = [
@@ -349,7 +354,7 @@ class ResultBindingProcessorTest {
 					namespace:"ns",
 					sparqlMapItem: [
 						new SparqlMapItem(
-							compositeResultMap:result
+							resultMap:result
 						)
 					]
 				)
@@ -360,13 +365,13 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForObject(resultset, null, Qname.toQname("ns:resultId"))
+		def r = binding.bind(resultset, Qname.toQname("ns:resultId"))
 
-		assertEquals 1, r.compositeList.size()
-		assertEquals "my value", r.compositeList.get(0).threeProp
+		assertEquals 1, r.get(0).compositeList.size()
+		assertEquals "my value", r.get(0).compositeList.get(0).threeProp
 	
 	}
-	
+/*	
 	@Test
 	void testBindForObjectWithTripleMappingsWithListTwoEntries(){
 
@@ -572,7 +577,7 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution1, querysolution2)
 		
-		def result1 = new ResultMap(
+		def result1 = new NamedResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultMap1",
 			extends: "resultMap2",
@@ -593,7 +598,7 @@ class ResultBindingProcessorTest {
 				)
 		);
 	
-		def result2 = new ResultMap(
+		def result2 = new NamedResultMap(
 			id: "resultMap2",
 			resultMapChoice:
 				new ResultMapChoice(
@@ -631,7 +636,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.select(resultset, Qname.toQname("ns:resultMap1"))
+		def r = binding.bind(resultset, Qname.toQname("ns:resultMap1"))
 	
 		assertEquals 1, r.size()
 		assertEquals "my value", r.get(0).oneProp;
@@ -659,7 +664,7 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new ResultMap(
+		def result = new NamedResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
 			resultMapChoice:
@@ -694,7 +699,7 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.select(resultset, Qname.toQname("ns:resultId"))
+		def r = binding.bind(resultset, Qname.toQname("ns:resultId"))
 
 		assertEquals 1, r.size()
 		assertEquals "my value", r.get(0).oneProp;

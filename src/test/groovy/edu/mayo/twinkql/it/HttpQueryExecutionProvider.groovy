@@ -21,48 +21,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.context
+package edu.mayo.twinkql.it;
 
-import java.io.IOException;
-import static org.junit.Assert.*
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource
+import javax.annotation.Resource;
 
-import edu.mayo.twinkql.model.SparqlMap
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component
+
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
+
+import edu.mayo.twinkql.context.QueryExecutionProvider;
 
 /**
- * The Class TwinqlContextFactoryTest.
+ * The Class HttpQueryExecutionProvider.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
- */
-public class TwinqlContextFactoryTest {
+ */\
+@Component
+public class HttpQueryExecutionProvider implements QueryExecutionProvider {
+
+	def sparqlService = "http://dbpedia.org/sparql/";
+
 	
-	@Test
-	void testLoadSparqlMappings() throws IOException{
-		TwinkqlContextFactory sparqlContextFactory = new TwinkqlContextFactory()
+	/* (non-Javadoc)
+	 * @see edu.mayo.twinkql.context.QueryExecutionProvider#provideQueryExecution(com.hp.hpl.jena.query.Query)
+	 */
+	@Override
+	public QueryExecution provideQueryExecution(String query) {
+		def qexec = new QueryEngineHTTP(
+				this.sparqlService, query);
 		
-		def map = 
-				sparqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/testMap.xml"));
-		
-		assertNotNull map;
-		
-		assertEquals "myTestNamespace", map.getNamespace()
-	}
-	
-	@Test
-	public void testLoadSparqlMap() throws IOException{
-		TwinkqlContextFactory twinkqlContextFactory = new TwinkqlContextFactory();
-		
-		SparqlMap map = 
-				twinkqlContextFactory.loadSparqlMap(new ClassPathResource("/xml/testMap.xml"));
-		
-		
-		def select = map.getSparqlMapItem(1).getSparqlMapChoice().getSparqlMapChoiceItem(0).getSelect()
-		
-		assertEquals "getAssociationDirectoryEntrySummaries", select.getId()
-		
-		assertNotNull select.getContent()
-		
+		return qexec;
 	}
 
 }
