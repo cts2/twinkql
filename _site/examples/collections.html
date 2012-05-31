@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : Working with Collections example</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'examples';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Introductory examples</h1>
+<ul>
+    <li>
+        <strong><a href="helloWorld.html">Hello world</a></strong>
+        <small>Working with <code>ko.observable</code> &amp; <code>ko.computed</code></small>
+    </li>
+    <li>
+        <strong><a href="clickCounter.html">Click counter</a></strong>
+        <small>Using declarative bindings and how KO tracks dependencies automatically</small>
+    </li>
+    <li>
+        <strong><a href="simpleList.html">Simple list</a></strong>
+        <small>Working with <code>ko.observableArray</code></small>
+    </li>
+    <li>
+        <strong><a href="betterList.html">Better list</a></strong>
+        <small>Combining more behaviors</small>
+    </li>
+    <li>
+        <strong><a href="controlTypes.html">Control types</a></strong>
+        <small>Reference: All HTML control types</small>
+    </li>
+    <li>
+        <strong><a href="collections.html">Working with Collections</a></strong>
+        <small>Working with arrays, including nested ones</small>
+    </li>
+    <li>
+        <strong><a href="grid.html">Paged grid</a></strong>
+        <small>Creating reusable components, i.e., plugins</small>
+    </li>
+    <li>
+        <strong><a href="animatedTransitions.html">Animated transitions</a></strong>
+        <small>Two simple ways to implement animated transitions (one of which is a custom binding)</small>
+    </li>
+</ul>
+
+<h1>Detailed examples</h1>
+<ul>
+    <li>
+        <strong><a href="contactsEditor.html">Contacts editor</a></strong>
+        <small>Editing a nested list</small>
+    </li>
+    <li>
+        <strong><a href="gridEditor.html">Editable grid</a></strong>
+        <small>Using the 'foreach' binding and integrating with jQuery Validation</small>
+    </li>
+    <li>
+        <strong><a href="cartEditor.html">Shopping cart screen</a></strong>
+        <small>Includes nested dropdowns and a string formatting function</small>
+    </li>
+    <li>
+        <strong><a href="twitter.html">Twitter client</a></strong>
+        <small>Combines templating, declarative bindings, and Ajax</small>
+    </li>
+</ul>
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="example sticker">
+		    <div class="content">
+		    	<h1>Working with Collections example</h1>	
+		    	<p>This example shows how to render a collection using the <code>foreach</code> binding.</p>
+
+<p>The contents of an element using the <code>foreach</code> binding are repeated for each item in the collection and <code>foreach</code> bindings can easily be nested. As you can see from this demonstration (enable &#8216;Show render times&#8217;), Knockout knows that it only needs to render additional content for items that are added a collection.</p>
+<style type='text/css'>
+    .renderTime { color: #777; font-style: italic; font-size: 0.8em; }
+</style><h2>Live example</h2><div class='liveExample'>
+ 
+<h2>People</h2>
+<ul data-bind='foreach: people'>
+    <li>
+        <div>
+            <span data-bind='text: name'> </span> has <span data-bind='text: children().length'>&nbsp;</span> children:
+            <a href='#' data-bind='click: addChild '>Add child</a>
+            <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
+                (person rendered at <span data-bind='text: new Date().getSeconds()'> </span>)
+            </span>
+        </div>
+        <ul data-bind='foreach: children'>
+            <li>
+                <span data-bind='text: $data'> </span>
+                <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
+                    (child rendered at <span data-bind='text: new Date().getSeconds()'> </span>)
+                </span>
+            </li>
+        </ul>
+    </li>
+</ul>
+<label><input data-bind='checked: showRenderTimes' type='checkbox' /> Show render times</label> 
+
+<script type='text/javascript'>
+/*<![CDATA[*/
+    // Define a "Person" class that tracks its own name and children, and has a method to add a new child
+    var Person = function(name, children) {
+        this.name = name;
+        this.children = ko.observableArray(children);
+
+        this.addChild = function() {
+            this.children.push("New child");
+        }.bind(this);
+    }
+    
+    // The view model is an abstract description of the state of the UI, but without any knowledge of the UI technology (HTML)
+    var viewModel = {
+        people: [
+            new Person("Annabelle", ["Arnie", "Anders", "Apple"]),
+            new Person("Bertie", ["Boutros-Boutros", "Brianna", "Barbie", "Bee-bop"]),
+            new Person("Charles", ["Cayenne", "Cleopatra"])
+            ],
+        showRenderTimes: ko.observable(false)
+    };
+
+    ko.applyBindings(viewModel);
+/*]]>*/
+</script>
+</div><h2>Source code: View</h2><pre class='brush:html'> 
+&lt;h2&gt;People&lt;/h2&gt;
+&lt;ul data-bind=&quot;foreach: people&quot;&gt;
+    &lt;li&gt;
+        &lt;div&gt;
+            &lt;span data-bind=&quot;text: name&quot;&gt; &lt;/span&gt; has &lt;span data-bind='text: children().length'&gt;&amp;nbsp;&lt;/span&gt; children:
+            &lt;a href='#' data-bind='click: addChild '&gt;Add child&lt;/a&gt;
+            &lt;span class='renderTime' data-bind='visible: $root.showRenderTimes'&gt;
+                (person rendered at &lt;span data-bind='text: new Date().getSeconds()' &gt; &lt;/span&gt;)
+            &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;ul data-bind=&quot;foreach: children&quot;&gt;
+            &lt;li&gt;
+                &lt;span data-bind=&quot;text: $data&quot;&gt; &lt;/span&gt;
+                &lt;span class='renderTime' data-bind='visible: $root.showRenderTimes'&gt;
+                    (child rendered at &lt;span data-bind='text: new Date().getSeconds()' &gt; &lt;/span&gt;)
+                &lt;/span&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+&lt;label&gt;&lt;input data-bind='checked: showRenderTimes' type='checkbox' /&gt; Show render times&lt;/label&gt; 
+</pre><h2>Source code: View model</h2><pre class='brush:js'>
+    // Define a &quot;Person&quot; class that tracks its own name and children, and has a method to add a new child
+    var Person = function(name, children) {
+        this.name = name;
+        this.children = ko.observableArray(children);
+
+        this.addChild = function() {
+            this.children.push(&quot;New child&quot;);
+        }.bind(this);
+    }
+    
+    // The view model is an abstract description of the state of the UI, but without any knowledge of the UI technology (HTML)
+    var viewModel = {
+        people: [
+            new Person(&quot;Annabelle&quot;, [&quot;Arnie&quot;, &quot;Anders&quot;, &quot;Apple&quot;]),
+            new Person(&quot;Bertie&quot;, [&quot;Boutros-Boutros&quot;, &quot;Brianna&quot;, &quot;Barbie&quot;, &quot;Bee-bop&quot;]),
+            new Person(&quot;Charles&quot;, [&quot;Cayenne&quot;, &quot;Cleopatra&quot;])
+            ],
+        showRenderTimes: ko.observable(false)
+    };
+
+    ko.applyBindings(viewModel);
+</pre>
+<p><a href='http://jsfiddle.net/rniemeyer/GSvnh/'>Try it in jsFiddle</a></p>   		    		    	
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

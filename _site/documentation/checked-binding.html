@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : The "checked" binding</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'documentation';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Getting started</h1>
+
+<ol>
+    <li><a href="introduction.html">How KO works and what benefits it brings</a></li>
+    <li><a href="installation.html">Downloading and installing</a></li>
+</ol>
+
+<h1>Observables</h1>
+
+<ol>
+    <li><a href="observables.html">Creating <em>view models</em> with <em>observables</em></a></li>
+    <li><a href="computedObservables.html">Using <em>computed observables</em></a></li>
+    <li><a href="observableArrays.html">Working with <em>observable arrays</em></a></li>	
+</ol>
+
+<h1>Using built-in bindings</h1>
+
+<h2>Controlling text and appearance</h2>
+<ol>
+    <li><a href="visible-binding.html">The <code>visible</code> binding</a></li>
+    <li><a href="text-binding.html">The <code>text</code> binding</a></li>
+    <li><a href="html-binding.html">The <code>html</code> binding</a></li>
+    <li><a href="css-binding.html">The <code>css</code> binding</a></li>
+    <li><a href="style-binding.html">The <code>style</code> binding</a></li>
+    <li><a href="attr-binding.html">The <code>attr</code> binding</a></li>
+</ol>
+
+<h2>Control flow</h2>
+<ol>
+    <li><a href="foreach-binding.html">The <code>foreach</code> binding</a></li>
+    <li><a href="if-binding.html">The <code>if</code> binding</a></li>
+    <li><a href="ifnot-binding.html">The <code>ifnot</code> binding</a></li>
+    <li><a href="with-binding.html">The <code>with</code> binding</a></li>
+</ol>
+
+<h2>Working with form fields</h2>
+<ol>
+    <li><a href="click-binding.html">The <code>click</code> binding</a></li>
+    <li><a href="event-binding.html">The <code>event</code> binding</a></li>
+    <li><a href="submit-binding.html">The <code>submit</code> binding</a></li>
+    <li><a href="enable-binding.html">The <code>enable</code> binding</a></li>
+    <li><a href="disable-binding.html">The <code>disable</code> binding</a></li>
+    <li><a href="value-binding.html">The <code>value</code> binding</a></li>
+    <li><a href="hasfocus-binding.html">The <code>hasfocus</code> binding</a></li>
+    <li><a href="checked-binding.html">The <code>checked</code> binding</a></li>
+    <li><a href="options-binding.html">The <code>options</code> binding</a></li>
+    <li><a href="selectedOptions-binding.html">The <code>selectedOptions</code> binding</a></li>    
+    <li><a href="uniqueName-binding.html">The <code>uniqueName</code> binding</a></li>		
+</ol>
+
+<h2>Creating custom bindings</h2>
+<ol>
+    <li><a href="custom-bindings.html">Creating custom bindings</a></li>
+    <li><a href="custom-bindings-controlling-descendant-bindings.html">Controlling descendant bindings</a></li>
+    <li><a href="custom-bindings-for-virtual-elements.html">Supporting virtual elements</a></li>
+</ol>
+
+<h2>Rendering templates</h2>
+<ol>
+    <li><a href="template-binding.html">The <code>template</code> binding</a></li>
+</ol>
+
+<h2>Further techniques</h2>
+<ol>
+    <li><a href="json-data.html">Loading and saving JSON data</a></li>
+    <li><a href="extenders.html">Extending observables</a></li>
+    <li><a href="throttle-extender.html">The <code>throttle</code> extender</a></li>
+    <li><a href="unobtrusive-event-handling.html">Unobtrusive event handling</a></li>
+    <li><a href="fn.html">Using <code>fn</code> to add custom functions</a></li>
+</ol>
+
+<h2>Plugins</h2>
+<ol>
+    <li><a href="plugins-mapping.html">The <code>mapping</code> plugin</a></li>
+</ol>
+
+<h1>More information</h1>
+<ol>
+    <li><a href="browser-support.html">Browser support</a></li>
+    <li><a href="http://groups.google.com/group/knockoutjs">Getting help</a></li>
+    <li><a href="links.html">Links to tutorials &amp; examples</a></li>
+    <li><a href="amd-loading.html">Usage with AMD using RequireJs (Asynchronous Module Definition)</a></li>
+</ol>
+
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="documentation sticker">
+		    <div class="content">
+		    	<h1>The "checked" binding</h1>	
+		    	<h3 id='purpose'>Purpose</h3>
+
+<p>The <code>checked</code> binding links a checkable form control &#8212; i.e., a checkbox (<code>&lt;input type=&#39;checkbox&#39;&gt;</code>) or a radio button (<code>&lt;input type=&#39;radio&#39;&gt;</code>) &#8212; with a property on your view model.</p>
+
+<p>When the user checks the associated form control, this updates the value on your view model. Likewise, when you update the value in your view model, this checks or unchecks the form control on screen.</p>
+
+<p>Note: For text boxes, drop-down lists, and all non-checkable form controls, use <a href='value-binding.html'>the <code>value</code> binding</a> to read and write the element&#8217;s value, not the <code>checked</code> binding.</p>
+
+<h3 id='example_with_checkbox'>Example with checkbox</h3>
+
+<pre><code>&lt;p&gt;Send me spam: &lt;input type=&quot;checkbox&quot; data-bind=&quot;checked: wantsSpam&quot; /&gt;&lt;/p&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var viewModel = {
+		wantsSpam: ko.observable(true) // Initially checked
+    };
+    
+    // ... then later ...
+    viewModel.wantsSpam(false); // The checkbox becomes unchecked
+&lt;/script&gt;</code></pre>
+
+<h3 id='example_adding_checkboxes_bound_to_an_array'>Example adding checkboxes bound to an array</h3>
+
+<pre><code>&lt;p&gt;Send me spam: &lt;input type=&quot;checkbox&quot; data-bind=&quot;checked: wantsSpam&quot; /&gt;&lt;/p&gt;
+&lt;div data-bind=&quot;visible: wantsSpam&quot;&gt;
+	Preferred flavors of spam:
+	&lt;div&gt;&lt;input type=&quot;checkbox&quot; value=&quot;cherry&quot; data-bind=&quot;checked: spamFlavors&quot; /&gt; Cherry&lt;/div&gt;
+	&lt;div&gt;&lt;input type=&quot;checkbox&quot; value=&quot;almond&quot; data-bind=&quot;checked: spamFlavors&quot; /&gt; Almond&lt;/div&gt;
+	&lt;div&gt;&lt;input type=&quot;checkbox&quot; value=&quot;msg&quot; data-bind=&quot;checked: spamFlavors&quot; /&gt; Monosodium Glutamate&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var viewModel = {
+		wantsSpam: ko.observable(true),
+		spamFlavors: ko.observableArray([&quot;cherry&quot;,&quot;almond&quot;]) // Initially checks the Cherry and Almond checkboxes
+    };
+    
+    // ... then later ...
+    viewModel.spamFlavors.push(&quot;msg&quot;); // Now additionally checks the Monosodium Glutamate checkbox
+&lt;/script&gt;</code></pre>
+
+<h3 id='example_adding_radio_buttons'>Example adding radio buttons</h3>
+
+<pre><code>&lt;p&gt;Send me spam: &lt;input type=&quot;checkbox&quot; data-bind=&quot;checked: wantsSpam&quot; /&gt;&lt;/p&gt;
+&lt;div data-bind=&quot;visible: wantsSpam&quot;&gt;
+	Preferred flavor of spam:
+	&lt;div&gt;&lt;input type=&quot;radio&quot; name=&quot;flavorGroup&quot; value=&quot;cherry&quot; data-bind=&quot;checked: spamFlavor&quot; /&gt; Cherry&lt;/div&gt;
+	&lt;div&gt;&lt;input type=&quot;radio&quot; name=&quot;flavorGroup&quot; value=&quot;almond&quot; data-bind=&quot;checked: spamFlavor&quot; /&gt; Almond&lt;/div&gt;
+	&lt;div&gt;&lt;input type=&quot;radio&quot; name=&quot;flavorGroup&quot; value=&quot;msg&quot; data-bind=&quot;checked: spamFlavor&quot; /&gt; Monosodium Glutamate&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var viewModel = {
+		wantsSpam: ko.observable(true),
+		spamFlavor: ko.observable(&quot;almond&quot;) // Initially selects only the Almond radio button
+    };
+    
+    // ... then later ...
+    viewModel.spamFlavor(&quot;msg&quot;); // Now only Monosodium Glutamate is checked
+&lt;/script&gt;</code></pre>
+
+<h3 id='parameters'>Parameters</h3>
+
+<ul>
+<li>
+<p>Main parameter</p>
+
+<p>KO sets the element&#8217;s checked state to match your parameter value. Any previous checked state will be overwritten. The way your parameter is interpreted depends on what type of element you&#8217;re binding to:</p>
+
+<ul>
+<li>
+<p>For <strong>checkboxes</strong>, KO will set the element to be <em>checked</em> when the parameter value is <code>true</code>, and <em>unchecked</em> when it is <code>false</code>. If you give a value that isn&#8217;t actually boolean, it will be interpreted loosely. This means that nonzero numbers and non-<code>null</code> objects and non-empty strings will all be interpreted as <code>true</code>, whereas zero, <code>null</code>, <code>undefined</code>, and empty strings will be interpreted as <code>false</code>.</p>
+
+<p>When the user checks or unchecks the checkbox, KO will set your model property to <code>true</code> or <code>false</code> accordingly.</p>
+
+<p>Special consideration is given if your parameter resolves to an <code>array</code>. In this case, KO will set the element to be <em>checked</em> if the value matches an item in the array, and <em>unchecked</em> if it is not contained in the array.</p>
+
+<p>When the user checks or unchecks the checkbox, KO will add or remove the value from the array accordingly.</p>
+</li>
+
+<li>
+<p>For <strong>radio buttons</strong>, KO will set the element to be <em>checked</em> if and only if the parameter value equals the radio button node&#8217;s <code>value</code> attribute. So, your parameter value should be a string. In the previous example, the radio button with <code>value=&quot;almond&quot;</code> was checked only when the view model&#8217;s <code>spamFlavor</code> property was equal to <code>&quot;almond&quot;</code>.</p>
+
+<p>When the user changes which radio button is selected, KO will set your model property to equal the <code>value</code> attribute of the selected radio button. In the preceding example, clicking on the radio button with <code>value=&quot;cherry&quot;</code> would set <code>viewModel.spamFlavor</code> to be <code>&quot;cherry&quot;</code>.</p>
+
+<p>Of course, this is most useful when you have multiple radio button elements bound to a single model property. To ensure that only <em>one</em> of those radio buttons can be checked at any one time, you should set all their <code>name</code> attributes to an arbitrary common value (e.g., the value <code>flavorGroup</code> in the preceding example) - doing this puts them into a group where only one can be selected.</p>
+</li>
+</ul>
+
+<p>If your parameter is an observable value, the binding will update the element&#8217;s checked state whenever the value changes. If the parameter isn&#8217;t observable, it will only set the element&#8217;s checked state once and will not update it again later.</p>
+</li>
+
+<li>
+<p>Additional parameters</p>
+
+<p>None</p>
+</li>
+</ul>
+
+<h3 id='dependencies'>Dependencies</h3>
+
+<p>None, other than the core Knockout library.</p>    
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+<h4>Source code: A SPARQL Query</h4>	
+<script type="syntaxhighlighter" class="brush: xml"><![CDATA[
+	<select id="whatGovernorsAre" resultMap="resultMap">
+
+		SELECT DISTINCT ?s ?isa 
+		WHERE {
+
+			?s a <http://dbpedia.org/ontology/Governor> ;
+			<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?isa .
+		
+		} LIMIT 100
+	
+	</select>
+]]></script>
+
+<h4>Source code: A Result Mapping</h4>	
+<script type="syntaxhighlighter" class="brush: xml"><![CDATA[
+	<resultMap id="resultMap" resultClass="org.twinkql.Governor">
+		<uniqueResult>s</uniqueResult>
+		<rowMap var="s" varType="localName" beanProperty="name"/>
+		<rowMap var="isa" varType="localName" beanProperty="isA[]"/>
+	</resultMap>
+]]></script>

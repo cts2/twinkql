@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : Introduction</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'documentation';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Getting started</h1>
+
+<ol>
+    <li><a href="introduction.html">How KO works and what benefits it brings</a></li>
+    <li><a href="installation.html">Downloading and installing</a></li>
+</ol>
+
+<h1>Observables</h1>
+
+<ol>
+    <li><a href="observables.html">Creating <em>view models</em> with <em>observables</em></a></li>
+    <li><a href="computedObservables.html">Using <em>computed observables</em></a></li>
+    <li><a href="observableArrays.html">Working with <em>observable arrays</em></a></li>	
+</ol>
+
+<h1>Using built-in bindings</h1>
+
+<h2>Controlling text and appearance</h2>
+<ol>
+    <li><a href="visible-binding.html">The <code>visible</code> binding</a></li>
+    <li><a href="text-binding.html">The <code>text</code> binding</a></li>
+    <li><a href="html-binding.html">The <code>html</code> binding</a></li>
+    <li><a href="css-binding.html">The <code>css</code> binding</a></li>
+    <li><a href="style-binding.html">The <code>style</code> binding</a></li>
+    <li><a href="attr-binding.html">The <code>attr</code> binding</a></li>
+</ol>
+
+<h2>Control flow</h2>
+<ol>
+    <li><a href="foreach-binding.html">The <code>foreach</code> binding</a></li>
+    <li><a href="if-binding.html">The <code>if</code> binding</a></li>
+    <li><a href="ifnot-binding.html">The <code>ifnot</code> binding</a></li>
+    <li><a href="with-binding.html">The <code>with</code> binding</a></li>
+</ol>
+
+<h2>Working with form fields</h2>
+<ol>
+    <li><a href="click-binding.html">The <code>click</code> binding</a></li>
+    <li><a href="event-binding.html">The <code>event</code> binding</a></li>
+    <li><a href="submit-binding.html">The <code>submit</code> binding</a></li>
+    <li><a href="enable-binding.html">The <code>enable</code> binding</a></li>
+    <li><a href="disable-binding.html">The <code>disable</code> binding</a></li>
+    <li><a href="value-binding.html">The <code>value</code> binding</a></li>
+    <li><a href="hasfocus-binding.html">The <code>hasfocus</code> binding</a></li>
+    <li><a href="checked-binding.html">The <code>checked</code> binding</a></li>
+    <li><a href="options-binding.html">The <code>options</code> binding</a></li>
+    <li><a href="selectedOptions-binding.html">The <code>selectedOptions</code> binding</a></li>    
+    <li><a href="uniqueName-binding.html">The <code>uniqueName</code> binding</a></li>		
+</ol>
+
+<h2>Creating custom bindings</h2>
+<ol>
+    <li><a href="custom-bindings.html">Creating custom bindings</a></li>
+    <li><a href="custom-bindings-controlling-descendant-bindings.html">Controlling descendant bindings</a></li>
+    <li><a href="custom-bindings-for-virtual-elements.html">Supporting virtual elements</a></li>
+</ol>
+
+<h2>Rendering templates</h2>
+<ol>
+    <li><a href="template-binding.html">The <code>template</code> binding</a></li>
+</ol>
+
+<h2>Further techniques</h2>
+<ol>
+    <li><a href="json-data.html">Loading and saving JSON data</a></li>
+    <li><a href="extenders.html">Extending observables</a></li>
+    <li><a href="throttle-extender.html">The <code>throttle</code> extender</a></li>
+    <li><a href="unobtrusive-event-handling.html">Unobtrusive event handling</a></li>
+    <li><a href="fn.html">Using <code>fn</code> to add custom functions</a></li>
+</ol>
+
+<h2>Plugins</h2>
+<ol>
+    <li><a href="plugins-mapping.html">The <code>mapping</code> plugin</a></li>
+</ol>
+
+<h1>More information</h1>
+<ol>
+    <li><a href="browser-support.html">Browser support</a></li>
+    <li><a href="http://groups.google.com/group/knockoutjs">Getting help</a></li>
+    <li><a href="links.html">Links to tutorials &amp; examples</a></li>
+    <li><a href="amd-loading.html">Usage with AMD using RequireJs (Asynchronous Module Definition)</a></li>
+</ol>
+
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="documentation sticker">
+		    <div class="content">
+		    	<h1>Introduction</h1>	
+		    	<p>Knockout is a JavaScript library that helps you to create rich, responsive display and editor user interfaces with a clean underlying data model. Any time you have sections of UI that update dynamically (e.g., changing depending on the user&#8217;s actions or when an external data source changes), KO can help you implement it more simply and maintainably.</p>
+
+<p>Headline features:</p>
+
+<ul>
+<li><strong>Elegant dependency tracking</strong> - automatically updates the right parts of your UI whenever your data model changes.</li>
+
+<li><strong>Declarative bindings</strong> - a simple and obvious way to connect parts of your UI to your data model. You can construct a complex dynamic UIs easily using arbitrarily nested binding contexts.</li>
+
+<li><strong>Trivially extensible</strong> - implement custom behaviors as new declarative bindings for easy reuse in just a few lines of code.</li>
+</ul>
+
+<p>Additional benefits:</p>
+
+<ul>
+<li><strong>Pure JavaScript library</strong> - works with any server or client-side technology</li>
+
+<li><strong>Can be added on top of your existing web application</strong> without requiring major architectural changes</li>
+
+<li><strong>Compact</strong> - around 13kb after gzipping</li>
+
+<li><strong>Works on any mainstream browser</strong> (IE 6+, Firefox 2+, Chrome, Safari, others)</li>
+
+<li><strong>Comprehensive suite of specifications</strong> (developed BDD-style) means its correct functioning can easily be verified on new browsers and platforms</li>
+</ul>
+
+<p>Developers familiar with Ruby on Rails, ASP.NET MVC, or other MV* technologies may see MVVM as a real-time form of MVC with declarative syntax. In another sense, you can think of KO as a general way to make UIs for editing JSON data&#8230; whatever works for you :)</p>
+
+<h2 id='ok_how_do_you_use_it'>OK, how do you use it?</h2>
+
+<p>The quickest and most fun way to get started is by working through the <a href='http://learn.knockoutjs.com'>interactive tutorials</a>. Once you&#8217;ve got to grips with the basics, explore the <a href='../examples/index.html'>live examples</a> and then have a go with it in your own project.</p>
+
+<h2 id='is_ko_intended_to_compete_with_jquery_or_prototype_etc_or_work_with_it'>Is KO intended to compete with jQuery (or Prototype, etc.) or work with it?</h2>
+
+<p>Everyone loves jQuery! It&#8217;s an outstanding replacement for the clunky, inconsistent DOM API we had to put up with in the past. jQuery is an excellent low-level way to manipulate elements and event handlers in a web page. I certainly still use jQuery for low-level DOM manipulation. KO solves a different problem.</p>
+
+<p>As soon as your UI gets nontrivial and has a few overlapping behaviors, things can get tricky and expensive to maintain if you only use jQuery. Consider an example: you&#8217;re displaying a list of items, stating the number of items in that list, and want to enable an &#8216;Add&#8217; button only when there are fewer than 5 items. jQuery doesn&#8217;t have a concept of an underlying data model, so to get the number of items you have to infer it from the number of TRs in a table or the number of DIVs with a certain CSS class. Maybe the number of items is displayed in some SPAN, and you have to remember to update that SPAN&#8217;s text when the user adds an item. You also must remember to disable the &#8216;Add&#8217; button when the number of TRs is 5. Later, you&#8217;re asked also to implement a &#8216;Delete&#8217; button and you have to figure out which DOM elements to change whenever it&#8217;s clicked.</p>
+
+<h3 id='how_is_knockout_different'>How is Knockout different?</h3>
+
+<p>It&#8217;s much easier with KO. It lets you scale up in complexity without fear of introducing inconsistencies. Just represent your items as a JavaScript array, and then use a <code>foreach</code> binding to transform this array into a TABLE or set of DIVs. Whenever the array changes, the UI changes to match (you don&#8217;t have to figure out how to inject new TRs or where to inject them). The rest of the UI stays in sync. For example, you can declaratively bind a SPAN to display the number of items as follows:</p>
+
+<pre><code>There are &lt;span data-bind=&quot;text: myItems().count&quot;&gt;&lt;/span&gt; items</code></pre>
+
+<p>That&#8217;s it! You don&#8217;t have to write code to update it; it updates on its own when the <code>myItems</code> array changes. Similarly, to make the &#8216;Add&#8217; button enable or disable depending on the number of items, just write:</p>
+
+<pre><code>&lt;button data-bind=&quot;enable: myItems().count &lt; 5&quot;&gt;Add&lt;/button&gt;</code></pre>
+
+<p>Later, when you&#8217;re asked to implement the &#8216;Delete&#8217; functionality, you don&#8217;t have to figure out what bits of the UI it has to interact with; you just make it alter the underlying data model.</p>
+
+<p>To summarise: KO doesn&#8217;t compete with jQuery or similar low-level DOM APIs. KO provides a complementary, high-level way to link a data model to a UI. KO itself doesn&#8217;t depend on jQuery, but you can certainly use jQuery at the same time, and indeed that&#8217;s often useful if you want things like animated transitions.</p>    
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

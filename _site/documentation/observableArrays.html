@@ -1,0 +1,331 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : Observable Arrays</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'documentation';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Getting started</h1>
+
+<ol>
+    <li><a href="introduction.html">How KO works and what benefits it brings</a></li>
+    <li><a href="installation.html">Downloading and installing</a></li>
+</ol>
+
+<h1>Observables</h1>
+
+<ol>
+    <li><a href="observables.html">Creating <em>view models</em> with <em>observables</em></a></li>
+    <li><a href="computedObservables.html">Using <em>computed observables</em></a></li>
+    <li><a href="observableArrays.html">Working with <em>observable arrays</em></a></li>	
+</ol>
+
+<h1>Using built-in bindings</h1>
+
+<h2>Controlling text and appearance</h2>
+<ol>
+    <li><a href="visible-binding.html">The <code>visible</code> binding</a></li>
+    <li><a href="text-binding.html">The <code>text</code> binding</a></li>
+    <li><a href="html-binding.html">The <code>html</code> binding</a></li>
+    <li><a href="css-binding.html">The <code>css</code> binding</a></li>
+    <li><a href="style-binding.html">The <code>style</code> binding</a></li>
+    <li><a href="attr-binding.html">The <code>attr</code> binding</a></li>
+</ol>
+
+<h2>Control flow</h2>
+<ol>
+    <li><a href="foreach-binding.html">The <code>foreach</code> binding</a></li>
+    <li><a href="if-binding.html">The <code>if</code> binding</a></li>
+    <li><a href="ifnot-binding.html">The <code>ifnot</code> binding</a></li>
+    <li><a href="with-binding.html">The <code>with</code> binding</a></li>
+</ol>
+
+<h2>Working with form fields</h2>
+<ol>
+    <li><a href="click-binding.html">The <code>click</code> binding</a></li>
+    <li><a href="event-binding.html">The <code>event</code> binding</a></li>
+    <li><a href="submit-binding.html">The <code>submit</code> binding</a></li>
+    <li><a href="enable-binding.html">The <code>enable</code> binding</a></li>
+    <li><a href="disable-binding.html">The <code>disable</code> binding</a></li>
+    <li><a href="value-binding.html">The <code>value</code> binding</a></li>
+    <li><a href="hasfocus-binding.html">The <code>hasfocus</code> binding</a></li>
+    <li><a href="checked-binding.html">The <code>checked</code> binding</a></li>
+    <li><a href="options-binding.html">The <code>options</code> binding</a></li>
+    <li><a href="selectedOptions-binding.html">The <code>selectedOptions</code> binding</a></li>    
+    <li><a href="uniqueName-binding.html">The <code>uniqueName</code> binding</a></li>		
+</ol>
+
+<h2>Creating custom bindings</h2>
+<ol>
+    <li><a href="custom-bindings.html">Creating custom bindings</a></li>
+    <li><a href="custom-bindings-controlling-descendant-bindings.html">Controlling descendant bindings</a></li>
+    <li><a href="custom-bindings-for-virtual-elements.html">Supporting virtual elements</a></li>
+</ol>
+
+<h2>Rendering templates</h2>
+<ol>
+    <li><a href="template-binding.html">The <code>template</code> binding</a></li>
+</ol>
+
+<h2>Further techniques</h2>
+<ol>
+    <li><a href="json-data.html">Loading and saving JSON data</a></li>
+    <li><a href="extenders.html">Extending observables</a></li>
+    <li><a href="throttle-extender.html">The <code>throttle</code> extender</a></li>
+    <li><a href="unobtrusive-event-handling.html">Unobtrusive event handling</a></li>
+    <li><a href="fn.html">Using <code>fn</code> to add custom functions</a></li>
+</ol>
+
+<h2>Plugins</h2>
+<ol>
+    <li><a href="plugins-mapping.html">The <code>mapping</code> plugin</a></li>
+</ol>
+
+<h1>More information</h1>
+<ol>
+    <li><a href="browser-support.html">Browser support</a></li>
+    <li><a href="http://groups.google.com/group/knockoutjs">Getting help</a></li>
+    <li><a href="links.html">Links to tutorials &amp; examples</a></li>
+    <li><a href="amd-loading.html">Usage with AMD using RequireJs (Asynchronous Module Definition)</a></li>
+</ol>
+
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="documentation sticker">
+		    <div class="content">
+		    	<h1>Observable Arrays</h1>	
+		    	<p>If you want to detect and respond to changes on one object, you&#8217;d use <a href='observables.html'>observables</a>. If you want to detect and respond to changes of a <em>collection of things</em>, use an <code>observableArray</code>. This is useful in many scenarios where you&#8217;re displaying or editing multiple values and need repeated sections of UI to appear and disappear as items are added and removed.</p>
+
+<h3 id='example'>Example</h3>
+
+<pre><code>var myObservableArray = ko.observableArray();    // Initially an empty array
+myObservableArray.push(&#39;Some value&#39;);            // Adds the value and notifies observers</code></pre>
+
+<p>To see how you can bind the <code>observableArray</code> to a UI and let the user modify it, see <a href='../examples/simpleList.html'>the simple list example</a>.</p>
+
+<h3 id='key_point_an_observablearray_tracks_which_objects_are_in_the_array_not_the_state_of_those_objects'>Key point: An observableArray tracks which objects are <em>in</em> the array, <em>not</em> the state of those objects</h3>
+
+<p>Simply putting an object into an <code>observableArray</code> doesn&#8217;t make all of that object&#8217;s properties themselves observable. Of course, you can make those properties observable if you wish, but that&#8217;s an independent choice. An <code>observableArray</code> just tracks which objects it holds, and notifies listeners when objects are added or removed.</p>
+
+<h2 id='prepopulating_an_observablearray'>Prepopulating an observableArray</h2>
+
+<p>If you want your observable array <strong>not</strong> to start empty, but to contain some initial items, pass those items as an array to the constructor. For example,</p>
+
+<pre><code>// This observable array initially contains three objects
+var anotherObservableArray = ko.observableArray([
+	{ name: &quot;Bungle&quot;, type: &quot;Bear&quot; },
+	{ name: &quot;George&quot;, type: &quot;Hippo&quot; },
+	{ name: &quot;Zippy&quot;, type: &quot;Unknown&quot; }
+]);</code></pre>
+
+<h2 id='reading_information_from_an_observablearray'>Reading information from an observableArray</h2>
+
+<p>Behind the scenes, an <code>observableArray</code> is actually an <a href='observables.html'>observable</a> whose value is an array (plus, <code>observableArray</code> adds some additional features I&#8217;ll describe in a moment). So, you can get the underlying JavaScript array by invoking the <code>observableArray</code> as a function with no parameters, just like any other observable. Then you can read information from that underlying array. For example,</p>
+
+<pre><code>alert(&#39;The length of the array is &#39; + myObservableArray().length);
+alert(&#39;The first element is &#39; + myObservableArray()[0]);</code></pre>
+
+<p>Technically you can use any of the native JavaScript array functions to operate on that underlying array, but normally there&#8217;s a better alternative. KO&#8217;s <code>observableArray</code> has equivalent functions of its own, and they&#8217;re more useful because:</p>
+
+<ol>
+<li>They work on all targeted browsers. (For example, the native JavaScript <code>indexOf</code> function doesn&#8217;t work on IE 8 or earlier, but KO&#8217;s <code>indexOf</code> works everywhere.)</li>
+
+<li>For functions that modify the contents of the array, such as <code>push</code> and <code>splice</code>, KO&#8217;s methods automatically trigger the dependency tracking mechanism so that all registered listeners are notified of the change, and your UI is automatically updated.</li>
+
+<li>The syntax is more convenient. To call KO&#8217;s <code>push</code> method, just write <code>myObservableArray.push(...)</code>. This is slightly nicer than calling the underlying array&#8217;s <code>push</code> method by writing <code>myObservableArray().push(...)</code>.</li>
+</ol>
+
+<p>The rest of this page describes <code>observableArray</code>&#8217;s functions for reading and writing array information.</p>
+
+<h3 id='indexof'>indexOf</h3>
+
+<p>The <code>indexOf</code> function returns the index of the first array item that equals your parameter. For example, <code>myObservableArray.indexOf(&#39;Blah&#39;)</code> will return the zero-based index of the first array entry that equals <code>Blah</code>, or the value <code>-1</code> if no matching value was found.</p>
+
+<h3 id='slice'>slice</h3>
+
+<p>The <code>slice</code> function is the <code>observableArray</code> equivalent of the native JavaScript <code>slice</code> function (i.e., it returns the entries of your array from a given start index up to a given end index). Calling <code>myObservableArray.slice(...)</code> is equivalent to calling the same method on the underlying array (i.e., <code>myObservableArray().slice(...)</code>).</p>
+
+<h2 id='manipulating_an_observablearray'>Manipulating an observableArray</h2>
+
+<p><code>observableArray</code> exposes a familiar set of functions for modifying the contents of the array and notifying listeners.</p>
+
+<h3 id='pop_push_shift_unshift_reverse_sort_splice'>pop, push, shift, unshift, reverse, sort, splice</h3>
+
+<p>All of these functions are equivalent to running the native JavaScript array functions on the underlying array, and then notifying listeners about the change:</p>
+
+<ul>
+<li>
+<p><code>myObservableArray.push(&#39;Some new value&#39;)</code> adds a new item to the end of array</p>
+</li>
+
+<li>
+<p><code>myObservableArray.pop()</code> removes the last value from the array and returns it</p>
+</li>
+
+<li>
+<p><code>myObservableArray.unshift(&#39;Some new value&#39;)</code> inserts a new item at the beginning of the array</p>
+</li>
+
+<li>
+<p><code>myObservableArray.shift()</code> removes the first value from the array and returns it</p>
+</li>
+
+<li>
+<p><code>myObservableArray.reverse()</code> reverses the order of the array</p>
+</li>
+
+<li>
+<p><code>myObservableArray.sort()</code> sorts the array contents.</p>
+
+<ul>
+<li>By default, it sorts alphabetically (for strings) or numerically (for numbers).</li>
+
+<li>Optionally, you can pass a function to control how the array should be sorted. Your function should accept any two objects from the array and return a negative value if the first argument is smaller, a positive value is the second is smaller, or zero to treat them as equal. For example, to sort an array of &#8216;person&#8217; objects by last name, you could write <code>myObservableArray.sort(function(left, right) { return left.lastName == right.lastName ? 0 : (left.lastName &lt; right.lastName ? -1 : 1) })</code></li>
+</ul>
+</li>
+
+<li>
+<p><code>myObservableArray.splice()</code> removes and returns a given number of elements starting from a given index. For example, <code>myObservableArray.splice(1, 3)</code> removes three elements starting from index position 1 (i.e., the 2nd, 3rd, and 4th elements) and returns them as an array.</p>
+</li>
+</ul>
+
+<p>For more details about these <code>observableArray</code> functions, see the equivalent documentation of the <a href='http://www.w3schools.com/jsref/jsref_obj_array.asp'>standard JavaScript array functions</a>.</p>
+
+<h3 id='remove_and_removeall'>remove and removeAll</h3>
+
+<p><code>observableArray</code> adds some more useful methods that aren&#8217;t found on JavaScript arrays by default:</p>
+
+<ul>
+<li><code>myObservableArray.remove(someItem)</code> removes all values that equal <code>someItem</code> and returns them as an array</li>
+
+<li><code>myObservableArray.remove(function(item) { return item.age &lt; 18 })</code> removes all values whose <code>age</code> property is less than 18, and returns them as an array</li>
+
+<li><code>myObservableArray.removeAll([&#39;Chad&#39;, 132, undefined])</code> removes all values that equal <code>&#39;Chad&#39;</code>, <code>123</code>, or <code>undefined</code> and returns them as an array</li>
+
+<li><code>myObservableArray.removeAll()</code> removes all values and returns them as an array</li>
+</ul>
+
+<h3 id='destroy_and_destroyall_note_usually_relevant_to_ruby_on_rails_developers_only'>destroy and destroyAll (Note: Usually relevant to Ruby on Rails developers only)</h3>
+
+<p>The <code>destroy</code> and <code>destroyAll</code> functions are mainly intended as a convenience for developers using Ruby on Rails:</p>
+
+<ul>
+<li><code>myObservableArray.destroy(someItem)</code> finds any objects in the array that equal <code>someItem</code> and gives them a special property called <code>_destroy</code> with value <code>true</code></li>
+
+<li><code>myObservableArray.destroy(function(someItem) { return someItem.age &lt; 18 })</code> finds any objects in the array whose <code>age</code> property is less than 18, and gives those objects a special property called <code>_destroy</code> with value <code>true</code></li>
+
+<li><code>myObservableArray.destroyAll([&#39;Chad&#39;, 132, undefined])</code> finds any objects in the array that equal <code>&#39;Chad&#39;</code>, <code>123</code>, or <code>undefined</code> and gives them a special property called <code>_destroy</code> with value <code>true</code></li>
+
+<li><code>myObservableArray.destroyAll()</code> gives a special property called <code>_destroy</code> with value <code>true</code> to all objects in the array</li>
+</ul>
+
+<p>So, what&#8217;s this <code>_destroy</code> thing all about? As I mentioned, it&#8217;s only really interesting to Rails developers. The convention in Rails is that, when you pass into an action a JSON object graph, the framework can automatically convert it to an ActiveRecord object graph and then save it to your database. It knows which of the objects are already in your database, and issues the correct INSERT or UPDATE statements. To tell the framework to DELETE a record, you just mark it with <code>_destroy</code> set to <code>true</code>.</p>
+
+<p>Note that when KO renders a <code>foreach</code> binding, it automatically hides any objects marked with <code>_destroy</code> equal to <code>true</code>. So, you can have some kind of &#8220;delete&#8221; button that invokes the <code>destroy(someItem)</code> method on the array, and this will immediately cause the specified item to vanish from the visible UI. Later, when you submit the JSON object graph to Rails, that item will also be deleted from the database (while the other array items will be inserted or updated as usual).</p>    
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

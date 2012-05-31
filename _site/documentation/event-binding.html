@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : The "event" binding</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'documentation';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Getting started</h1>
+
+<ol>
+    <li><a href="introduction.html">How KO works and what benefits it brings</a></li>
+    <li><a href="installation.html">Downloading and installing</a></li>
+</ol>
+
+<h1>Observables</h1>
+
+<ol>
+    <li><a href="observables.html">Creating <em>view models</em> with <em>observables</em></a></li>
+    <li><a href="computedObservables.html">Using <em>computed observables</em></a></li>
+    <li><a href="observableArrays.html">Working with <em>observable arrays</em></a></li>	
+</ol>
+
+<h1>Using built-in bindings</h1>
+
+<h2>Controlling text and appearance</h2>
+<ol>
+    <li><a href="visible-binding.html">The <code>visible</code> binding</a></li>
+    <li><a href="text-binding.html">The <code>text</code> binding</a></li>
+    <li><a href="html-binding.html">The <code>html</code> binding</a></li>
+    <li><a href="css-binding.html">The <code>css</code> binding</a></li>
+    <li><a href="style-binding.html">The <code>style</code> binding</a></li>
+    <li><a href="attr-binding.html">The <code>attr</code> binding</a></li>
+</ol>
+
+<h2>Control flow</h2>
+<ol>
+    <li><a href="foreach-binding.html">The <code>foreach</code> binding</a></li>
+    <li><a href="if-binding.html">The <code>if</code> binding</a></li>
+    <li><a href="ifnot-binding.html">The <code>ifnot</code> binding</a></li>
+    <li><a href="with-binding.html">The <code>with</code> binding</a></li>
+</ol>
+
+<h2>Working with form fields</h2>
+<ol>
+    <li><a href="click-binding.html">The <code>click</code> binding</a></li>
+    <li><a href="event-binding.html">The <code>event</code> binding</a></li>
+    <li><a href="submit-binding.html">The <code>submit</code> binding</a></li>
+    <li><a href="enable-binding.html">The <code>enable</code> binding</a></li>
+    <li><a href="disable-binding.html">The <code>disable</code> binding</a></li>
+    <li><a href="value-binding.html">The <code>value</code> binding</a></li>
+    <li><a href="hasfocus-binding.html">The <code>hasfocus</code> binding</a></li>
+    <li><a href="checked-binding.html">The <code>checked</code> binding</a></li>
+    <li><a href="options-binding.html">The <code>options</code> binding</a></li>
+    <li><a href="selectedOptions-binding.html">The <code>selectedOptions</code> binding</a></li>    
+    <li><a href="uniqueName-binding.html">The <code>uniqueName</code> binding</a></li>		
+</ol>
+
+<h2>Creating custom bindings</h2>
+<ol>
+    <li><a href="custom-bindings.html">Creating custom bindings</a></li>
+    <li><a href="custom-bindings-controlling-descendant-bindings.html">Controlling descendant bindings</a></li>
+    <li><a href="custom-bindings-for-virtual-elements.html">Supporting virtual elements</a></li>
+</ol>
+
+<h2>Rendering templates</h2>
+<ol>
+    <li><a href="template-binding.html">The <code>template</code> binding</a></li>
+</ol>
+
+<h2>Further techniques</h2>
+<ol>
+    <li><a href="json-data.html">Loading and saving JSON data</a></li>
+    <li><a href="extenders.html">Extending observables</a></li>
+    <li><a href="throttle-extender.html">The <code>throttle</code> extender</a></li>
+    <li><a href="unobtrusive-event-handling.html">Unobtrusive event handling</a></li>
+    <li><a href="fn.html">Using <code>fn</code> to add custom functions</a></li>
+</ol>
+
+<h2>Plugins</h2>
+<ol>
+    <li><a href="plugins-mapping.html">The <code>mapping</code> plugin</a></li>
+</ol>
+
+<h1>More information</h1>
+<ol>
+    <li><a href="browser-support.html">Browser support</a></li>
+    <li><a href="http://groups.google.com/group/knockoutjs">Getting help</a></li>
+    <li><a href="links.html">Links to tutorials &amp; examples</a></li>
+    <li><a href="amd-loading.html">Usage with AMD using RequireJs (Asynchronous Module Definition)</a></li>
+</ol>
+
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="documentation sticker">
+		    <div class="content">
+		    	<h1>The "event" binding</h1>	
+		    	<h3 id='purpose'>Purpose</h3>
+
+<p>The <code>event</code> binding allows you to add an event handler for a specified event so that your chosen JavaScript function will be invoked when that event is triggered for the associated DOM element. This can be used to bind to any event, such as <code>keypress</code>, <code>mouseover</code> or <code>mouseout</code>.</p>
+
+<h3 id='example'>Example</h3>
+
+<pre><code>&lt;div&gt;
+    &lt;div data-bind=&quot;event: { mouseover: enableDetails, mouseout: disableDetails }&quot;&gt;
+        Mouse over me
+    &lt;/div&gt;
+    &lt;div data-bind=&quot;visible: detailsEnabled&quot;&gt;
+        Details
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var viewModel = {
+        detailsEnabled: ko.observable(false),
+        enableDetails: function() {
+            this.detailsEnabled(true);
+        },
+        disableDetails: function() {
+            this.detailsEnabled(false);
+        }
+    };
+    ko.applyBindings(viewModel);
+&lt;/script&gt;</code></pre>
+
+<p>Now, moving your mouse pointer on or off of the first element will invoke methods on the view model to toggle the <code>detailsEnabled</code> observable. The second element reacts to changes to the value of <code>detailsEnabled</code> by either showing or hiding itself.</p>
+
+<h3 id='parameters'>Parameters</h3>
+
+<ul>
+<li>
+<p>Main parameter</p>
+
+<p>You should pass a JavaScript object in which the property names correspond to event names, and the values correspond to the function that you want to bind to the event.</p>
+
+<p>You can reference any JavaScript function - it doesn&#8217;t have to be a function on your view model. You can reference a function on any object by writing <code>event { mouseover: someObject.someFunction }</code>.</p>
+</li>
+
+<li>
+<p>Additional parameters</p>
+
+<ul>
+<li>None</li>
+</ul>
+</li>
+</ul>
+
+<h3 id='note_1_passing_a_current_item_as_a_parameter_to_your_handler_function'>Note 1: Passing a &#8220;current item&#8221; as a parameter to your handler function</h3>
+
+<p>When calling your handler, Knockout will supply the current model value as the first parameter. This is particularly useful if you&#8217;re rendering some UI for each item in a collection, and you need to know which item the event refers to. For example,</p>
+
+<pre><code>&lt;ul data-bind=&quot;foreach: places&quot;&gt;
+    &lt;li data-bind=&quot;text: $data, event: { mouseover: $parent.logMouseOver }&quot;&gt; &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You seem to be interested in: &lt;span data-bind=&quot;text: lastInterest&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+
+ &lt;script type=&quot;text/javascript&quot;&gt;
+     function MyViewModel() {
+         var self = this;
+         self.lastInterest = ko.observable();
+         self.places = ko.observableArray([&#39;London&#39;, &#39;Paris&#39;, &#39;Tokyo&#39;]);
+
+         // The current item will be passed as the first parameter, so we know which place was hovered over
+         self.logMouseOver = function(place) {
+             self.lastInterest(place);
+         }
+     }
+     ko.applyBindings(new MyViewModel());
+&lt;/script&gt;</code></pre>
+
+<p>Two points to note about this example:</p>
+
+<ul>
+<li>If you&#8217;re inside a nested <a href='binding-context.html'>binding context</a>, for example if you&#8217;re inside a <code>foreach</code> or a <code>with</code> block, but your handler function is on the root viewmodel or some other parent context, you&#8217;ll need to use a prefix such as <code>$parent</code> or <code>$root</code> to locate the handler function.</li>
+
+<li>In your viewmodel, it&#8217;s often useful to declare <code>self</code> (or some other variable) as an alias for <code>this</code>. Doing so avoids any problems with <code>this</code> being redefined to mean something else in event handlers or Ajax request callbacks.</li>
+</ul>
+
+<h3 id='note_2_accessing_the_event_object_or_passing_more_parameters'>Note 2: Accessing the event object, or passing more parameters</h3>
+
+<p>In some scenarios, you may need to access the DOM event object associated with your event. Knockout will pass the event as the second parameter to your function, as in this example:</p>
+
+<pre><code>&lt;div data-bind=&quot;event: { mouseover: myFunction }&quot;&gt;
+    Mouse over me
+&lt;/div&gt;
+
+ &lt;script type=&quot;text/javascript&quot;&gt;
+    var viewModel = {
+        myFunction: function(data, event) {
+            if (event.shiftKey) {
+                //do something different when user has shift key down
+            } else {
+                //do normal action
+            }
+        }
+    };
+    ko.applyBindings(viewModel);
+&lt;/script&gt;</code></pre>
+
+<p>If you need to pass more parameters, one way to do it is by wrapping your handler in a function literal that takes in a parameter, as in this example:</p>
+
+<pre><code>&lt;div data-bind=&quot;event: { mouseover: function(data, event) { myFunction(&#39;param1&#39;, &#39;param2&#39;, data, event) } }&quot;&gt;
+    Mouse over me
+&lt;/div&gt;</code></pre>
+
+<p>Now, KO will pass the event to your function literal, which is then available to be passed to your handler.</p>
+
+<p>Alternatively, if you prefer to avoid the function literal in your view, you can use the <a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind'>bind</a> function, which attaches specific parameter values to a function reference:</p>
+
+<pre><code>&lt;button data-bind=&quot;event: { mouseover: myFunction.bind($data, &#39;param1&#39;, &#39;param2&#39;) }&quot;&gt;
+    Click me
+&lt;/button&gt;</code></pre>
+
+<h3 id='note_3_allowing_the_default_action'>Note 3: Allowing the default action</h3>
+
+<p>By default, Knockout will prevent the event from taking any default action. For example if you use the <code>event</code> binding to capture the <code>keypress</code> event of an <code>input</code> tag, the browser will only call your handler function and will <em>not</em> add the value of the key to the <code>input</code> element&#8217;s value. A more common example is using <a href='click-binding.html'>the click binding</a>, which internally uses this binding, where your handler function will be called, but the browser will <em>not</em> navigate to the link&#8217;s <code>href</code>. This is a useful default because when you use the <code>click</code> binding, it&#8217;s normally because you&#8217;re using the link as part of a UI that manipulates your view model, not as a regular hyperlink to another web page.</p>
+
+<p>However, if you <em>do</em> want to let the default action proceed, just return <code>true</code> from your <code>event</code> handler function.</p>
+
+<h3 id='note_4_preventing_the_event_from_bubbling'>Note 4: Preventing the event from bubbling</h3>
+
+<p>By default, Knockout will allow the event to continue to bubble up to any higher level event handlers. For example, if your element is handling a <code>mouseover</code> event and a parent of the element also handles that same event, then the event handler for both elements will be triggered. If necessary, you can prevent the event from bubbling by including an additional binding that is named <code>youreventBubble</code> and passing false to it, as in this example:</p>
+
+<pre><code>    &lt;div data-bind=&quot;event: { mouseover: myDivHandler }&quot;&gt;
+        &lt;button data-bind=&quot;event: { mouseover: myButtonHandler }, mouseoverBubble: false&quot;&gt;
+            Click me
+        &lt;/button&gt;
+    &lt;/div&gt;</code></pre>
+
+<p>Normally, in this case <code>myButtonHandler</code> would be called first, then the event would bubble up to <code>myDivHandler</code>. However, the <code>mouseoverBubble</code> binding that we added with a value of <code>false</code> prevents the event from making it past <code>myButtonHandler</code>.</p>
+
+<h3 id='dependencies'>Dependencies</h3>
+
+<p>None, other than the core Knockout library.</p>    
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

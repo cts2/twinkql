@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : Contacts editor example</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'examples';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Introductory examples</h1>
+<ul>
+    <li>
+        <strong><a href="helloWorld.html">Hello world</a></strong>
+        <small>Working with <code>ko.observable</code> &amp; <code>ko.computed</code></small>
+    </li>
+    <li>
+        <strong><a href="clickCounter.html">Click counter</a></strong>
+        <small>Using declarative bindings and how KO tracks dependencies automatically</small>
+    </li>
+    <li>
+        <strong><a href="simpleList.html">Simple list</a></strong>
+        <small>Working with <code>ko.observableArray</code></small>
+    </li>
+    <li>
+        <strong><a href="betterList.html">Better list</a></strong>
+        <small>Combining more behaviors</small>
+    </li>
+    <li>
+        <strong><a href="controlTypes.html">Control types</a></strong>
+        <small>Reference: All HTML control types</small>
+    </li>
+    <li>
+        <strong><a href="collections.html">Working with Collections</a></strong>
+        <small>Working with arrays, including nested ones</small>
+    </li>
+    <li>
+        <strong><a href="grid.html">Paged grid</a></strong>
+        <small>Creating reusable components, i.e., plugins</small>
+    </li>
+    <li>
+        <strong><a href="animatedTransitions.html">Animated transitions</a></strong>
+        <small>Two simple ways to implement animated transitions (one of which is a custom binding)</small>
+    </li>
+</ul>
+
+<h1>Detailed examples</h1>
+<ul>
+    <li>
+        <strong><a href="contactsEditor.html">Contacts editor</a></strong>
+        <small>Editing a nested list</small>
+    </li>
+    <li>
+        <strong><a href="gridEditor.html">Editable grid</a></strong>
+        <small>Using the 'foreach' binding and integrating with jQuery Validation</small>
+    </li>
+    <li>
+        <strong><a href="cartEditor.html">Shopping cart screen</a></strong>
+        <small>Includes nested dropdowns and a string formatting function</small>
+    </li>
+    <li>
+        <strong><a href="twitter.html">Twitter client</a></strong>
+        <small>Combines templating, declarative bindings, and Ajax</small>
+    </li>
+</ul>
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="example sticker">
+		    <div class="content">
+		    	<h1>Contacts editor example</h1>	
+		    	<p>This examples shows a fairly typical way to edit a nested data structure. Check the HTML source code to see how simple the viewmodel is, and how straightforward it is to bind the view to it.</p>
+<style type='text/css'>
+    .liveExample TR { vertical-align: top; }
+    .liveExample TABLE, .liveExample TD, .liveExample TH { padding: 0.2em; border-width: 0; margin: 0; }
+    .liveExample TD A { font-size: 0.8em; text-decoration: none; }
+    .liveExample table.contactsEditor > tbody > TR { border-bottom: 1px solid silver; }
+    .liveExample td input { width: 8em; }
+</style><h2>Live example</h2><div class='liveExample'>
+ 
+<h2>Contacts</h2>
+<div id='contactsList'>
+    <table class='contactsEditor'>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Phone numbers</th>
+        </tr>
+        <tbody data-bind='foreach: contacts'>
+            <tr>
+                <td>
+                    <input data-bind='value: firstName' />
+                    <div><a href='#' data-bind='click: $root.removeContact'>Delete</a></div>
+                </td>
+                <td><input data-bind='value: lastName' /></td>
+                <td>
+                    <table>
+                        <tbody data-bind='foreach: phones'>
+                            <tr>
+                                <td><input data-bind='value: type' /></td>
+                                <td><input data-bind='value: number' /></td>
+                                <td><a href='#' data-bind='click: $root.removePhone'>Delete</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a href='#' data-bind='click: $root.addPhone'>Add number</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p>
+    <button data-bind='click: addContact'>Add a contact</button>
+    <button data-bind='click: save, enable: contacts().length > 0'>Save to JSON</button>
+</p>
+
+<textarea data-bind='value: lastSavedJson' rows='5' cols='60' disabled='disabled'> </textarea>
+
+<script type='text/javascript'>
+/*<![CDATA[*/
+    var initialData = [
+        { firstName: "Danny", lastName: "LaRusso", phones: [
+            { type: "Mobile", number: "(555) 121-2121" },
+            { type: "Home", number: "(555) 123-4567"}]
+        },
+        { firstName: "Sensei", lastName: "Miyagi", phones: [
+            { type: "Mobile", number: "(555) 444-2222" },
+            { type: "Home", number: "(555) 999-1212"}]
+        }
+    ];
+
+    var ContactsModel = function(contacts) {
+        var self = this;
+        self.contacts = ko.observableArray(ko.utils.arrayMap(contacts, function(contact) {
+            return { firstName: contact.firstName, lastName: contact.lastName, phones: ko.observableArray(contact.phones) };
+        }));
+
+        self.addContact = function() {
+            self.contacts.push({
+                firstName: "",
+                lastName: "",
+                phones: ko.observableArray()
+            });
+        };
+
+        self.removeContact = function(contact) {
+            self.contacts.remove(contact);
+        };
+
+        self.addPhone = function(contact) {
+            contact.phones.push({
+                type: "",
+                number: ""
+            });
+        };
+
+        self.removePhone = function(phone) {
+            $.each(self.contacts(), function() { this.phones.remove(phone) })
+        };
+
+        self.save = function() {
+            self.lastSavedJson(JSON.stringify(ko.toJS(self.contacts), null, 2));
+        };
+
+        self.lastSavedJson = ko.observable("")
+    };
+
+    ko.applyBindings(new ContactsModel(initialData));
+/*]]>*/
+</script>
+</div><h2>Source code: View</h2><pre class='brush:html'> 
+&lt;h2&gt;Contacts&lt;/h2&gt;
+&lt;div id='contactsList'&gt;
+    &lt;table class='contactsEditor'&gt;
+        &lt;tr&gt;
+            &lt;th&gt;First name&lt;/th&gt;
+            &lt;th&gt;Last name&lt;/th&gt;
+            &lt;th&gt;Phone numbers&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tbody data-bind=&quot;foreach: contacts&quot;&gt;
+            &lt;tr&gt;
+                &lt;td&gt;
+                    &lt;input data-bind='value: firstName' /&gt;
+                    &lt;div&gt;&lt;a href='#' data-bind='click: $root.removeContact'&gt;Delete&lt;/a&gt;&lt;/div&gt;
+                &lt;/td&gt;
+                &lt;td&gt;&lt;input data-bind='value: lastName' /&gt;&lt;/td&gt;
+                &lt;td&gt;
+                    &lt;table&gt;
+                        &lt;tbody data-bind=&quot;foreach: phones&quot;&gt;
+                            &lt;tr&gt;
+                                &lt;td&gt;&lt;input data-bind='value: type' /&gt;&lt;/td&gt;
+                                &lt;td&gt;&lt;input data-bind='value: number' /&gt;&lt;/td&gt;
+                                &lt;td&gt;&lt;a href='#' data-bind='click: $root.removePhone'&gt;Delete&lt;/a&gt;&lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/tbody&gt;
+                    &lt;/table&gt;
+                    &lt;a href='#' data-bind='click: $root.addPhone'&gt;Add number&lt;/a&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+    &lt;button data-bind='click: addContact'&gt;Add a contact&lt;/button&gt;
+    &lt;button data-bind='click: save, enable: contacts().length &gt; 0'&gt;Save to JSON&lt;/button&gt;
+&lt;/p&gt;
+
+&lt;textarea data-bind='value: lastSavedJson' rows='5' cols='60' disabled='disabled'&gt; &lt;/textarea&gt;
+</pre><h2>Source code: View model</h2><pre class='brush:js'>
+    var initialData = [
+        { firstName: &quot;Danny&quot;, lastName: &quot;LaRusso&quot;, phones: [
+            { type: &quot;Mobile&quot;, number: &quot;(555) 121-2121&quot; },
+            { type: &quot;Home&quot;, number: &quot;(555) 123-4567&quot;}]
+        },
+        { firstName: &quot;Sensei&quot;, lastName: &quot;Miyagi&quot;, phones: [
+            { type: &quot;Mobile&quot;, number: &quot;(555) 444-2222&quot; },
+            { type: &quot;Home&quot;, number: &quot;(555) 999-1212&quot;}]
+        }
+    ];
+
+    var ContactsModel = function(contacts) {
+        var self = this;
+        self.contacts = ko.observableArray(ko.utils.arrayMap(contacts, function(contact) {
+            return { firstName: contact.firstName, lastName: contact.lastName, phones: ko.observableArray(contact.phones) };
+        }));
+
+        self.addContact = function() {
+            self.contacts.push({
+                firstName: &quot;&quot;,
+                lastName: &quot;&quot;,
+                phones: ko.observableArray()
+            });
+        };
+
+        self.removeContact = function(contact) {
+            self.contacts.remove(contact);
+        };
+
+        self.addPhone = function(contact) {
+            contact.phones.push({
+                type: &quot;&quot;,
+                number: &quot;&quot;
+            });
+        };
+
+        self.removePhone = function(phone) {
+            $.each(self.contacts(), function() { this.phones.remove(phone) })
+        };
+
+        self.save = function() {
+            self.lastSavedJson(JSON.stringify(ko.toJS(self.contacts), null, 2));
+        };
+
+        self.lastSavedJson = ko.observable(&quot;&quot;)
+    };
+
+    ko.applyBindings(new ContactsModel(initialData));
+</pre>
+<p><a href='http://jsfiddle.net/rniemeyer/gZC5k/'>Try it in jsFiddle</a></p>   		    		    	
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

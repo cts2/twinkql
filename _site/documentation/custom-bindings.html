@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : Creating custom bindings</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'documentation';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Getting started</h1>
+
+<ol>
+    <li><a href="introduction.html">How KO works and what benefits it brings</a></li>
+    <li><a href="installation.html">Downloading and installing</a></li>
+</ol>
+
+<h1>Observables</h1>
+
+<ol>
+    <li><a href="observables.html">Creating <em>view models</em> with <em>observables</em></a></li>
+    <li><a href="computedObservables.html">Using <em>computed observables</em></a></li>
+    <li><a href="observableArrays.html">Working with <em>observable arrays</em></a></li>	
+</ol>
+
+<h1>Using built-in bindings</h1>
+
+<h2>Controlling text and appearance</h2>
+<ol>
+    <li><a href="visible-binding.html">The <code>visible</code> binding</a></li>
+    <li><a href="text-binding.html">The <code>text</code> binding</a></li>
+    <li><a href="html-binding.html">The <code>html</code> binding</a></li>
+    <li><a href="css-binding.html">The <code>css</code> binding</a></li>
+    <li><a href="style-binding.html">The <code>style</code> binding</a></li>
+    <li><a href="attr-binding.html">The <code>attr</code> binding</a></li>
+</ol>
+
+<h2>Control flow</h2>
+<ol>
+    <li><a href="foreach-binding.html">The <code>foreach</code> binding</a></li>
+    <li><a href="if-binding.html">The <code>if</code> binding</a></li>
+    <li><a href="ifnot-binding.html">The <code>ifnot</code> binding</a></li>
+    <li><a href="with-binding.html">The <code>with</code> binding</a></li>
+</ol>
+
+<h2>Working with form fields</h2>
+<ol>
+    <li><a href="click-binding.html">The <code>click</code> binding</a></li>
+    <li><a href="event-binding.html">The <code>event</code> binding</a></li>
+    <li><a href="submit-binding.html">The <code>submit</code> binding</a></li>
+    <li><a href="enable-binding.html">The <code>enable</code> binding</a></li>
+    <li><a href="disable-binding.html">The <code>disable</code> binding</a></li>
+    <li><a href="value-binding.html">The <code>value</code> binding</a></li>
+    <li><a href="hasfocus-binding.html">The <code>hasfocus</code> binding</a></li>
+    <li><a href="checked-binding.html">The <code>checked</code> binding</a></li>
+    <li><a href="options-binding.html">The <code>options</code> binding</a></li>
+    <li><a href="selectedOptions-binding.html">The <code>selectedOptions</code> binding</a></li>    
+    <li><a href="uniqueName-binding.html">The <code>uniqueName</code> binding</a></li>		
+</ol>
+
+<h2>Creating custom bindings</h2>
+<ol>
+    <li><a href="custom-bindings.html">Creating custom bindings</a></li>
+    <li><a href="custom-bindings-controlling-descendant-bindings.html">Controlling descendant bindings</a></li>
+    <li><a href="custom-bindings-for-virtual-elements.html">Supporting virtual elements</a></li>
+</ol>
+
+<h2>Rendering templates</h2>
+<ol>
+    <li><a href="template-binding.html">The <code>template</code> binding</a></li>
+</ol>
+
+<h2>Further techniques</h2>
+<ol>
+    <li><a href="json-data.html">Loading and saving JSON data</a></li>
+    <li><a href="extenders.html">Extending observables</a></li>
+    <li><a href="throttle-extender.html">The <code>throttle</code> extender</a></li>
+    <li><a href="unobtrusive-event-handling.html">Unobtrusive event handling</a></li>
+    <li><a href="fn.html">Using <code>fn</code> to add custom functions</a></li>
+</ol>
+
+<h2>Plugins</h2>
+<ol>
+    <li><a href="plugins-mapping.html">The <code>mapping</code> plugin</a></li>
+</ol>
+
+<h1>More information</h1>
+<ol>
+    <li><a href="browser-support.html">Browser support</a></li>
+    <li><a href="http://groups.google.com/group/knockoutjs">Getting help</a></li>
+    <li><a href="links.html">Links to tutorials &amp; examples</a></li>
+    <li><a href="amd-loading.html">Usage with AMD using RequireJs (Asynchronous Module Definition)</a></li>
+</ol>
+
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="documentation sticker">
+		    <div class="content">
+		    	<h1>Creating custom bindings</h1>	
+		    	<p>You&#8217;re not limited to using the built-in bindings like <code>click</code>, <code>value</code>, and so on &#8212; you can create your own ones. This is how to control how observables interact with DOM elements, and gives you a lot of flexibility to encapsulate sophisticated behaviors in an easy-to-reuse way.</p>
+
+<p>For example, you can create interactive components like grids, tabsets, and so on, in the form of custom bindings (see the <a href='../examples/grid.html'>grid example</a>).</p>
+
+<h3 id='registering_your_binding'>Registering your binding</h3>
+
+<p>To register a binding, add it as a subproperty of <code>ko.bindingHandlers</code>:</p>
+
+<pre><code>ko.bindingHandlers.yourBindingName = {
+    init: function(element, valueAccessor, allBindingsAccessor, viewModel) {
+        // This will be called when the binding is first applied to an element
+        // Set up any initial state, event handlers, etc. here
+    },
+    update: function(element, valueAccessor, allBindingsAccessor, viewModel) {
+        // This will be called once when the binding is first applied to an element,
+        // and again whenever the associated observable changes value.
+        // Update the DOM element based on the supplied values here.
+    }
+};</code></pre>
+
+<p>&#8230; and then you can use it on any number of DOM elements:</p>
+
+<pre><code>&lt;div data-bind=&quot;yourBindingName: someValue&quot;&gt; &lt;/div&gt;</code></pre>
+
+<p>Note: you don&#8217;t actually have to provide both <code>init</code> <em>and</em> <code>update</code> callbacks &#8212; you can just provide one or the other if that&#8217;s all you need.</p>
+
+<h3 id='the_update_callback'>The &#8220;update&#8221; callback</h3>
+
+<p>Whenever the associated observable changes, KO will call your <code>update</code> callback, passing the following parameters:</p>
+
+<ul>
+<li><code>element</code> &#8212; The DOM element involved in this binding</li>
+
+<li><code>valueAccessor</code> &#8212; A JavaScript function that you can call to get the current model property that is involved in this binding. Call this without passing any parameters (i.e., call <code>valueAccessor()</code>) to get the current model property value.</li>
+
+<li><code>allBindingsAccessor</code> &#8212; A JavaScript function that you can call to get <em>all</em> the model properties bound to this DOM element. Like <code>valueAccessor</code>, call it without any parameters to get the current bound model properties.</li>
+
+<li><code>viewModel</code> &#8212; The view model object that was passed to <code>ko.applyBindings</code>. Inside a nested binding context, this parameter will be set to the current data item (e.g., inside a <code>with: person</code> binding, <code>viewModel</code> will be set to <code>person</code>).</li>
+</ul>
+
+<p>For example, you might have been controlling an element&#8217;s visibility using the <code>visible</code> binding, but now you want to go a step further and animate the transition. You want elements to slide into and out of existence according to the value of an observable. You can do this by writing a custom binding that calls jQuery&#8217;s <code>slideUp</code>/<code>slideDown</code> functions:</p>
+
+<pre><code>ko.bindingHandlers.slideVisible = {
+    update: function(element, valueAccessor, allBindingsAccessor) {
+        // First get the latest data that we&#39;re bound to
+        var value = valueAccessor(), allBindings = allBindingsAccessor();
+        
+        // Next, whether or not the supplied model property is observable, get its current value
+        var valueUnwrapped = ko.utils.unwrapObservable(value); 
+        
+        // Grab some more data from another binding property
+        var duration = allBindings.slideDuration || 400; // 400ms is default duration unless otherwise specified
+        
+        // Now manipulate the DOM element
+        if (valueUnwrapped == true) 
+            $(element).slideDown(duration); // Make the element visible
+        else 
+            $(element).slideUp(duration);   // Make the element invisible
+    }
+};</code></pre>
+
+<p>Now you can use this binding as follows:</p>
+
+<pre><code>&lt;div data-bind=&quot;slideVisible: giftWrap, slideDuration:600&quot;&gt;You have selected the option&lt;/div&gt;
+&lt;label&gt;&lt;input type=&quot;checkbox&quot; data-bind=&quot;checked: giftWrap&quot; /&gt; Gift wrap&lt;/label&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var viewModel = {
+        giftWrap: ko.observable(true)
+    };
+    ko.applyBindings(viewModel);
+&lt;/script&gt;</code></pre>
+
+<p>Of course, this is a lot of code at first glance, but once you&#8217;ve created your custom bindings they can very easily be reused in many places.</p>
+
+<h3 id='the_init_callback'>The &#8220;init&#8221; callback</h3>
+
+<p>Knockout will call your <code>init</code> function once for each DOM element that you use the binding on. There are two main uses for <code>init</code>:</p>
+
+<ul>
+<li>To set any initial state for the DOM element</li>
+
+<li>To register any event handlers so that, for example, when the user clicks on or modifies the DOM element, you can change the state of the associated observable</li>
+</ul>
+
+<p>KO will pass exactly the same set of parameters that it passes to <a href='#the_update_callback'>the <code>update</code> callback</a>.</p>
+
+<p>Continuing the previous example, you might want <code>slideVisible</code> to set the element to be instantly visible or invisible when the page first appears (without any animated slide), so that the animation only runs when the user changes the model state. You could do that as follows:</p>
+
+<pre><code>ko.bindingHandlers.slideVisible = {
+    init: function(element, valueAccessor) {
+        var value = ko.utils.unwrapObservable(valueAccessor()); // Get the current value of the current property we&#39;re bound to
+        $(element).toggle(value); // jQuery will hide/show the element depending on whether &quot;value&quot; or true or false
+    },
+    update: function(element, valueAccessor, allBindingsAccessor) {
+        // Leave as before
+    }
+};</code></pre>
+
+<p>This means that if <code>giftWrap</code> was defined with the initial state <code>false</code> (i.e., <code>giftWrap: ko.observable(false)</code>) then the associated DIV would initially be hidden, and then would slide into view when the user later checks the box.</p>
+
+<h3 id='modifying_observables_after_dom_events'>Modifying observables after DOM events</h3>
+
+<p>You&#8217;ve already seen how to use <code>update</code> so that, when an observable changes, you can update an associated DOM element. But what about events in the other direction? When the user performs some action on a DOM element, you might want to updated an associated observable.</p>
+
+<p>You can use the <code>init</code> callback as a place to register an event handler that will cause changes to the associated observable. For example,</p>
+
+<pre><code>ko.bindingHandlers.hasFocus = {
+    init: function(element, valueAccessor) {
+        $(element).focus(function() {
+            var value = valueAccessor();
+            value(true);
+        });
+        $(element).blur(function() {
+            var value = valueAccessor();
+            value(false);
+        });           
+    },
+    update: function(element, valueAccessor) {
+        var value = valueAccessor();
+        if (ko.utils.unwrapObservable(value))
+            element.focus();
+        else
+            element.blur();
+    }
+};</code></pre>
+
+<p>Now you can both read and write the &#8220;focusedness&#8221; of an element by binding it to an observable:</p>
+
+<pre><code>&lt;p&gt;Name: &lt;input data-bind=&quot;hasFocus: editingName&quot; /&gt;&lt;/p&gt;
+
+&lt;!-- Showing that we can both read and write the focus state --&gt;
+&lt;div data-bind=&quot;visible: editingName&quot;&gt;You&#39;re editing the name&lt;/div&gt;
+&lt;button data-bind=&quot;enable: !editingName(), click:function() { editingName(true) }&quot;&gt;Edit name&lt;/button&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var viewModel = {
+        editingName: ko.observable()
+    };
+    ko.applyBindings(viewModel);
+&lt;/script&gt;</code></pre>
+
+<h3 id='note_supporting_virtual_elements'>Note: Supporting virtual elements</h3>
+
+<p>If you want a custom binding to be usable with Knockout&#8217;s <em>virtual elements</em> syntax, e.g.:</p>
+
+<pre><code>&lt;!-- ko mybinding: somedata --&gt; ... &lt;!-- /ko --&gt;</code></pre>
+
+<p>&#8230; then see <a href='custom-bindings-for-virtual-elements.html'>the documentation for virtual elements</a>.</p>    
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : The "foreach" binding</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'documentation';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Getting started</h1>
+
+<ol>
+    <li><a href="introduction.html">How KO works and what benefits it brings</a></li>
+    <li><a href="installation.html">Downloading and installing</a></li>
+</ol>
+
+<h1>Observables</h1>
+
+<ol>
+    <li><a href="observables.html">Creating <em>view models</em> with <em>observables</em></a></li>
+    <li><a href="computedObservables.html">Using <em>computed observables</em></a></li>
+    <li><a href="observableArrays.html">Working with <em>observable arrays</em></a></li>	
+</ol>
+
+<h1>Using built-in bindings</h1>
+
+<h2>Controlling text and appearance</h2>
+<ol>
+    <li><a href="visible-binding.html">The <code>visible</code> binding</a></li>
+    <li><a href="text-binding.html">The <code>text</code> binding</a></li>
+    <li><a href="html-binding.html">The <code>html</code> binding</a></li>
+    <li><a href="css-binding.html">The <code>css</code> binding</a></li>
+    <li><a href="style-binding.html">The <code>style</code> binding</a></li>
+    <li><a href="attr-binding.html">The <code>attr</code> binding</a></li>
+</ol>
+
+<h2>Control flow</h2>
+<ol>
+    <li><a href="foreach-binding.html">The <code>foreach</code> binding</a></li>
+    <li><a href="if-binding.html">The <code>if</code> binding</a></li>
+    <li><a href="ifnot-binding.html">The <code>ifnot</code> binding</a></li>
+    <li><a href="with-binding.html">The <code>with</code> binding</a></li>
+</ol>
+
+<h2>Working with form fields</h2>
+<ol>
+    <li><a href="click-binding.html">The <code>click</code> binding</a></li>
+    <li><a href="event-binding.html">The <code>event</code> binding</a></li>
+    <li><a href="submit-binding.html">The <code>submit</code> binding</a></li>
+    <li><a href="enable-binding.html">The <code>enable</code> binding</a></li>
+    <li><a href="disable-binding.html">The <code>disable</code> binding</a></li>
+    <li><a href="value-binding.html">The <code>value</code> binding</a></li>
+    <li><a href="hasfocus-binding.html">The <code>hasfocus</code> binding</a></li>
+    <li><a href="checked-binding.html">The <code>checked</code> binding</a></li>
+    <li><a href="options-binding.html">The <code>options</code> binding</a></li>
+    <li><a href="selectedOptions-binding.html">The <code>selectedOptions</code> binding</a></li>    
+    <li><a href="uniqueName-binding.html">The <code>uniqueName</code> binding</a></li>		
+</ol>
+
+<h2>Creating custom bindings</h2>
+<ol>
+    <li><a href="custom-bindings.html">Creating custom bindings</a></li>
+    <li><a href="custom-bindings-controlling-descendant-bindings.html">Controlling descendant bindings</a></li>
+    <li><a href="custom-bindings-for-virtual-elements.html">Supporting virtual elements</a></li>
+</ol>
+
+<h2>Rendering templates</h2>
+<ol>
+    <li><a href="template-binding.html">The <code>template</code> binding</a></li>
+</ol>
+
+<h2>Further techniques</h2>
+<ol>
+    <li><a href="json-data.html">Loading and saving JSON data</a></li>
+    <li><a href="extenders.html">Extending observables</a></li>
+    <li><a href="throttle-extender.html">The <code>throttle</code> extender</a></li>
+    <li><a href="unobtrusive-event-handling.html">Unobtrusive event handling</a></li>
+    <li><a href="fn.html">Using <code>fn</code> to add custom functions</a></li>
+</ol>
+
+<h2>Plugins</h2>
+<ol>
+    <li><a href="plugins-mapping.html">The <code>mapping</code> plugin</a></li>
+</ol>
+
+<h1>More information</h1>
+<ol>
+    <li><a href="browser-support.html">Browser support</a></li>
+    <li><a href="http://groups.google.com/group/knockoutjs">Getting help</a></li>
+    <li><a href="links.html">Links to tutorials &amp; examples</a></li>
+    <li><a href="amd-loading.html">Usage with AMD using RequireJs (Asynchronous Module Definition)</a></li>
+</ol>
+
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="documentation sticker">
+		    <div class="content">
+		    	<h1>The "foreach" binding</h1>	
+		    	<h3 id='purpose'>Purpose</h3>
+
+<p>The <code>foreach</code> binding duplicates a section of markup for each entry in an array, and binds each copy of that markup to the corresponding array item. This is especially useful for rendering lists or tables.</p>
+
+<p>Assuming your array is an <a href='observableArrays.html'>observable array</a>, whenever you later add or remove array entries, the binding will efficiently update the UI to match - inserting or removing more copies of the markup, without affecting any other DOM elements.</p>
+
+<p>Of course, you can arbitrarily nest any number of <code>foreach</code> bindings along with other control-flow bindings such as <code>if</code> and <code>with</code>.</p>
+
+<h3 id='example_1_iterating_over_an_array'>Example 1: Iterating over an array</h3>
+
+<p>This example uses <code>foreach</code> to produce a read-only table with a row for each array entry.</p>
+
+<pre><code>&lt;table&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;&lt;th&gt;First name&lt;/th&gt;&lt;th&gt;Last name&lt;/th&gt;&lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody data-bind=&quot;foreach: people&quot;&gt;
+        &lt;tr&gt;
+            &lt;td data-bind=&quot;text: firstName&quot;&gt;&lt;/td&gt;
+            &lt;td data-bind=&quot;text: lastName&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    ko.applyBindings({
+        people: [
+            { firstName: &#39;Bert&#39;, lastName: &#39;Bertington&#39; },
+            { firstName: &#39;Charles&#39;, lastName: &#39;Charlesforth&#39; },
+            { firstName: &#39;Denise&#39;, lastName: &#39;Dentiste&#39; }
+        ]
+    });
+&lt;/script&gt;</code></pre>
+
+<h3 id='example_2_live_example_with_addremove'>Example 2: Live example with add/remove</h3>
+
+<p>The following example show that, if your array is observable, then the UI will be kept in sync with changes to that array.</p>
+<div class='liveExample'>
+
+<h4>People</h4>
+<ul data-bind='foreach: people'>
+    <li>
+        Name at position <span data-bind='text: $index'> </span>:
+        <span data-bind='text: name'> </span>
+        <a href='#' data-bind='click: $parent.removePerson'>Remove</a>
+    </li>
+</ul>
+<button data-bind='click: addPerson'>Add</button>
+
+<script type='text/javascript'>
+
+/*<![CDATA[*/
+function AppViewModel() {
+    var self = this;
+
+    self.people = ko.observableArray([
+        { name: 'Bert' },
+        { name: 'Charles' },
+        { name: 'Denise' }
+    ]);
+
+    self.addPerson = function() {
+        self.people.push({ name: "New at " + new Date() });
+    };
+
+    self.removePerson = function() {
+        self.people.remove(this);
+    }
+}
+
+ko.applyBindings(new AppViewModel());
+/*]]>*/
+
+</script>
+</div><h4>Source code: View</h4><pre class='brush:html'>
+&lt;h4&gt;People&lt;/h4&gt;
+&lt;ul data-bind=&quot;foreach: people&quot;&gt;
+    &lt;li&gt;
+        Name at position &lt;span data-bind=&quot;text: $index&quot;&gt; &lt;/span&gt;:
+        &lt;span data-bind=&quot;text: name&quot;&gt; &lt;/span&gt;
+        &lt;a href=&quot;#&quot; data-bind=&quot;click: $parent.removePerson&quot;&gt;Remove&lt;/a&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+&lt;button data-bind=&quot;click: addPerson&quot;&gt;Add&lt;/button&gt;
+</pre><h4>Source code: View model</h4><pre class='brush:js'>
+function AppViewModel() {
+    var self = this;
+
+    self.people = ko.observableArray([
+        { name: 'Bert' },
+        { name: 'Charles' },
+        { name: 'Denise' }
+    ]);
+
+    self.addPerson = function() {
+        self.people.push({ name: &quot;New at &quot; + new Date() });
+    };
+
+    self.removePerson = function() {
+        self.people.remove(this);
+    }
+}
+
+ko.applyBindings(new AppViewModel());
+</pre>
+<h3 id='parameters'>Parameters</h3>
+
+<ul>
+<li>
+<p>Main parameter</p>
+
+<p>Pass the array that you wish to iterate over. The binding will output a section of markup for each entry.</p>
+
+<p>Alternatively, pass a JavaScript object literal with a property called <code>data</code> which is the array you wish to iterate over. The object literal may also have other properties, such as <code>afterAdd</code> or <code>includeDestroyed</code> &#8212; see below for details of these extra options and examples of their use.</p>
+
+<p>If the array you supply is observable, the <code>foreach</code> binding will respond to any future changes in the array&#8217;s contents by adding or removing corresponding sections of markup in the DOM.</p>
+</li>
+
+<li>
+<p>Additional parameters</p>
+
+<ul>
+<li>None</li>
+</ul>
+</li>
+</ul>
+
+<h3 id='note_1_referring_to_each_array_entry_using_data'>Note 1: Referring to each array entry using $data</h3>
+
+<p>As shown in the above examples, bindings within the <code>foreach</code> block can refer to properties on the array entries. For example, <a href='#example_1_iterating_over_an_array'>Example 1</a> referenced the <code>firstName</code> and <code>lastName</code> properties on each array entry.</p>
+
+<p>But what if you want to refer to the array entry itself (not just one of its properties)? In that case, you can use the <a href='binding-context.html'>special context property</a> <code>$data</code>. Within a <code>foreach</code> block, it means &#8220;the current item&#8221;. For example,</p>
+
+<pre><code>&lt;ul data-bind=&quot;foreach: months&quot;&gt;
+    &lt;li&gt;
+        The current item is: &lt;b data-bind=&quot;text: $data&quot;&gt;&lt;/b&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    ko.applyBindings({
+        months: [ &#39;Jan&#39;, &#39;Feb&#39;, &#39;Mar&#39;, &#39;etc&#39; ]
+    });
+&lt;/script&gt;</code></pre>
+
+<p>If you wanted, you could use <code>$data</code> as a prefix when referencing properties on each entry. For example, you could rewrite part of <a href='#example_1_iterating_over_an_array'>Example 1</a> as follows:</p>
+
+<pre><code>&lt;td data-bind=&quot;text: $data.firstName&quot;&gt;&lt;/td&gt;</code></pre>
+
+<p>&#8230; but you don&#8217;t have to, because <code>firstName</code> will be evaluated within the context of <code>$data</code> by default anyway.</p>
+
+<h3 id='note_2_using_index_parent_and_other_context_properties'>Note 2: Using $index, $parent, and other context properties</h3>
+
+<p>As you can see from Example 2 above, it&#8217;s possible to use <code>$index</code> to refer to the zero-based index of the current array item. <code>$index</code> is an observable and is updated whenever the index of the item changes (e.g., if items are added to or removed from the array).</p>
+
+<p>Similarly, you can use <code>$parent</code> to refer to data from outside the <code>foreach</code>, e.g.:</p>
+
+<pre><code>&lt;h1 data-bind=&quot;text: blogPostTitle&quot;&gt;&lt;/h1&gt;
+&lt;ul data-bind=&quot;foreach: likes&quot;&gt;
+    &lt;li&gt;
+        &lt;b data-bind=&quot;text: name&quot;&gt;&lt;/b&gt; likes the blog post &lt;b data-bind=&quot;text: $parent.blogPostTitle&quot;&gt;&lt;/b&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+<p>For more information about <code>$index</code> and other context properties such as <code>$parent</code>, see documentation for <a href='binding-context.html'>binding context properties</a>.</p>
+
+<h3 id='note_3_using_foreach_without_a_container_element'>Note 3: Using foreach without a container element</h3>
+
+<p>In some cases, you might want to duplicate a section of markup, but you don&#8217;t have any container element on which to put a <code>foreach</code> binding. For example, you might want to generate the following:</p>
+
+<pre><code>&lt;ul&gt;
+    &lt;li class=&quot;header&quot;&gt;Header item&lt;/li&gt;
+    &lt;!-- The following are generated dynamically from an array --&gt;
+    &lt;li&gt;Item A&lt;/li&gt;
+    &lt;li&gt;Item B&lt;/li&gt;
+    &lt;li&gt;Item C&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+<p>In this example, there isn&#8217;t anywhere to put a normal <code>foreach</code> binding. You can&#8217;t put it on the <code>&lt;ul&gt;</code> (because then you&#8217;d be duplicating the header item), nor can you put a further container inside the <code>&lt;ul&gt;</code> (because only <code>&lt;li&gt;</code> elements are allowed inside <code>&lt;ul&gt;</code>s).</p>
+
+<p>To handle this, you can use the <em>containerless control flow syntax</em>, which is based on comment tags. For example,</p>
+
+<pre><code>&lt;ul&gt;
+    &lt;li class=&quot;header&quot;&gt;Header item&lt;/li&gt;
+    &lt;!-- ko foreach: myItems --&gt;
+        &lt;li&gt;Item &lt;span data-bind=&quot;text: $data&quot;&gt;&lt;/span&gt;&lt;/li&gt;
+    &lt;!-- /ko --&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    ko.applyBindings({
+        myItems: [ &#39;A&#39;, &#39;B&#39;, &#39;C&#39; ]
+    });
+&lt;/script&gt;</code></pre>
+
+<p>The <code>&lt;!-- ko --&gt;</code> and <code>&lt;!-- /ko --&gt;</code> comments act as start/end markers, defining a &#8220;virtual element&#8221; that contains the markup inside. Knockout understands this virtual element syntax and binds as if you had a real container element.</p>
+
+<h3 id='note_4_destroyed_entries_are_hidden_by_default'>Note 4: Destroyed entries are hidden by default</h3>
+
+<p>Sometimes you may want to mark an array entry as deleted, but without actually losing record of its existence. This is known as a <em>non-destructive delete</em>. For details of how to do this, see <a href='observableArrays.html#destroy_and_destroyall_note_usually_relevant_to_ruby_on_rails_developers_only'>the destroy function on <code>observableArray</code></a>.</p>
+
+<p>By default, the <code>foreach</code> binding will skip over (i.e., hide) any array entries that are marked as destroyed. If you want to show destroyed entries, use the <code>includeDestroyed</code> option. For example,</p>
+
+<pre><code>&lt;div data-bind=&#39;foreach: { data: myArray, includeDestroyed: true }&#39;&gt;
+    ...
+&lt;/div&gt;</code></pre>
+
+<h3 id='note_5_postprocessing_or_animating_the_generated_dom_elements'>Note 5: Post-processing or animating the generated DOM elements</h3>
+
+<p>If you need to run some further custom logic on the generated DOM elements, you can use any of the following callbacks:</p>
+
+<ul>
+<li>
+<p><code>afterRender</code> &#8212; is invoked each time the <code>foreach</code> block is duplicated and inserted into the document, both when <code>foreach</code> first initializes, and when new entries are added to the associated array later. Knockout will supply the following parameters to your callback:</p>
+
+<ol>
+<li>An array of the inserted DOM elements</li>
+
+<li>The data item against which they are being bound</li>
+</ol>
+</li>
+
+<li>
+<p><code>afterAdd</code> &#8212; is like <code>afterRender</code>, except it is invoked only when new entries are added to your array (and <em>not</em> when <code>foreach</code> first iterates over your array&#8217;s initial contents). A common use for <code>afterAdd</code> is to call a method such as jQuery&#8217;s <code>$(domNode).fadeIn()</code> so that you get animated transitions whenever items are added. Knockout will supply the following parameters to your callback:</p>
+
+<ol>
+<li>A DOM node being added to the document</li>
+
+<li>The index of the added array element</li>
+
+<li>The added array element</li>
+</ol>
+</li>
+
+<li>
+<p><code>beforeRemove</code> &#8212; is invoked when an array item has been removed, but before the corresponding DOM nodes have been removed. If you specify a <code>beforeRemove</code> callback, then <em>it becomes your responsibility to remove the DOM nodes</em>. The obvious use case here is calling something like jQuery&#8217;s <code>$(domNode).fadeOut()</code> to animate the removal of the corresponding DOM nodes &#8212; in this case, Knockout cannot know how soon it is allowed to physically remove the DOM nodes (who knows how long your animation will take?), so it is up to you to remove them. Knockout will supply the following parameters to your callback:</p>
+
+<ol>
+<li>A DOM node that you should remove</li>
+
+<li>The index of the removed array element</li>
+
+<li>The removed array element</li>
+</ol>
+</li>
+</ul>
+
+<p>Here&#8217;s a trivial example that uses <code>afterRender</code>. It simply uses jQuery&#8217;s <code>$.css</code> to make the rendered element turn red:</p>
+
+<pre><code>&lt;ul data-bind=&quot;foreach: { data: myItems, afterRender: handleAfterRender }&quot;&gt;
+    &lt;li data-bind=&quot;text: $data&quot;&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    ko.applyBindings({
+        myItems: ko.observableArray([ &#39;A&#39;, &#39;B&#39;, &#39;C&#39; ]),
+        handleAfterRender: function(elements, data) {
+            $(elements).css({ color: &#39;red&#39; });
+        }
+    });
+&lt;/script&gt;</code></pre>
+
+<p>For examples of <code>afterAdd</code> and <code>beforeRemove</code> see <a href='/examples/animatedTransitions.html'>animated transitions</a>.</p>
+
+<h3 id='dependencies'>Dependencies</h3>
+
+<p>None, other than the core Knockout library.</p>    
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>

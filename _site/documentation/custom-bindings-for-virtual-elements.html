@@ -1,0 +1,333 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout : Creating custom bindings that support virtual elements</title>
+        <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
+        <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
+        <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
+        <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
+        <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
+<script type="text/javascript" src="../js/cufon-yui.js"></script>
+<script type="text/javascript" src="../js/titilliummaps.font.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+
+<!--[if lt IE 7]>
+<script defer type="text/javascript" src="../js/ie6pngfix.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shCore.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script> 
+<script type="text/javascript" src="../js/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script> 
+<link type="text/css" rel="stylesheet" href="../js/syntaxhighlighter_3.0.83/styles/shThemeFadeToGrey.css"/>  
+
+<script type="text/javascript">
+    $(function() {
+        // Fancy fonts
+        Cufon.replace('.titillium');
+        Cufon.replace('.engraved', {
+            textShadow: 'rgba(253, 224, 217, 0.45) 1.2px 1px'	
+        });
+        
+        // Syntax highlighting
+        $("pre > code").each(function() {
+            var codeText = $(this).text();
+            $(this).parent().text(codeText).addClass("brush:js");
+        });
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.all();
+        
+        // Highlight current top menu item
+        var desiredMenuItem = '' || 'documentation';
+        $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
+        
+        // Highlight current left-hand-nav menu item
+        var urlFilename = location.href.match(/\/([^\/]+)$/);
+        if (urlFilename) {
+            $(".leftColContents li:has(a[href$=" + urlFilename[1] + "])").addClass("active");
+        }
+    });
+</script> 
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="vspace"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+            <div class="vspace"></div>
+            <div>	
+	<div class="leftCol">		
+		<div class="leftColBackground">&nbsp;</div>
+		<div class="leftColContents">
+			<h1>Getting started</h1>
+
+<ol>
+    <li><a href="introduction.html">How KO works and what benefits it brings</a></li>
+    <li><a href="installation.html">Downloading and installing</a></li>
+</ol>
+
+<h1>Observables</h1>
+
+<ol>
+    <li><a href="observables.html">Creating <em>view models</em> with <em>observables</em></a></li>
+    <li><a href="computedObservables.html">Using <em>computed observables</em></a></li>
+    <li><a href="observableArrays.html">Working with <em>observable arrays</em></a></li>	
+</ol>
+
+<h1>Using built-in bindings</h1>
+
+<h2>Controlling text and appearance</h2>
+<ol>
+    <li><a href="visible-binding.html">The <code>visible</code> binding</a></li>
+    <li><a href="text-binding.html">The <code>text</code> binding</a></li>
+    <li><a href="html-binding.html">The <code>html</code> binding</a></li>
+    <li><a href="css-binding.html">The <code>css</code> binding</a></li>
+    <li><a href="style-binding.html">The <code>style</code> binding</a></li>
+    <li><a href="attr-binding.html">The <code>attr</code> binding</a></li>
+</ol>
+
+<h2>Control flow</h2>
+<ol>
+    <li><a href="foreach-binding.html">The <code>foreach</code> binding</a></li>
+    <li><a href="if-binding.html">The <code>if</code> binding</a></li>
+    <li><a href="ifnot-binding.html">The <code>ifnot</code> binding</a></li>
+    <li><a href="with-binding.html">The <code>with</code> binding</a></li>
+</ol>
+
+<h2>Working with form fields</h2>
+<ol>
+    <li><a href="click-binding.html">The <code>click</code> binding</a></li>
+    <li><a href="event-binding.html">The <code>event</code> binding</a></li>
+    <li><a href="submit-binding.html">The <code>submit</code> binding</a></li>
+    <li><a href="enable-binding.html">The <code>enable</code> binding</a></li>
+    <li><a href="disable-binding.html">The <code>disable</code> binding</a></li>
+    <li><a href="value-binding.html">The <code>value</code> binding</a></li>
+    <li><a href="hasfocus-binding.html">The <code>hasfocus</code> binding</a></li>
+    <li><a href="checked-binding.html">The <code>checked</code> binding</a></li>
+    <li><a href="options-binding.html">The <code>options</code> binding</a></li>
+    <li><a href="selectedOptions-binding.html">The <code>selectedOptions</code> binding</a></li>    
+    <li><a href="uniqueName-binding.html">The <code>uniqueName</code> binding</a></li>		
+</ol>
+
+<h2>Creating custom bindings</h2>
+<ol>
+    <li><a href="custom-bindings.html">Creating custom bindings</a></li>
+    <li><a href="custom-bindings-controlling-descendant-bindings.html">Controlling descendant bindings</a></li>
+    <li><a href="custom-bindings-for-virtual-elements.html">Supporting virtual elements</a></li>
+</ol>
+
+<h2>Rendering templates</h2>
+<ol>
+    <li><a href="template-binding.html">The <code>template</code> binding</a></li>
+</ol>
+
+<h2>Further techniques</h2>
+<ol>
+    <li><a href="json-data.html">Loading and saving JSON data</a></li>
+    <li><a href="extenders.html">Extending observables</a></li>
+    <li><a href="throttle-extender.html">The <code>throttle</code> extender</a></li>
+    <li><a href="unobtrusive-event-handling.html">Unobtrusive event handling</a></li>
+    <li><a href="fn.html">Using <code>fn</code> to add custom functions</a></li>
+</ol>
+
+<h2>Plugins</h2>
+<ol>
+    <li><a href="plugins-mapping.html">The <code>mapping</code> plugin</a></li>
+</ol>
+
+<h1>More information</h1>
+<ol>
+    <li><a href="browser-support.html">Browser support</a></li>
+    <li><a href="http://groups.google.com/group/knockoutjs">Getting help</a></li>
+    <li><a href="links.html">Links to tutorials &amp; examples</a></li>
+    <li><a href="amd-loading.html">Usage with AMD using RequireJs (Asynchronous Module Definition)</a></li>
+</ol>
+
+		</div>		
+	</div>
+	<div class="rightCol">
+		<div class="documentation sticker">
+		    <div class="content">
+		    	<h1>Creating custom bindings that support virtual elements</h1>	
+		    	<p><em>Note: This is an advanced technique, typically used only when creating libraries of reusable bindings. It&#8217;s not something you&#8217;ll normally need to do when building applications with Knockout.</em></p>
+
+<p>Knockout&#8217;s <em>control flow bindings</em> (e.g., <a href='if-binding.html'><code>if</code></a> and <a href='foreach-binding.html'><code>foreach</code></a>) can be applied not only to regular DOM elements, but also to &#8220;virtual&#8221; DOM elements defined by a special comment-based syntax. For example:</p>
+
+<pre><code>&lt;ul&gt;
+    &lt;li class=&quot;heading&quot;&gt;My heading&lt;/li&gt;
+    &lt;!-- ko foreach: items --&gt;
+        &lt;li data-bind=&quot;text: $data&quot;&gt;&lt;/li&gt;
+    &lt;!-- /ko --&gt;
+&lt;/ul&gt;</code></pre>
+
+<p>Custom bindings can work with virtual elements too, but to enable this, you must explicitly tell Knockout that your binding understands virtual elements, by using the <code>ko.virtualElements.allowedBindings</code> API.</p>
+
+<h3 id='example'>Example</h3>
+
+<p>To get started, here&#8217;s a custom binding that randomises the order of DOM nodes:</p>
+
+<pre><code>ko.bindingHandlers.randomOrder = {
+    init: function(elem, valueAccessor) {
+        // Pull out each of the child elements into an array
+        var childElems = [];
+        while(elem.firstChild)
+            childElems.push(elem.removeChild(elem.firstChild));
+
+        // Put them back in a random order
+        while(childElems.length) {
+            var randomIndex = Math.floor(Math.random() * childElems.length),
+                chosenChild = childElems.splice(randomIndex, 1);
+            elem.appendChild(chosenChild[0]);
+        }
+    }
+};</code></pre>
+
+<p>This works nicely with regular DOM elements. The following elements will be shuffled into a random order:</p>
+
+<pre><code>&lt;div data-bind=&quot;randomOrder: true&quot;&gt;
+    &lt;div&gt;First&lt;/div&gt;
+    &lt;div&gt;Second&lt;/div&gt;
+    &lt;div&gt;Third&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+<p>However, it does <em>not</em> work with virtual elements. If you try the following:</p>
+
+<pre><code>&lt;!-- ko randomOrder: true --&gt;
+    &lt;div&gt;First&lt;/div&gt;
+    &lt;div&gt;Second&lt;/div&gt;
+    &lt;div&gt;Third&lt;/div&gt;
+&lt;!-- /ko --&gt;</code></pre>
+
+<p>&#8230; then you&#8217;ll get the error <code>The binding &#39;randomOrder&#39; cannot be used with virtual elements</code>. Let&#8217;s fix this. To make <code>randomOrder</code> usable with virtual elements, start by telling Knockout to allow it. Add the following:</p>
+
+<pre><code>ko.virtualElements.allowedBindings.randomOrder = true;</code></pre>
+
+<p>Now there won&#8217;t be an error. However, it still won&#8217;t work properly, because our <code>randomOrder</code> binding is coded using normal DOM API calls (<code>firstChild</code>, <code>appendChild</code>, etc.) which don&#8217;t understand virtual elements. This is the reason why KO requires you to explicitly opt in to virtual element support: unless your custom binding is coded using virtual element APIs, it&#8217;s not going to work properly!</p>
+
+<p>Let&#8217;s update the code for <code>randomOrder</code>, this time using KO&#8217;s virtual element APIs:</p>
+
+<pre><code>ko.bindingHandlers.randomOrder = {
+    init: function(elem, valueAccessor) {
+        // Build an array of child elements
+        var child = ko.virtualElements.firstChild(elem),
+            childElems = [];
+        while (child) {
+            childElems.push(child);
+            child = ko.virtualElements.nextSibling(child);
+        }
+
+        // Remove them all, then put them back in a random order
+        ko.virtualElements.emptyNode(elem);
+        while(childElems.length) {
+            var randomIndex = Math.floor(Math.random() * childElems.length),
+                chosenChild = childElems.splice(randomIndex, 1);
+            ko.virtualElements.prepend(elem, chosenChild[0]);
+        }
+    }
+};</code></pre>
+
+<p>Notice how, instead of using APIs like <code>domElement.firstChild</code>, we&#8217;re now using <code>ko.virtualElements.firstChild(domOrVirtualElement)</code>. The <code>randomOrder</code> binding will now correctly work with virtual elements, e.g., <code>&lt;!-- ko randomOrder: true --&gt;...&lt;!-- /ko --&gt;</code>.</p>
+
+<p>Also, <code>randomOrder</code> will still work with regular DOM elements, because all of the <code>ko.virtualElements</code> APIs are backwardly compatible with regular DOM elements.</p>
+
+<h3 id='virtual_element_apis'>Virtual Element APIs</h3>
+
+<p>Knockout provides the following functions for working with virtual elements.</p>
+
+<ul>
+<li>
+<p><code>ko.virtualElements.allowedBindings</code></p>
+
+<p>An object whose keys determine which bindings are usable with virtual elements. Set <code>ko.virtualElements.allowedBindings.mySuperBinding = true</code> to allow <code>mySuperBinding</code> to be used with virtual elements.</p>
+</li>
+
+<li>
+<p><code>ko.virtualElements.emptyNode(containerElem)</code></p>
+
+<p>Removes all child nodes from the real or virtual element <code>containerElem</code> (cleaning away any data associated with them to avoid memory leaks).</p>
+</li>
+
+<li>
+<p><code>ko.virtualElements.firstChild(containerElem)</code></p>
+
+<p>Returns the first child of the real or virtual element <code>containerElem</code>, or <code>null</code> if there are no children.</p>
+</li>
+
+<li>
+<p><code>ko.virtualElements.insertAfter(containerElem, nodeToInsert, insertAfter)</code></p>
+
+<p>Inserts <code>nodeToInsert</code> as a child of the real or virtual element <code>containerElem</code>, positioned immediately after <code>insertAfter</code> (where <code>insertAfter</code> must be a child of <code>containerElem</code>).</p>
+</li>
+
+<li>
+<p><code>ko.virtualElements.nextSibling(node)</code></p>
+
+<p>Returns the sibling node that follows <code>node</code> in its real or virtual parent element, or <code>null</code> if there is no following sibling.</p>
+</li>
+
+<li>
+<p><code>ko.virtualElements.prepend(containerElem, nodeToPrepend)</code></p>
+
+<p>Inserts <code>nodeToPrepend</code> as the first child of the real or virtual element <code>containerElem</code>.</p>
+</li>
+
+<li>
+<p><code>ko.virtualElements.setDomNodeChildren(containerElem, arrayOfNodes)</code></p>
+
+<p>Removes all child nodes from the real or virtual element <code>containerElem</code> (in the process, cleaning away any data associated with them to avoid memory leaks), and then inserts all of the nodes from <code>arrayOfNodes</code> as its new children.</p>
+</li>
+</ul>
+
+<p>Notice that this is <em>not</em> intended to be a complete replacement to the full set of regular DOM APIs. Knockout provides only a minimal set of virtual element APIs to make it possible to perform the kinds of transformations needed when implementing control flow bindings.</p>    
+		    </div>
+		    
+		    <div class="clear"></div>
+		</div>
+	</div>	
+</div>
+            <div class="clear"></div>
+            <div class="main-menu">
+    <ul>
+        <li><a rel="home" href="../index.html">Home</a></li>
+        <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
+        <li><a rel="tutorials" href="http://learn.knockoutjs.com/">Tutorials</a></li>
+        <li><a rel="examples" href="../examples/">Live examples</a></li>
+        <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
+        <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li>
+        <li><a href="http://github.com/SteveSanderson/knockout">Source</a></li>
+    </ul>
+</div>        	
+<div class="clear"></div>
+        </div>
+        
+        <div id="page-footer">(c) knockoutjs.com</div> 
+        
+		  <script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-32297409-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+			</script>
+    </body>
+</html>
