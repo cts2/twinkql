@@ -14,4 +14,13 @@ class IsA {
 	
 	String isA
 
+	List<Detail> details
+}
+
+class Detail {
+	
+	String name
+	
+	List<String> values
+	
 }

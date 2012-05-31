@@ -99,7 +99,7 @@ public class ResultBindingProcessor implements InitializingBean {
 		this.beanInstantiator = new BeanInstantiator(twinkqlContext);
 		this.querySolutionResultExtractor = 
 			new QuerySolutionResultExtractor(this.beanInstantiator);
-		this.matchExpressionParser = new MatchExpressionParser();
+		this.matchExpressionParser = new DefaultMatchExpressionParser();
 	
 		this.afterPropertiesSet();
 	}
@@ -223,8 +223,11 @@ public class ResultBindingProcessor implements InitializingBean {
 		if(association.isIsCollection()){
 			List<Object> returnList = new ArrayList<Object>();
 			
-			for(QuerySolution solution : uniqueSet){
-				Object result = this.processUniqueSet(Arrays.asList(solution), association);
+			Collection<List<QuerySolution>> innerUniqueSets = 
+				this.separateByUniqueIds(association.getUniqueResult(), uniqueSet);
+			
+			for(List<QuerySolution> innerUniqueSet : innerUniqueSets){
+				Object result = this.processUniqueSet(innerUniqueSet, association);
 				returnList.add(result);
 			}
 			
@@ -314,7 +317,7 @@ public class ResultBindingProcessor implements InitializingBean {
 			return true;
 		} else {
 			MatchExpression matchExpression = 
-				this.matchExpressionParser.getMatchExpression(rowMap.getMatch());
+				this.matchExpressionParser.parseMatchExpression(rowMap.getMatch());
 		
 			return matchExpression.isMatch(solution);
 		}
@@ -339,6 +342,22 @@ public class ResultBindingProcessor implements InitializingBean {
 		return returnList;
 	}
 	
+	private Collection<List<QuerySolution>> separateByUniqueIds(String uniqueVar, List<QuerySolution> solutions){
+		Map<String,List<QuerySolution>> uniqueMap = new HashMap<String,List<QuerySolution>>();
+		
+		for(QuerySolution solution : solutions){
+			String uniqueUri = solution.get(uniqueVar).asNode().getURI();
+			
+			if(! uniqueMap.containsKey(uniqueUri)){
+				uniqueMap.put(uniqueUri, new ArrayList<QuerySolution>());
+			}
+			
+			uniqueMap.get(uniqueUri).add(solution);
+			
+		}
+		return uniqueMap.values();
+	}
+	
 	private Collection<List<QuerySolution>> separateByUniqueIds(String uniqueVar, ResultSet resultSet){
 		Map<String,List<QuerySolution>> uniqueMap = new HashMap<String,List<QuerySolution>>();
 		
@@ -354,7 +373,6 @@ public class ResultBindingProcessor implements InitializingBean {
 			uniqueMap.get(uniqueUri).add(solution);
 			
 		}
-		
 		return uniqueMap.values();
 	}
 	

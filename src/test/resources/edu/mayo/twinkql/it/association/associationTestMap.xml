@@ -18,31 +18,61 @@
 		</association>
 	</resultMap>
 	
+	<resultMap id="whatGovernorsAreDoubleObjectResultMap" resultClass="edu.mayo.twinkql.it.association.Governor">
+		<uniqueResult>s</uniqueResult>
+		<rowMap  var="s" varType="localName" beanProperty="name" />
+		<association beanProperty="isAObject" isCollection="true" resultClass="edu.mayo.twinkql.it.association.IsA">
+			<uniqueResult>isa</uniqueResult>
+			<rowMap var="isa" varType="localName" beanProperty="isA"/>
+			<association beanProperty="details" isCollection="true" resultClass="edu.mayo.twinkql.it.association.Detail">
+				<uniqueResult>detail</uniqueResult>
+				<rowMap var="detail" varType="localName" beanProperty="name"/>
+				<rowMap var="value" varType="literalValue" match="value.isLiteral()" beanProperty="values[]"/>
+				<rowMap var="value" varType="localName" match="value.isURIResource()" beanProperty="values[]"/>
+			</association>
+		</association>
+	</resultMap>
+	
 	<select id="whatGovernorsAreShort" resultMap="whatGovernorsAreShortResultMap">
 
-	SELECT DISTINCT ?s ?isa 
-	WHERE {
-	
-	<![CDATA[
-	?s a <http://dbpedia.org/ontology/Governor> ;
-	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?isa
-	]]>
-	
-	} LIMIT 100
+		SELECT DISTINCT ?s ?isa 
+		WHERE {
+		
+		<![CDATA[
+		?s a <http://dbpedia.org/ontology/Governor> ;
+		<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?isa
+		]]>
+		
+		} LIMIT 100
 	
 	</select>
 	
 	<select id="whatGovernorsAreObject" resultMap="whatGovernorsAreObjectResultMap">
 
-	SELECT DISTINCT ?s ?isa 
-	WHERE {
+		SELECT DISTINCT ?s ?isa 
+		WHERE {
+		
+		<![CDATA[
+		?s a <http://dbpedia.org/ontology/Governor> ;
+		<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?isa
+		]]>
+		
+		} LIMIT 100
 	
-	<![CDATA[
-	?s a <http://dbpedia.org/ontology/Governor> ;
-	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?isa
-	]]>
+	</select>
 	
-	} LIMIT 100
+	<select id="whatGovernorsAreDoubleObject" resultMap="whatGovernorsAreDoubleObjectResultMap">
+
+		SELECT DISTINCT ?s ?isa ?detail ?value
+		WHERE {
+		
+		<![CDATA[
+		?s a <http://dbpedia.org/ontology/Governor> ;
+		<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?isa .
+		]]>
+		?isa ?detail ?value .
+		
+		} LIMIT 150
 	
 	</select>
 
