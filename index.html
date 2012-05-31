@@ -1,1 +1,129 @@
-My GitHub Page
+---
+layout: default
+title: Home
+mainmenukey: home
+---
+<div id="masthead">
+    <div id="slogan">
+        <p class="engraved">SPARQL With a Twist! Simplify integration of a SPARQL datasource into your app.</p>
+        <a style="float:left" class="download-button" href="http://informatics.mayo.edu/maven/content/repositories/releases/edu/mayo/twinkql/0.3.0/twinkql-0.3.0.jar">
+            <p>Download</p>
+            <p class="smallprint">v0.3.0</p>
+        </a>
+        <a style="float:left" class="download-button" href="documentation/installation.html#dependency">
+         	<p>Repository</p>
+            <p class="smallprint">Maven/Ivy/Gradle</p>
+        </a>
+    </div>
+    <img src="img/ko-logo.png" />
+</div>
+<div class="clear vspace"></div>
+
+<div class="sticker fullWidth">
+    <div class="stickerHeading titillium">
+        <h1>Key concepts</h1>
+    </div>
+    <ul id="introBadges">
+        <li>
+            <img src="img/feature-icons/declarative-bindings.png" />					
+            <p class="titillium heading">Result Bindings</p>
+            <p>Easily bind SPARQL results to your Java Beans using XML Mappings</p>						
+        </li>					
+        <li>
+            <img src="img/feature-icons/automatic-refreshing.png" />					
+            <p class="titillium heading">Reusability</p>
+            <p>Extend and link results maps to fit your Java Bean hierarchy</p>						
+        </li>
+        <li>
+            <img src="img/feature-icons/dependency-tracking.png" />					
+            <p class="titillium heading">Dynamic SPARQL</p>
+            <p>Need to build complex SPARQL on the fly? Twinkql can handle that</p>
+        </li>
+        <li>
+            <img src="img/feature-icons/templating.png" />					
+            <p class="titillium heading">Keep SPARQL out of your Code!</p>
+            <p>Keep your code clean -- Move your SPARQL out of your code and into XML</p>						
+        </li>					
+    </ul>
+    <div class="clear"></div>
+</div>
+
+<div class="floatLeft">
+    <div class="sticker" style="width: 380px">
+        <div class="stickerHeading titillium">
+            <h1>More features</h1>
+        </div>
+        <ul class="tickIcons">
+            <li>Free, open source (<a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>)</li>
+            <li>Java Framework</li>
+            <li>Seamless integration with Spring</li>
+            <li>Uses familiar paradigms. Modeled after <a href="http://www.mybatis.org">MyBatis</a> JDBC Mapping Framework</li>            
+            <li>
+                Fully documented
+                <p class="smallprint">API docs and sample DBPedia queries included</p>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="sticker" style="width: 380px">
+        <div class="stickerHeading titillium">
+            <h1>Get started</h1>
+        </div>
+        <ul class="stickerList">
+            <li>
+                <a href="http://learn.knockoutjs.com">Interactive tutorials</a>
+                <p class="smallprint">Learn the easy way with an in-browser code editor</p>
+            </li>
+            <li>
+                <a href="http://channel9.msdn.com/Events/MIX/MIX11/FRM08">20-minute demo video</a>
+                <p>
+                    <a href="http://channel9.msdn.com/Events/MIX/MIX11/FRM08">
+                        <img src="img/mixVideo.jpg" width="320" height="145" style="display: block; margin: 1em auto"/>
+                    </a>
+                </p>
+                <p class="smallprint">Grab a coffee and watch this fast-paced introductory session, filmed at the 2011 MIX conference.</p>
+            </li>
+            <li>
+                <a href="documentation/introduction.html">Introduction to Knockout</a>
+                <p class="smallprint">Tutorial, benefits, comparisons with other frameworks</p>
+            </li>
+            <li>
+                <a href="http://www.pluralsight-training.net/microsoft/Courses/TableOfContents?courseName=knockout-mvvm">PluralSight Knockout.js training course</a>
+                <p class="smallprint">Nearly 5 hours of online video content by John Papa (<a href="http://johnpapa.net/komvvm">more info</a>)</p>
+            </li>
+            <li>
+                <a href="documentation/observables.html#mvvm_and_view_models">Introduction to the Model-View-View Model pattern</a>
+                <p class="smallprint">How KO enables it with observables and computed properties</p>
+            </li>
+            <li>
+                <a href="examples/">More live examples</a>
+            </li>           	
+            <li>
+                <a href="documentation/links.html">External links and blog posts</a>
+            </li>        	
+            <li>
+                <a href="http://github.com/SteveSanderson/knockout/">Source code on Github</a>
+            </li>
+        </ul>
+    </div>    
+</div>	
+
+<div class="sticker floatRight" style="width:494px">
+    <div class="stickerHeading titillium">
+        <h1><b>New:</b> Interactive tutorials</h1>
+    </div>
+	<p>
+		Get started with knockout.js quickly, learning to build <em>single-page applications</em>, <em>custom bindings</em> and more
+		with <a href="http://learn.knockoutjs.com">these interactive tutorials</a>.
+	</p>
+</div>		
+        
+<div class="sticker floatRight homepageExample" style="width:494px">
+    <div class="stickerHeading titillium">
+        <h1>What it looks like</h1>
+    </div>
+    {% include homepage-example.html %}
+    <p>Named SPARQL queries can be called from your application. These queries my contain parameters, and may be built dynamically based
+    on parameter values. The queries may then be bound to a ResultMapping, which specifies the binding points between the returned SPARQL
+    variables and the beans.</p>
+</div>		
