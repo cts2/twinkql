@@ -83,6 +83,8 @@ public class ResultBindingProcessor implements InitializingBean {
 	private Map<Qname, ? extends ResultMap> resultMaps = new HashMap<Qname, ResultMap>();
 	
 	private Map<String,PropertyReasoner> reasoners;
+	
+	private QuerySolutionGrouper querySolutionGrouper = new QuerySolutionGrouper();
 
 	public ResultBindingProcessor() {
 		super();
@@ -133,18 +135,30 @@ public class ResultBindingProcessor implements InitializingBean {
 			ResultSet resultSet,
 			Qname resultMapQname) {
 		List<T> returnList = new ArrayList<T>();
+		
+		List<QuerySolution> solutions = this.resolveResultSet(resultSet);
 
 		ResultMap resultMap = this.resultMaps.get(resultMapQname);
 
 		Collection<List<QuerySolution>> uniqueResults = 
-			this.separateByUniqueIds(
+			this.querySolutionGrouper.separateByUniqueIds(
 				resultMap, 
-				resultSet);
+				solutions);
 		
 		for(List<QuerySolution> uniqueSet : uniqueResults){
 			returnList.add( (T) this.processUniqueSet(uniqueSet, resultMap) );
 		}
 
+		return returnList;
+	}
+	
+	private List<QuerySolution> resolveResultSet(ResultSet resultSet) {
+		List<QuerySolution> returnList = new ArrayList<QuerySolution>();
+		
+		while(resultSet.hasNext()){
+			returnList.add(resultSet.next());
+		}
+		
 		return returnList;
 	}
 	
@@ -224,7 +238,7 @@ public class ResultBindingProcessor implements InitializingBean {
 			List<Object> returnList = new ArrayList<Object>();
 			
 			Collection<List<QuerySolution>> innerUniqueSets = 
-				this.separateByUniqueIds(association.getUniqueResult(), uniqueSet);
+				this.querySolutionGrouper.separateByUniqueIds(association, uniqueSet);
 			
 			for(List<QuerySolution> innerUniqueSet : innerUniqueSets){
 				Object result = this.processUniqueSet(innerUniqueSet, association);
@@ -323,58 +337,7 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 	}
 	
-	private Collection<List<QuerySolution>> separateByUniqueIds(ResultMap map, ResultSet resultSet){
-		if(StringUtils.isBlank(map.getUniqueResult())){
-			return this.separateByUniqueIds(resultSet);
-		} else {
-			return this.separateByUniqueIds(map.getUniqueResult(), resultSet);
-		}
-	}
-	
-	private Collection<List<QuerySolution>> separateByUniqueIds(ResultSet resultSet){
-		List<List<QuerySolution>> returnList = new ArrayList<List<QuerySolution>>();
-		
-		while(resultSet.hasNext()){
-			QuerySolution solution = resultSet.next();
-			returnList.add(Arrays.asList(solution));
-		}
-		
-		return returnList;
-	}
-	
-	private Collection<List<QuerySolution>> separateByUniqueIds(String uniqueVar, List<QuerySolution> solutions){
-		Map<String,List<QuerySolution>> uniqueMap = new HashMap<String,List<QuerySolution>>();
-		
-		for(QuerySolution solution : solutions){
-			String uniqueUri = solution.get(uniqueVar).asNode().getURI();
-			
-			if(! uniqueMap.containsKey(uniqueUri)){
-				uniqueMap.put(uniqueUri, new ArrayList<QuerySolution>());
-			}
-			
-			uniqueMap.get(uniqueUri).add(solution);
-			
-		}
-		return uniqueMap.values();
-	}
-	
-	private Collection<List<QuerySolution>> separateByUniqueIds(String uniqueVar, ResultSet resultSet){
-		Map<String,List<QuerySolution>> uniqueMap = new HashMap<String,List<QuerySolution>>();
-		
-		while(resultSet.hasNext()){
-			QuerySolution solution = resultSet.next();
-			
-			String uniqueUri = solution.get(uniqueVar).asNode().getURI();
-			
-			if(! uniqueMap.containsKey(uniqueUri)){
-				uniqueMap.put(uniqueUri, new ArrayList<QuerySolution>());
-			}
-			
-			uniqueMap.get(uniqueUri).add(solution);
-			
-		}
-		return uniqueMap.values();
-	}
+
 	
 	private void handleConditional(
 			Object targetObj, 
