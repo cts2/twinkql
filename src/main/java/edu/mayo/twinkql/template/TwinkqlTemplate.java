@@ -211,8 +211,7 @@ public class TwinkqlTemplate implements InitializingBean {
 		Select select = this.selectMap.get(new Qname(namespace, selectId));
 
 		if (select == null) {
-			throw new MappingException("SELECT Statement Namespace: "
-					+ namespace + ", ID: " + selectId + " was not found.");
+			throw new SelectNotFoundException(namespace, selectId);
 		}
 
 		String queryString = this.doGetSparqlQueryString(select, parameters);

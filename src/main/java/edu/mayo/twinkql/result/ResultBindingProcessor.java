@@ -162,9 +162,15 @@ public class ResultBindingProcessor implements InitializingBean {
 			Qname resultMapQname) {
 		List<T> returnList = new ArrayList<T>();
 		
+		//fail fast if its an invalid ResultMap Qname
+		ResultMap resultMap = this.resultMaps.get(resultMapQname);
+		if(resultMap == null){
+			throw new ResultMapNotFoundException(resultMapQname);
+		}
+
 		List<QuerySolution> solutions = this.resolveResultSet(resultSet);
 
-		ResultMap resultMap = this.resultMaps.get(resultMapQname);
+		
 
 		Collection<List<QuerySolution>> uniqueResults = 
 			this.querySolutionGrouper.separateByUniqueIds(

@@ -115,6 +115,57 @@ public class TwinkqlTemplateTest {
 		
 	}
 	
+	@Test(expected=SelectNotFoundException)
+	void TestQuerySelectNotFoundBadName(){
+			
+		TwinkqlContextFactory factory = new TwinkqlContextFactory()
+		SparqlMap map = factory.loadSparqlMap(new ClassPathResource("xml/testMap.xml"))
+		
+		def twinkqlContext = [
+			getSparqlMaps : {-> [map] as Set},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
+	
+		def template = new TwinkqlTemplate(twinkqlContext, null)
+	
+		def query = template.getSelectQueryString("myTestNamespace", "__INVALID__", [
+			someProp1:null])
+	}
+	
+	@Test(expected=SelectNotFoundException)
+	void TestQuerySelectNotFoundBadNamespace(){
+			
+		TwinkqlContextFactory factory = new TwinkqlContextFactory()
+		SparqlMap map = factory.loadSparqlMap(new ClassPathResource("xml/testMap.xml"))
+		
+		def twinkqlContext = [
+			getSparqlMaps : {-> [map] as Set},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
+	
+		def template = new TwinkqlTemplate(twinkqlContext, null)
+	
+		def query = template.getSelectQueryString("__INVALID__", "testIterativeQuery", [
+			someProp1:null])
+	}
+	
+	@Test(expected=SelectNotFoundException)
+	void TestSelectNotFoundBothInvalid(){
+			
+		TwinkqlContextFactory factory = new TwinkqlContextFactory()
+		SparqlMap map = factory.loadSparqlMap(new ClassPathResource("xml/testMap.xml"))
+		
+		def twinkqlContext = [
+			getSparqlMaps : {-> [map] as Set},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
+	
+		def template = new TwinkqlTemplate(twinkqlContext, null)
+	
+		def query = template.getSelectQueryString("__INVALID__", "__INVALID__", [
+			someProp1:null])
+	}
+	
 	@Test
 	void TestQueryForStringParameterSubstitutionWithNotNullNestedSubstitution(){
 			

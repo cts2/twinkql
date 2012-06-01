@@ -704,6 +704,24 @@ class ResultBindingProcessorTest {
 	
 	}
 	
+	@Test(expected=ResultMapNotFoundException)
+	void testBindInvalidResultSet(){
+		def twinkqlContext = [
+			getSparqlMaps:{
+				[new SparqlMap(
+					namespace:"ns",
+				)
+				] as Set
+			},
+			getTwinkqlConfig : {null}
+		] as TwinkqlContext
+	
+		def binding = new ResultBindingProcessor(twinkqlContext)
+		
+		def r = binding.bind(null, Qname.toQname("ns:__INVALID__"))
+
+	
+	}
 	
 	@Test
 	void testBindForRowsWithAfterCallback(){

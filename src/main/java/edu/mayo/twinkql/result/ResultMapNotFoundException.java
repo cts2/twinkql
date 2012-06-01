@@ -21,7 +21,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.template;
+package edu.mayo.twinkql.result;
+
+import edu.mayo.twinkql.context.Qname;
 
 /**
  * The Class ResultMapNotFoundException.
@@ -31,6 +33,10 @@ package edu.mayo.twinkql.template;
 public class ResultMapNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -3572551432548266228L;
+	
+	public ResultMapNotFoundException(Qname resultMap){
+		this(resultMap.getNamespace(), resultMap.getLocalName());
+	}
 	
 	/**
 	 * Instantiates a new sparql map not found exception.

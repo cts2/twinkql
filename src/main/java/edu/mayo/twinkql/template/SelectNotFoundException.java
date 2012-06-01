@@ -24,11 +24,11 @@
 package edu.mayo.twinkql.template;
 
 /**
- * The Class SparqlMapNotFoundException.
+ * The Class SelectNotFoundException.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
-public class SparqlMapNotFoundException extends RuntimeException {
+public class SelectNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -3572551432548266228L;
 	
@@ -38,8 +38,8 @@ public class SparqlMapNotFoundException extends RuntimeException {
 	 * @param namespace the namespace
 	 * @param sparqlMapId the sparql map id
 	 */
-	public SparqlMapNotFoundException(String namespace, String sparqlMapId){
-		super("Sparql map with ID: " + sparqlMapId + " of namespace " + namespace + " was not found.");
+	public SelectNotFoundException(String namespace, String sparqlMapId){
+		super("SELECT Statement with ID: " + sparqlMapId + " of namespace " + namespace + " was not found.");
 	}
 
 }
