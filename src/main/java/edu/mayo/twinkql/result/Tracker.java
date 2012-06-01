@@ -35,14 +35,29 @@ class Tracker {
 	Map<String, Object> callbackParams = new HashMap<String, Object>();
 	Map<String, Object> queryParams = new HashMap<String, Object>();
 
+	/**
+	 * Gets the callback params.
+	 *
+	 * @return the callback params
+	 */
 	public Map<String, Object> getCallbackParams() {
 		return callbackParams;
 	}
 
+	/**
+	 * Gets the query params.
+	 *
+	 * @return the query params
+	 */
 	public Map<String, Object> getQueryParams() {
 		return queryParams;
 	}
 
+	/**
+	 * Sets the query params.
+	 *
+	 * @param queryParams the query params
+	 */
 	public void setQueryParams(Map<String, Object> queryParams) {
 		this.queryParams = queryParams;
 	}

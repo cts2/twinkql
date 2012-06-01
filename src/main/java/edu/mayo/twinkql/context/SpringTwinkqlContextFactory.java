@@ -38,6 +38,9 @@ public class SpringTwinkqlContextFactory extends TwinkqlContextFactory
 	
 	private ApplicationContext applicationContext;
 
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.FactoryBean#getObject()
+	 */
 	public TwinkqlContext getObject() throws Exception {
 		TwinkqlContext context = this.getTwinkqlContext();
 		
@@ -46,14 +49,23 @@ public class SpringTwinkqlContextFactory extends TwinkqlContextFactory
 		return context;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+	 */
 	public Class<?> getObjectType() {
 		return TwinkqlContext.class;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+	 */
 	public boolean isSingleton() {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+	 */
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		this.applicationContext = applicationContext;

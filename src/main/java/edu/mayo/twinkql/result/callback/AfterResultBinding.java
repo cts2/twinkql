@@ -36,6 +36,7 @@ public interface AfterResultBinding<T> extends Callback {
 	 * After binding.
 	 *
 	 * @param bindingResult the binding result
+	 * @param context the context
 	 * @return the t
 	 */
 	public void afterBinding(T bindingResult, CallbackContext context);

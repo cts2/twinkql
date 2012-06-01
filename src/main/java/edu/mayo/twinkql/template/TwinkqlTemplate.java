@@ -86,15 +86,18 @@ public class TwinkqlTemplate implements InitializingBean {
 
 	private Set<NamespaceDefinition> prefixes = new HashSet<NamespaceDefinition>();
 
+	/**
+	 * Instantiates a new twinkql template.
+	 */
 	public TwinkqlTemplate(){
 		super();
 	}
 	
 	/**
 	 * Instantiates a new twinkql template.
-	 * 
-	 * @param twinkqlContext
-	 *            the twinkql context
+	 *
+	 * @param twinkqlContext the twinkql context
+	 * @param resultBindingProcessor the result binding processor
 	 */
 	public TwinkqlTemplate(TwinkqlContext twinkqlContext, ResultBindingProcessor resultBindingProcessor) {
 		this.twinkqlContext = twinkqlContext;
@@ -103,6 +106,9 @@ public class TwinkqlTemplate implements InitializingBean {
 		this.init();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
 	public void afterPropertiesSet() throws Exception {
 		this.init();
 	}
@@ -113,6 +119,9 @@ public class TwinkqlTemplate implements InitializingBean {
 	 * @see
 	 * org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
+	/**
+	 * Inits the.
+	 */
 	protected void init() {
 		Assert.notNull(this.twinkqlContext,
 				"The property 'twinkqlContext' must be set!");
@@ -121,6 +130,11 @@ public class TwinkqlTemplate implements InitializingBean {
 		this.initCaches();
 	}
 
+	/**
+	 * Inits the prefixes.
+	 *
+	 * @param config the config
+	 */
 	public void initPrefixes(TwinkqlConfig config) {
 		if (config == null) {
 			return;
@@ -135,6 +149,12 @@ public class TwinkqlTemplate implements InitializingBean {
 		}
 	}
 
+	/**
+	 * Builds the prefix.
+	 *
+	 * @param def the def
+	 * @return the string
+	 */
 	protected String buildPrefix(NamespaceDefinition def) {
 		String uri = def.getUri();
 		String prefix = def.getPrefix();
@@ -142,6 +162,9 @@ public class TwinkqlTemplate implements InitializingBean {
 		return "PREFIX " + prefix + ": <" + uri + ">";
 	}
 
+	/**
+	 * Reinit caches.
+	 */
 	public void reinitCaches(){
 		this.selectMap.clear();
 		this.initCaches();
@@ -204,6 +227,12 @@ public class TwinkqlTemplate implements InitializingBean {
 	//TODO: This method searches for prefixes in the query
 	//This would most likely be more efficient with a regex of
 	//of some kind.
+	/**
+	 * Adds the in known prefixes.
+	 *
+	 * @param query the query
+	 * @return the string
+	 */
 	protected String addInKnownPrefixes(String query) {
 		
 		StringBuilder sb = new StringBuilder();
@@ -219,6 +248,13 @@ public class TwinkqlTemplate implements InitializingBean {
 		return sb.toString();
 	}
 	
+	/**
+	 * Does test pass.
+	 *
+	 * @param param the param
+	 * @param testType the test type
+	 * @return true, if successful
+	 */
 	protected boolean doesTestPass(Object param, TestType testType){
 		switch(testType) {
 			case IS_NULL :{
@@ -374,10 +410,24 @@ public class TwinkqlTemplate implements InitializingBean {
 		return query;
 	}
 
+	/**
+	 * Replace marker.
+	 *
+	 * @param id the id
+	 * @param query the query
+	 * @param replacement the replacement
+	 * @return the string
+	 */
 	private String replaceMarker(String id, String query, String replacement) {
 		return StringUtils.replaceOnce(query, id, replacement);
 	}
 
+	/**
+	 * Strip variable wrapping.
+	 *
+	 * @param variable the variable
+	 * @return the string
+	 */
 	private String stripVariableWrapping(String variable) {
 		variable = StringUtils.removeStart(variable, "#{");
 		variable = StringUtils.removeEnd(variable, "}");
@@ -385,6 +435,12 @@ public class TwinkqlTemplate implements InitializingBean {
 		return variable;
 	}
 
+	/**
+	 * Strip variable wrapping for iterator.
+	 *
+	 * @param variable the variable
+	 * @return the string
+	 */
 	private String stripVariableWrappingForIterator(String variable) {
 		variable = StringUtils.removeStart(
 				this.stripVariableWrapping(variable), "item.");
@@ -392,6 +448,12 @@ public class TwinkqlTemplate implements InitializingBean {
 		return variable;
 	}
 
+	/**
+	 * Gets the variables.
+	 *
+	 * @param text the text
+	 * @return the variables
+	 */
 	private List<String> getVariables(String text) {
 		List<String> returnList = new ArrayList<String>();
 
@@ -534,18 +596,38 @@ public class TwinkqlTemplate implements InitializingBean {
 		}
 	}
 
+	/**
+	 * Gets the twinkql context.
+	 *
+	 * @return the twinkql context
+	 */
 	public TwinkqlContext getTwinkqlContext() {
 		return twinkqlContext;
 	}
 
+	/**
+	 * Sets the twinkql context.
+	 *
+	 * @param twinkqlContext the new twinkql context
+	 */
 	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
 		this.twinkqlContext = twinkqlContext;
 	}
 
+	/**
+	 * Gets the result binding processor.
+	 *
+	 * @return the result binding processor
+	 */
 	public ResultBindingProcessor getResultBindingProcessor() {
 		return resultBindingProcessor;
 	}
 
+	/**
+	 * Sets the result binding processor.
+	 *
+	 * @param resultBindingProcessor the new result binding processor
+	 */
 	public void setResultBindingProcessor(
 			ResultBindingProcessor resultBindingProcessor) {
 		this.resultBindingProcessor = resultBindingProcessor;

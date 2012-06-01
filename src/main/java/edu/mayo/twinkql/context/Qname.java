@@ -80,10 +80,20 @@ public class Qname {
 		this.localName = localName;
 	}
 
+	/**
+	 * Gets the namespace.
+	 *
+	 * @return the namespace
+	 */
 	public String getNamespace() {
 		return namespace;
 	}
 
+	/**
+	 * Gets the local name.
+	 *
+	 * @return the local name
+	 */
 	public String getLocalName() {
 		return localName;
 	}

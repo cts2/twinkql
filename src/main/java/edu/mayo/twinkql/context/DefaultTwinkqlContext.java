@@ -62,6 +62,7 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	/**
 	 * Instantiates a new default twinkql context.
 	 *
+	 * @param twinkqlConfig the twinkql config
 	 * @param queryExecutionProvider the query execution provider
 	 * @param maps the maps
 	 */
@@ -72,6 +73,7 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	/**
 	 * Instantiates a new default twinkql context.
 	 *
+	 * @param twinkqlConfig the twinkql config
 	 * @param queryExecutionProvider the query execution provider
 	 * @param sparqlMaps the sparql maps
 	 */
@@ -82,6 +84,12 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 		this.instantiators = this.doAddInstantiators(new HashSet<Instantiator>());
 	}
 	
+	/**
+	 * Do add instantiators.
+	 *
+	 * @param instantiators the instantiators
+	 * @return the sets the
+	 */
 	protected Set<Instantiator> doAddInstantiators(Set<Instantiator> instantiators){
 		instantiators.add(new DefaultClassForNameInstantiator());
 		
@@ -102,39 +110,78 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 		return this.queryExecutionProvider.provideQueryExecution(query);
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.mayo.twinkql.context.TwinkqlContext#getInstantiators()
+	 */
 	public Set<Instantiator> getInstantiators() {
 		return this.instantiators;
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.mayo.twinkql.context.TwinkqlContext#getTwinkqlConfig()
+	 */
 	public TwinkqlConfig getTwinkqlConfig() {
 		return this.twinkqlConfig;
 	}
 
+	/**
+	 * Gets the query execution provider.
+	 *
+	 * @return the query execution provider
+	 */
 	public QueryExecutionProvider getQueryExecutionProvider() {
 		return queryExecutionProvider;
 	}
 
+	/**
+	 * Sets the query execution provider.
+	 *
+	 * @param queryExecutionProvider the new query execution provider
+	 */
 	public void setQueryExecutionProvider(
 			QueryExecutionProvider queryExecutionProvider) {
 		this.queryExecutionProvider = queryExecutionProvider;
 	}
 
+	/**
+	 * Sets the sparql maps.
+	 *
+	 * @param sparqlMaps the new sparql maps
+	 */
 	public void setSparqlMaps(Set<SparqlMap> sparqlMaps) {
 		this.sparqlMaps = sparqlMaps;
 	}
 
+	/**
+	 * Sets the instantiators.
+	 *
+	 * @param instantiators the new instantiators
+	 */
 	public void setInstantiators(Set<Instantiator> instantiators) {
 		this.instantiators = instantiators;
 	}
 
+	/**
+	 * Sets the twinkql config.
+	 *
+	 * @param twinkqlConfig the new twinkql config
+	 */
 	public void setTwinkqlConfig(TwinkqlConfig twinkqlConfig) {
 		this.twinkqlConfig = twinkqlConfig;
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.mayo.twinkql.context.TwinkqlContext#getPropertyReasoners()
+	 */
 	public Set<PropertyReasoner> getPropertyReasoners() {
 		return propertyReasoners;
 	}
 
+	/**
+	 * Sets the property reasoners.
+	 *
+	 * @param propertyReasoners the new property reasoners
+	 */
 	public void setPropertyReasoners(Set<PropertyReasoner> propertyReasoners) {
 		this.propertyReasoners = propertyReasoners;
 	}

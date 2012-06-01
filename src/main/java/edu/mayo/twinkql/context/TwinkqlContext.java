@@ -42,7 +42,6 @@ public interface TwinkqlContext {
 	/**
 	 * Gets the sparql map.
 	 *
-	 * @param namespace the namespace
 	 * @return the sparql map
 	 */
 	public Set<SparqlMap> getSparqlMaps();
@@ -55,9 +54,24 @@ public interface TwinkqlContext {
 	 */
 	public QueryExecution getQueryExecution(String query);
 	
+	/**
+	 * Gets the twinkql config.
+	 *
+	 * @return the twinkql config
+	 */
 	public TwinkqlConfig getTwinkqlConfig();
 	
+	/**
+	 * Gets the instantiators.
+	 *
+	 * @return the instantiators
+	 */
 	public Set<Instantiator> getInstantiators();
 	
+	/**
+	 * Gets the property reasoners.
+	 *
+	 * @return the property reasoners
+	 */
 	public Set<PropertyReasoner> getPropertyReasoners();
 }

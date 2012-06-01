@@ -94,7 +94,6 @@
 		<xsd:attribute name="extends" type="xsd:string" />
 		<xsd:attribute name="resultClass" type="xsd:string" />
 		<xsd:attribute name="afterMap" type="xsd:string" />
-		<xsd:attribute name="beforeMap" type="xsd:string" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="namedResultMap">

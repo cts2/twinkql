@@ -14,8 +14,8 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory
 
 import edu.mayo.twinkql.context.Qname
 import edu.mayo.twinkql.context.TwinkqlContext
+import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator
 import edu.mayo.twinkql.model.NamedResultMap
-import edu.mayo.twinkql.model.ResultMap
 import edu.mayo.twinkql.model.ResultMapChoice
 import edu.mayo.twinkql.model.ResultMapChoiceItem
 import edu.mayo.twinkql.model.RowMap
@@ -28,46 +28,44 @@ import edu.mayo.twinkql.result.callback.CallbackContext
 
 
 class ResultBindingProcessorTest {
-	/*
+
 	@Test
 	void testInitCaches(){
-		def result1 = new CompositeResultMap(
+		def result1 = new NamedResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId1",
 			extends:"ns:resultId2",
-			compositeResultMapItem:[
-				new CompositeResultMapItem(
-				tripleMap:
-		
-							new TripleMap(
+			resultMapChoice:
+				new ResultMapChoice(
+					resultMapChoiceItem:[
+						new ResultMapChoiceItem(
+							rowMap:
+								new RowMap(
 								beanProperty: "oneProp",
-								predicateUri: "http://predicateUri1",
 								var: "o",
 								varType: BindingPart.LITERALVALUE
 							)
-						
+						)
+					]
 				)
-			]
-			
 		);
 	
-		def result2 = new CompositeResultMap(
+		def result2 = new NamedResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId2",
-			compositeResultMapItem:[
-				new CompositeResultMapItem(
-				tripleMap:
-		
-							new TripleMap(
+			resultMapChoice:
+				new ResultMapChoice(
+					resultMapChoiceItem:[
+						new ResultMapChoiceItem(
+							rowMap:
+								new RowMap(
 								beanProperty: "twoProp",
-								predicateUri: "http://predicateUri2",
 								var: "o",
 								varType: BindingPart.LITERALVALUE
 							)
-						
+						)
+					]
 				)
-			]
-			
 		);
 		
 		def twinkqlContext = [
@@ -76,10 +74,10 @@ class ResultBindingProcessorTest {
 					namespace:"ns",
 					sparqlMapItem: [
 						new SparqlMapItem(
-							compositeResultMap:result1
+							resultMap:result1
 						),
 						new SparqlMapItem(
-							compositeResultMap:result2
+							resultMap:result2
 						)
 					]
 				)
@@ -93,15 +91,15 @@ class ResultBindingProcessorTest {
 		
 		processor.initCaches();
 		
-		assertNotNull processor.compositeResultMaps.get(Qname.toQname("ns:resultId1"))
-		assertNotNull processor.compositeResultMaps.get(Qname.toQname("ns:resultId2"))
+		assertNotNull processor.resultMaps.get(Qname.toQname("ns:resultId1"))
+		assertNotNull processor.resultMaps.get(Qname.toQname("ns:resultId2"))
 		
-		assertEquals 2, processor.compositeResultMaps.get(Qname.toQname("ns:resultId1")).compositeResultMapItem.length
-		assertEquals 1, processor.compositeResultMaps.get(Qname.toQname("ns:resultId2")).compositeResultMapItem.length
+		assertEquals 2, processor.resultMaps.get(Qname.toQname("ns:resultId1")).resultMapChoice.resultMapChoiceItem.length
+		assertEquals 1, processor.resultMaps.get(Qname.toQname("ns:resultId2")).resultMapChoice.resultMapChoiceItem.length
 		
 	}
  
-
+/*
 	@Test
 	void testBindForWithNoMatch(){
 
@@ -707,7 +705,6 @@ class ResultBindingProcessorTest {
 	}
 	
 	
-/*	
 	@Test
 	void testBindForRowsWithAfterCallback(){
 
@@ -728,19 +725,23 @@ class ResultBindingProcessorTest {
 		
 		replay(resultset, querysolution)
 		
-		def result = new PerRowResultMap(
+		def result = new NamedResultMap(
 			resultClass: "edu.mayo.twinkql.result.TestResult",
 			id: "resultId",
 			afterMap:"edu.mayo.twinkql.result.TestAfterBinding",
-			perRowResultMapItem: [ 
-				new PerRowResultMapItem(
-					rowMap: new RowMap(
+			resultMapChoice:
+				new ResultMapChoice(
+					resultMapChoiceItem:[
+						new ResultMapChoiceItem(
+							rowMap:
+								new RowMap(
 								beanProperty:"oneProp",
 								var:"var1",
 								varType:BindingPart.LITERALVALUE
 							)
+						)
+					]
 				)
-			]
 		);
 	
 		def twinkqlContext = [
@@ -749,7 +750,7 @@ class ResultBindingProcessorTest {
 					namespace:"ns",
 					sparqlMapItem: [
 						new SparqlMapItem(
-							perRowResultMap:result
+							resultMap:result
 						)
 					]
 				)
@@ -761,12 +762,12 @@ class ResultBindingProcessorTest {
 	
 		def binding = new ResultBindingProcessor(twinkqlContext)
 		
-		def r = binding.bindForList(resultset, null, Qname.toQname("ns:resultId"))
+		def r = binding.bind(resultset, Qname.toQname("ns:resultId"))
 
 		assertEquals 1, r.size()
 		assertEquals "Modified!!", r.get(0).oneProp
 	}
-	
+/*	
 	@Test
 	void testBindForRowsWithCompositeResultMap(){
 

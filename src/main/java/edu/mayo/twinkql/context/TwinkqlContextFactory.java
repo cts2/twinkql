@@ -97,6 +97,12 @@ public class TwinkqlContextFactory {
 		
 	}
 
+	/**
+	 * Gets the twinkql context.
+	 *
+	 * @return the twinkql context
+	 * @throws Exception the exception
+	 */
 	public TwinkqlContext getTwinkqlContext() throws Exception {
 		Assert.notNull(this.queryExecutionProvider,
 				"Please provide a 'QueryExecutionProvider'");
@@ -104,6 +110,11 @@ public class TwinkqlContextFactory {
 		return this.doCreateTwinkqlContext();
 	}
 	
+	/**
+	 * Do create twinkql context.
+	 *
+	 * @return the twinkql context
+	 */
 	protected TwinkqlContext doCreateTwinkqlContext(){
 		DefaultTwinkqlContext context = new DefaultTwinkqlContext();
 		
@@ -117,8 +128,7 @@ public class TwinkqlContextFactory {
 	
 	/**
 	 * Load mapping files.
-	 * @param twinkqlConfig 
-	 * 
+	 *
 	 * @return the iterable
 	 */
 	protected Set<SparqlMap> loadMappingFiles() {
@@ -139,6 +149,11 @@ public class TwinkqlContextFactory {
 		return returnList;
 	}
 	
+	/**
+	 * Load configuration file.
+	 *
+	 * @return the twinkql config
+	 */
 	protected TwinkqlConfig loadConfigurationFile() {
 		PathMatchingResourcePatternResolver resolver = this.createPathMatchingResourcePatternResolver();
 
@@ -154,13 +169,17 @@ public class TwinkqlContextFactory {
 		return config;
 	}
 	
+	/**
+	 * Creates a new TwinkqlContext object.
+	 *
+	 * @return the path matching resource pattern resolver
+	 */
 	protected PathMatchingResourcePatternResolver createPathMatchingResourcePatternResolver(){
 		return new PathMatchingResourcePatternResolver();
 	}
 	
 	/**
 	 * Load sparql mappings.
-	 * @param twinkqlConfig 
 	 *
 	 * @param resource the resource
 	 * @return the sparql mappings
@@ -229,11 +248,40 @@ public class TwinkqlContextFactory {
 		}
 	}
 	
+	/**
+	 * The Interface AddToSelectItem.
+	 *
+	 * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
+	 */
 	private interface AddToSelectItem {
+		
+		/**
+		 * Adds the to select item.
+		 *
+		 * @param object the object
+		 * @param selectItem the select item
+		 */
 		public void addToSelectItem(Object object, SelectItem selectItem);
+		
+		/**
+		 * Sets the id.
+		 *
+		 * @param object the object
+		 * @param id the id
+		 */
 		public void setId(Object object, String id);
 	}
 	
+	/**
+	 * Replace markers.
+	 *
+	 * @param adder the adder
+	 * @param clazz the clazz
+	 * @param select the select
+	 * @param xmlStart the xml start
+	 * @param xmlEnd the xml end
+	 * @param marker the marker
+	 */
 	private void replaceMarkers(
 			AddToSelectItem adder, 
 			Class<?> clazz, 
@@ -273,6 +321,12 @@ public class TwinkqlContextFactory {
 		}
 	}
 	
+	/**
+	 * Excape inner xml.
+	 *
+	 * @param xml the xml
+	 * @return the string
+	 */
 	private String excapeInnerXml(String xml){
 		String newXml = StringUtils.replace(xml, "&", "&amp;");
 		newXml = StringUtils.replace(newXml, "<", "&lt;");
@@ -298,6 +352,12 @@ public class TwinkqlContextFactory {
 		return newXml;
 	}
 	
+	/**
+	 * Load twinkql config.
+	 *
+	 * @param resource the resource
+	 * @return the twinkql config
+	 */
 	protected TwinkqlConfig loadTwinkqlConfig(Resource resource) {
 		try {
 			String xml = IOUtils.toString(resource.getInputStream());
@@ -307,6 +367,12 @@ public class TwinkqlContextFactory {
 		}
 	}
 	
+	/**
+	 * Decorate xml.
+	 *
+	 * @param xml the xml
+	 * @return the string
+	 */
 	protected String decorateXml(String xml){
 		xml = xml.replaceAll("<iterator", "{iteratorMarker}");
 		xml = xml.replaceAll("</iterator>", "{iteratorMarker}");
@@ -318,19 +384,39 @@ public class TwinkqlContextFactory {
 		return xml;
 	}
 
+	/**
+	 * Gets the mapping files.
+	 *
+	 * @return the mapping files
+	 */
 	public String getMappingFiles() {
 		return mappingFiles;
 	}
 
+	/**
+	 * Gets the query execution provider.
+	 *
+	 * @return the query execution provider
+	 */
 	public QueryExecutionProvider getQueryExecutionProvider() {
 		return queryExecutionProvider;
 	}
 
+	/**
+	 * Sets the query execution provider.
+	 *
+	 * @param queryExecutionProvider the new query execution provider
+	 */
 	public void setQueryExecutionProvider(
 			QueryExecutionProvider queryExecutionProvider) {
 		this.queryExecutionProvider = queryExecutionProvider;
 	}
 
+	/**
+	 * Sets the mapping files.
+	 *
+	 * @param mappingFiles the new mapping files
+	 */
 	public void setMappingFiles(String mappingFiles) {
 		this.mappingFiles = mappingFiles;
 	}

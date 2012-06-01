@@ -48,10 +48,20 @@ class CompositeTracker extends Tracker {
 		this.requestedPredicateUris = requestedPredicateUris;
 	}
 
+	/**
+	 * Gets the requested predicate uris.
+	 *
+	 * @return the requested predicate uris
+	 */
 	public Set<String> getRequestedPredicateUris() {
 		return requestedPredicateUris;
 	}
 	
+	/**
+	 * Gets the collection tracker.
+	 *
+	 * @return the collection tracker
+	 */
 	public Map<String, Integer> getCollectionTracker() {
 		return collectionTracker;
 	}

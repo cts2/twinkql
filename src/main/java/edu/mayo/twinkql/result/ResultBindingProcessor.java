@@ -85,7 +85,16 @@ public class ResultBindingProcessor implements InitializingBean {
 	private Map<String,PropertyReasoner> reasoners;
 	
 	private QuerySolutionGrouper querySolutionGrouper = new QuerySolutionGrouper();
+	
+	@Autowired
+	private PropertySetter propertySetter;
+	
+	@Autowired
+	private AfterBindingCallbackProcessor afterBindingCallbackProcessor;
 
+	/**
+	 * Instantiates a new result binding processor.
+	 */
 	public ResultBindingProcessor() {
 		super();
 	}
@@ -102,10 +111,16 @@ public class ResultBindingProcessor implements InitializingBean {
 		this.querySolutionResultExtractor = 
 			new QuerySolutionResultExtractor(this.beanInstantiator);
 		this.matchExpressionParser = new DefaultMatchExpressionParser();
+		this.propertySetter = new PropertySetter(this.beanInstantiator);
+		this.afterBindingCallbackProcessor = 
+			new AfterBindingCallbackProcessor(this.beanInstantiator);
 	
 		this.afterPropertiesSet();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
 	public void afterPropertiesSet() {
 		Assert.notNull(this.twinkqlContext);
 		Assert.notNull(this.beanInstantiator);
@@ -113,6 +128,9 @@ public class ResultBindingProcessor implements InitializingBean {
 		this.initCaches();
 	}
 	
+	/**
+	 * Inits the caches.
+	 */
 	protected void initCaches() {
 		Map<Qname, ExtendableResultMap> resultMaps = new HashMap<Qname, ExtendableResultMap>();
 
@@ -131,6 +149,14 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 	}
 
+	/**
+	 * Bind.
+	 *
+	 * @param <T> the generic type
+	 * @param resultSet the result set
+	 * @param resultMapQname the result map qname
+	 * @return the list
+	 */
 	public <T> List<T> bind(
 			ResultSet resultSet,
 			Qname resultMapQname) {
@@ -152,6 +178,12 @@ public class ResultBindingProcessor implements InitializingBean {
 		return returnList;
 	}
 	
+	/**
+	 * Resolve result set.
+	 *
+	 * @param resultSet the result set
+	 * @return the list
+	 */
 	private List<QuerySolution> resolveResultSet(ResultSet resultSet) {
 		List<QuerySolution> returnList = new ArrayList<QuerySolution>();
 		
@@ -162,6 +194,12 @@ public class ResultBindingProcessor implements InitializingBean {
 		return returnList;
 	}
 	
+	/**
+	 * Process extendable result set.
+	 *
+	 * @param resultMaps the result maps
+	 * @return the map
+	 */
 	private Map<Qname, ExtendableResultMap> processExtendableResultSet(
 			Map<Qname, ExtendableResultMap> resultMaps){
 		
@@ -179,6 +217,13 @@ public class ResultBindingProcessor implements InitializingBean {
 		return resultMaps;
 	}
 	
+	/**
+	 * Process unique set.
+	 *
+	 * @param uniqueSet the unique set
+	 * @param resultMap the result map
+	 * @return the object
+	 */
 	private Object processUniqueSet(List<QuerySolution> uniqueSet, ResultMap resultMap){
 		Object returnResult = this.createNewResult(resultMap);
 		
@@ -207,31 +252,52 @@ public class ResultBindingProcessor implements InitializingBean {
 					Object associatedObject = 
 						this.processAssociation(association, uniqueSet);
 					
-					this.setProperty(returnResult, associatedObject, association, null);
+					this.propertySetter.
+						setProperty(returnResult, associatedObject, association, null);
 				}
 			}
 		}
 		
+		this.afterBindingCallbackProcessor.process(
+				resultMap.getAfterMap(), 
+				returnResult, 
+				null);
+		
 		return returnResult;
 	}
 
+	/**
+	 * Process row map.
+	 *
+	 * @param target the target
+	 * @param rowMap the row map
+	 * @param solution the solution
+	 */
 	private void processRowMap(Object target, RowMap rowMap, QuerySolution solution) {
 		if(this.isMatch(rowMap, solution)){
-			
+
 			String result = 
 					this.querySolutionResultExtractor.
 						getResultFromQuerySolution(
 							solution.get(rowMap.getVar()), 
 							rowMap);
 			
-			this.setProperty(
-				target, 
-				result, 
-				rowMap,
-				null);
+			this.propertySetter.
+				setProperty(
+					target, 
+					result, 
+					rowMap,
+					null);
 		}
 	}
 	
+	/**
+	 * Process association.
+	 *
+	 * @param association the association
+	 * @param uniqueSet the unique set
+	 * @return the object
+	 */
 	private Object processAssociation(Association association, List<QuerySolution> uniqueSet) {
 		Object returnObject;
 		if(association.isIsCollection()){
@@ -252,72 +318,14 @@ public class ResultBindingProcessor implements InitializingBean {
 		return returnObject;
 	}
 	
-	private void setProperty(
-			Object targetObj, 
-			Object result, 
-			Association association, 
-			Tracker tracker){
-		String callbackId = association.getCallbackId();
-		String property = association.getBeanProperty();
-		
-		this.setProperty(targetObj, result, property, callbackId, tracker);
-	}
 	
-	private void setProperty(
-			Object targetObj, 
-			Object result, 
-			RowMap rowMap, 
-			Tracker tracker){
-		String callbackId = rowMap.getCallbackId();
-		String property = rowMap.getBeanProperty();
-		
-		this.setProperty(targetObj, result, property, callbackId, tracker);
-	}
 	
-	private void setProperty(
-			Object targetObj, 
-			Object result, 
-			String property, 
-			String callbackId, 
-			Tracker tracker){
-
-		if(StringUtils.isNotBlank(callbackId)){
-			tracker.getCallbackParams().put(callbackId, result);
-		}
-		
-		if(StringUtils.isNotBlank(property)){
-			
-			property = this.adjustForCollection(targetObj, property);
-			
-			BeanUtil.setPropertyForced(targetObj,
-					property, result);
-		}	
-	}
-	
-	private String adjustForCollection(Object target, String property){
-		if(StringUtils.countMatches(property, "[]") > 1){
-			throw new MappingException("Cannot have more than one Collection Indicator ('[]') in a 'property' attribute.");
-		}
-		
-		String[] parts = StringUtils.split(property, '.');
-		
-		for(int i=0;i<parts.length;i++){
-			String part = parts[i];
-			if(StringUtils.endsWith(part, "[]")){
-				String propertySoFar = 
-					StringUtils.removeEnd(StringUtils.join(
-						ArrayUtils.subarray(parts, 0, i+1), '.'), "[]");
-				
-				Collection<?> collection = (Collection<?>) BeanUtil.getSimplePropertyForced(target, propertySoFar, true);
-				int index = collection.size();
-				
-				parts[i] = StringUtils.replace(part, "[]", "["+index+"]");
-			}
-		}
-		
-		return StringUtils.join(parts, '.');
-	}
-	
+	/**
+	 * Creates the new result.
+	 *
+	 * @param resultMap the result map
+	 * @return the object
+	 */
 	private Object createNewResult(ResultMap resultMap) {
 		try {
 			return Class.forName(resultMap.getResultClass()).newInstance();
@@ -326,6 +334,13 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 	}
 
+	/**
+	 * Checks if is match.
+	 *
+	 * @param rowMap the row map
+	 * @param solution the solution
+	 * @return true, if is match
+	 */
 	private boolean isMatch(RowMap rowMap, QuerySolution solution){
 		if(StringUtils.isBlank(rowMap.getMatch())){
 			return true;
@@ -339,6 +354,14 @@ public class ResultBindingProcessor implements InitializingBean {
 	
 
 	
+	/**
+	 * Handle conditional.
+	 *
+	 * @param targetObj the target obj
+	 * @param solution the solution
+	 * @param conditional the conditional
+	 * @param tracker the tracker
+	 */
 	private void handleConditional(
 			Object targetObj, 
 			QuerySolution solution,
@@ -365,10 +388,20 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 	}
 	
+	/**
+	 * Gets the twinkql context.
+	 *
+	 * @return the twinkql context
+	 */
 	public TwinkqlContext getTwinkqlContext() {
 		return twinkqlContext;
 	}
 
+	/**
+	 * Sets the twinkql context.
+	 *
+	 * @param twinkqlContext the new twinkql context
+	 */
 	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
 		this.twinkqlContext = twinkqlContext;
 	}

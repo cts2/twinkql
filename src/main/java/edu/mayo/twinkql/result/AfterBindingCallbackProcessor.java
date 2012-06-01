@@ -1,5 +1,5 @@
 /*
- * Copyright: (c) 2004-2011 Mayo Foundation for Medical Education and 
+ * Copyright: (c) 2004-2012 Mayo Foundation for Medical Education and 
  * Research (MFMER). All rights reserved. MAYO, MAYO CLINIC, and the
  * triple-shield Mayo logo are trademarks and service marks of MFMER.
  *
@@ -21,57 +21,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.mayo.twinkql.instance;
+package edu.mayo.twinkql.result;
 
-import org.apache.commons.lang.ClassUtils;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
-import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.instance.BeanInstantiator;
+import edu.mayo.twinkql.result.callback.AfterResultBinding;
+import edu.mayo.twinkql.result.callback.CallbackContext;
 
 /**
- * The Class CallbackInstantiator.
+ * The Class AfterBindingCallbackProcessor.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 @Component
-public class BeanInstantiator extends AbstractCachingInstantiatingBean {
+public class AfterBindingCallbackProcessor {
+
+	@Resource
+	private BeanInstantiator beanInstantiator;
 	
 	/**
-	 * Instantiates a new bean instantiator.
+	 * Instantiates a new after binding callback processor.
 	 */
-	public BeanInstantiator(){
+	public AfterBindingCallbackProcessor(){
 		super();
 	}
 	
 	/**
-	 * Instantiates a new bean instantiator.
+	 * Instantiates a new after binding callback processor.
 	 *
-	 * @param twinkqlContext the twinkql context
+	 * @param beanInstantiator the bean instantiator
 	 */
-	public BeanInstantiator(TwinkqlContext twinkqlContext){
-		super(twinkqlContext);
+	public AfterBindingCallbackProcessor(BeanInstantiator beanInstantiator){
+		super();
+		this.beanInstantiator = beanInstantiator;
 	}
 	
 	/**
-	 * Instantiate after callback.
+	 * Process.
 	 *
-	 * @param <T> the generic type
-	 * @param className the class name
-	 * @param requiredType the required type
-	 * @return the after result binding
+	 * @param callbackClass the callback class
+	 * @param resultObject the result object
+	 * @param context the context
 	 */
-	@SuppressWarnings("unchecked")
-	public <T> T instantiateCallback(String className, Class<T> requiredType) {
-		className = StringUtils.strip(className);
+	public void process(String callbackClass, Object resultObject, CallbackContext context) {
 		
-		Object callback = this.instantiate(className);
+		if(StringUtils.isNotBlank(callbackClass) &&
+				resultObject != null){
+			@SuppressWarnings("unchecked")
+			AfterResultBinding<Object> callback = 
+				this.beanInstantiator.instantiateCallback(callbackClass, AfterResultBinding.class);
 			
-		if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
-			throw new RuntimeException();
+			callback.afterBinding(resultObject, context);
 		}
-		
-		return (T) callback;
 	}
-
 }

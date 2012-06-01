@@ -42,10 +42,20 @@ class ExtendableResultMap extends NamedResultMap {
 	private ExtendableResultMap extending;
 
 	
+	/**
+	 * Gets the extending.
+	 *
+	 * @return the extending
+	 */
 	public ExtendableResultMap getExtending() {
 		return extending;
 	}
 
+	/**
+	 * Sets the extending.
+	 *
+	 * @param extending the new extending
+	 */
 	public void setExtending(ExtendableResultMap extending) {
 		this.extending = extending;
 	}
@@ -53,7 +63,7 @@ class ExtendableResultMap extends NamedResultMap {
 	/**
 	 * Instantiates a new extended composite result map.
 	 *
-	 * @param extending the extending
+	 * @param decorated the decorated
 	 */
 	ExtendableResultMap(ResultMap decorated) {
 		super();
@@ -64,6 +74,9 @@ class ExtendableResultMap extends NamedResultMap {
 		} 
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.mayo.twinkql.model.ResultMap#getResultMapChoice()
+	 */
 	@Override
 	public ResultMapChoice getResultMapChoice() {
 			if(this.extending != null){
