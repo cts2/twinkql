@@ -17,7 +17,7 @@
 			<rowMap var="isa" varType="localName" beanProperty="isA"/>
 		</association>
 	</resultMap>
-	
+		
 	<resultMap id="whatGovernorsAreDoubleObjectResultMap" resultClass="edu.mayo.twinkql.it.association.Governor">
 		<uniqueResult>s</uniqueResult>
 		<rowMap  var="s" varType="localName" beanProperty="name" />
@@ -32,6 +32,26 @@
 			</association>
 		</association>
 	</resultMap>
+	
+	<resultMap id="whatGovernorsAreNonInlineResultMap" resultClass="edu.mayo.twinkql.it.association.Governor">
+		<uniqueResult>s</uniqueResult>
+		<rowMap  var="s" varType="localName" beanProperty="name" />
+		<association beanProperty="isAObject" isCollection="true" resultMap="isAResultMap"/>
+	</resultMap>
+	
+	<resultMap id="isAResultMap" resultClass="edu.mayo.twinkql.it.association.IsA">
+		<uniqueResult>isa</uniqueResult>
+		<rowMap var="isa" varType="localName" beanProperty="isA"/>
+		<association beanProperty="details" isCollection="true" resultMap="detailResultMap"/>
+	</resultMap>
+	
+	<resultMap id="detailResultMap" resultClass="edu.mayo.twinkql.it.association.Detail">
+		<uniqueResult>detail</uniqueResult>
+		<rowMap var="detail" varType="localName" beanProperty="name"/>
+		<rowMap var="value" varType="literalValue" match="value.isLiteral()" beanProperty="values[]"/>
+		<rowMap var="value" varType="localName" match="value.isURIResource()" beanProperty="values[]"/>
+	</resultMap>
+
 	
 	<select id="whatGovernorsAreShort" resultMap="whatGovernorsAreShortResultMap">
 
@@ -76,4 +96,18 @@
 	
 	</select>
 
+	<select id="whatGovernorsAreNonInline" resultMap="whatGovernorsAreDoubleObjectResultMap">
+
+		SELECT DISTINCT ?s ?isa ?detail ?value
+		WHERE {
+		
+		<![CDATA[
+		?s a <http://dbpedia.org/ontology/Governor> ;
+		<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?isa .
+		]]>
+		?isa ?detail ?value .
+		
+		} LIMIT 150
+	
+	</select>
 </sparqlMap>

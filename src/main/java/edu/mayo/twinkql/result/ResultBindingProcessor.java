@@ -82,6 +82,8 @@ public class ResultBindingProcessor implements InitializingBean {
 
 	private Map<Qname, ? extends ResultMap> resultMaps = new HashMap<Qname, ResultMap>();
 	
+	private Map<ResultMap,String> namespaces = new HashMap<ResultMap, String>();
+	
 	private Map<String,PropertyReasoner> reasoners;
 	
 	private QuerySolutionGrouper querySolutionGrouper = new QuerySolutionGrouper();
@@ -139,9 +141,13 @@ public class ResultBindingProcessor implements InitializingBean {
 				if (sparqlMapItem.getResultMap() != null) {
 					ExtendableResultMap resultMap = new ExtendableResultMap(
 						sparqlMapItem.getResultMap());
+					
+					String namespace = sparqlMap.getNamespace();
 					resultMaps.put(
-							Qname.toQname(resultMap.getId(),
-									sparqlMap.getNamespace()), resultMap);
+						new Qname(namespace, resultMap.getId()),
+						resultMap);
+					
+					this.namespaces.put(resultMap, namespace);
 				}
 			}
 			
@@ -169,8 +175,6 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 
 		List<QuerySolution> solutions = this.resolveResultSet(resultSet);
-
-		
 
 		Collection<List<QuerySolution>> uniqueResults = 
 			this.querySolutionGrouper.separateByUniqueIds(
@@ -256,7 +260,7 @@ public class ResultBindingProcessor implements InitializingBean {
 				Association association = resultMapItem.getAssociation();
 				if(association != null){
 					Object associatedObject = 
-						this.processAssociation(association, uniqueSet);
+						this.processAssociation(association, uniqueSet, this.namespaces.get(resultMap));
 					
 					this.propertySetter.
 						setProperty(returnResult, associatedObject, association, null);
@@ -304,24 +308,44 @@ public class ResultBindingProcessor implements InitializingBean {
 	 * @param uniqueSet the unique set
 	 * @return the object
 	 */
-	private Object processAssociation(Association association, List<QuerySolution> uniqueSet) {
+	private Object processAssociation(Association association, List<QuerySolution> uniqueSet, String defaultNamespace) {
 		Object returnObject;
+		
+		ResultMap resultMap = this.getResultMapFromAssociation(association, defaultNamespace);
+		
 		if(association.isIsCollection()){
 			List<Object> returnList = new ArrayList<Object>();
 			
 			Collection<List<QuerySolution>> innerUniqueSets = 
-				this.querySolutionGrouper.separateByUniqueIds(association, uniqueSet);
+				this.querySolutionGrouper.separateByUniqueIds(resultMap, uniqueSet);
 			
 			for(List<QuerySolution> innerUniqueSet : innerUniqueSets){
-				Object result = this.processUniqueSet(innerUniqueSet, association);
+				Object result = this.processUniqueSet(innerUniqueSet, resultMap);
 				returnList.add(result);
 			}
 			
 			returnObject = returnList;
 		} else {
-			returnObject = this.processUniqueSet(uniqueSet, association);
+			returnObject = this.processUniqueSet(uniqueSet, resultMap);
 		}
 		return returnObject;
+	}
+	
+	private ResultMap getResultMapFromAssociation(Association association, String defaultNamespace) {
+		ResultMap resultMap;
+		
+		if(StringUtils.isNotBlank(association.getResultMap())) {
+			if(association.getResultMapChoice() != null){
+				throw new MappingException(
+					"Association cannot declare a 'resultMap' attribute and contain content.");
+			}
+			resultMap = this.resultMaps.get(
+				Qname.toQname(association.getResultMap(), defaultNamespace));	
+		} else {
+			resultMap = association;
+		}
+			
+		return resultMap;
 	}
 	
 	

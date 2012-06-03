@@ -80,4 +80,33 @@ class AssociationTest {
 			
 		}
 	}
+	
+	@Test
+	void TestNonInlineAssociation(){
+		def result = template.selectForList("association", "whatGovernorsAreNonInline", null, null)
+		
+		assertNotNull result
+		
+		assertTrue result.size() > 0
+		
+		assertTrue result.size() < 100
+		
+		result.each {
+			assertNull it.isA
+			
+			assertNotNull it.isAObject
+			assertNotNull it.isAObject.isA
+			
+			assertNotNull it.isAObject.details
+			assertTrue it.isAObject.details.size() > 0
+			
+			it.isAObject.details.each {
+				assertNotNull it.name
+				assertNotNull it.values
+				
+				assertTrue it.values.size() > 0
+			}
+			
+		}
+	}
 }

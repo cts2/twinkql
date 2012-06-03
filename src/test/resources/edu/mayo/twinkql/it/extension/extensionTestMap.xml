@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparqlMap namespace="extension"
+	xmlns="http://mayo.edu/twinkql" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://mayo.edu/twinkql ../../../../../../../main/castor/twinkql.xsd ">
+	
+	<resultMap id="personResultMap" resultClass="edu.mayo.twinkql.it.extension.Persion">
+	</resultMap>
+	
+	<resultMap id="boxerResultMap" resultClass="edu.mayo.twinkql.it.extension.Boxer" 
+		extends="personResultMap">
+	</resultMap>
+	
+
+	<select id="getRandallTexCobb" resultMap="boxerResultMap">
+
+		SELECT *
+		WHERE {
+		   <![CDATA[
+		   <http://dbpedia.org/resource/Randall_%22Tex%22_Cobb> ?p ?o .
+		   ]]>
+		}
+	
+	</select>
+</sparqlMap>
