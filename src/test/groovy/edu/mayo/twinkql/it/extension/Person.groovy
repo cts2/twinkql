@@ -2,7 +2,7 @@ package edu.mayo.twinkql.it.extension
 
 class Person {
 	
-	String name
+	List<String> names
 	
 	String birthDate
 
@@ -10,9 +10,5 @@ class Person {
 
 class Boxer extends Person {
 	
-	int wins
-
-	int losses
-	
-	int draws
+	List<String> comments
 }

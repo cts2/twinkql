@@ -85,6 +85,9 @@ public class QuerySolutionGrouper {
 		Map<String,List<QuerySolution>> uniqueMap = new HashMap<String,List<QuerySolution>>();
 		
 		for(QuerySolution solution : solutions){
+			if(!solution.contains(uniqueVar)){
+				throw new MappingException("Unique constraint: " + uniqueVar + " is not specified as a return variable.");
+			}
 			String uniqueUri = solution.get(uniqueVar).asNode().getURI();
 			
 			if(! uniqueMap.containsKey(uniqueUri)){

@@ -24,6 +24,7 @@
 package edu.mayo.twinkql.result;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 
 import edu.mayo.twinkql.model.NamedResultMap;
 import edu.mayo.twinkql.model.ResultMap;
@@ -82,12 +83,20 @@ class ExtendableResultMap extends NamedResultMap {
 			if(this.extending != null){
 			ResultMapChoice choice = new ResultMapChoice();
 			
-			for(ResultMapChoiceItem item : extending.getResultMapChoice().getResultMapChoiceItem()){
-				choice.addResultMapChoiceItem(item);
+			ResultMapChoice extendingChoice = extending.getResultMapChoice();
+			
+			if(extendingChoice != null){
+				for(ResultMapChoiceItem item : extendingChoice.getResultMapChoiceItem()){
+					choice.addResultMapChoiceItem(item);
+				}
 			}
 			
-			for(ResultMapChoiceItem item : super.getResultMapChoice().getResultMapChoiceItem()){
-				choice.addResultMapChoiceItem(item);
+			ResultMapChoice superChoice = super.getResultMapChoice();
+			
+			if(superChoice != null){
+				for(ResultMapChoiceItem item : superChoice.getResultMapChoiceItem()){
+					choice.addResultMapChoiceItem(item);
+				}
 			}
 			
 			return choice;
@@ -95,5 +104,16 @@ class ExtendableResultMap extends NamedResultMap {
 			return super.getResultMapChoice();
 		}
 	}
+
+	@Override
+	public String getUniqueResult() {
+		String thisUniqueResult = super.getUniqueResult();
+		
+		if(StringUtils.isNotBlank(thisUniqueResult)){
+			return thisUniqueResult;
+		} else {
+			return this.extending.getUniqueResult();
+		}
+	}	
 
 }
