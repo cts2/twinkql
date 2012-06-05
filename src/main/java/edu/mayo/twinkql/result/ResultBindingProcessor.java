@@ -645,7 +645,7 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 		
 		if(reasonedPossibleResults.contains(
-				queryResultPredicateUri)){
+				queryResultPredicateUri)){	
 			return true;
 		}
 		
@@ -909,6 +909,12 @@ public class ResultBindingProcessor implements InitializingBean {
 	 */
 	private void addExplicitlyRequestedPredicates(Set<String> set, String predicateUri){
 		if(! predicateUri.equals(MATCH_ALL_OTHERS)){
+			if(this.reasoners != null){
+				for(PropertyReasoner reasoner : this.reasoners.values()){
+					set.addAll(reasoner.reason(predicateUri));
+				}
+			}
+			
 			set.add(predicateUri);
 		}
 	}
