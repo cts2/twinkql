@@ -91,6 +91,9 @@ public class ResultBindingProcessor implements InitializingBean {
 
 	@Autowired
 	private TwinkqlContext twinkqlContext;
+	
+	@Autowired
+	private UriParser uriParser;
 
 	private Map<Qname, CompositeResultMap> compositeResultMaps = new HashMap<Qname, CompositeResultMap>();
 	private Map<Qname, PerRowResultMap> perRowResultMaps = new HashMap<Qname, PerRowResultMap>();
@@ -1016,11 +1019,9 @@ public class ResultBindingProcessor implements InitializingBean {
 
 		switch (part) {
 		case LOCALNAME: {
-			result = rdfNode.asNode().getLocalName();
-			if (StringUtils.isBlank(result)) {
-				result = StringUtils.substringAfterLast(rdfNode.asNode()
-						.getURI(), "/");
-			}
+			result = this.uriParser.getLocalPart(
+				rdfNode.asNode().getURI());
+			
 			break;
 		}
 		case URI: {
@@ -1028,11 +1029,9 @@ public class ResultBindingProcessor implements InitializingBean {
 			break;
 		}
 		case NAMESPACE: {
-			result = rdfNode.asNode().getNameSpace();
-			if (StringUtils.equals(result, rdfNode.asNode().getURI())) {
-				result = StringUtils.substringBeforeLast(rdfNode.asNode()
-						.getURI(), "/") + "/";
-			}
+			result = this.uriParser.getNamespace(
+					rdfNode.asNode().getURI());
+			
 			break;
 		}
 		case LITERALVALUE: {
@@ -1055,6 +1054,8 @@ public class ResultBindingProcessor implements InitializingBean {
 		}
 		return result;
 	}
+	
+	
 
 	public TwinkqlContext getTwinkqlContext() {
 		return twinkqlContext;
