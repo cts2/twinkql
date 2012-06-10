@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparqlMap namespace="extension"
+	xmlns="http://mayo.edu/twinkql" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://mayo.edu/twinkql ../../../../../../../main/castor/twinkql.xsd ">
+	
+	
+</sparqlMap>

@@ -112,8 +112,12 @@ class ExtendableResultMap extends NamedResultMap {
 		if(StringUtils.isNotBlank(thisUniqueResult)){
 			return thisUniqueResult;
 		} else {
-			return this.extending.getUniqueResult();
+			if(this.extending != null){
+				return this.extending.getUniqueResult();
+			}
 		}
+		
+		return null;
 	}	
 
 }

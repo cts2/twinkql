@@ -16,5 +16,5 @@
 		<property name="mappingFiles" value="classpath:edu/mayo/twinkql/it/**/*TestMap.xml"/>
 	</bean>
 	
-	<bean class="edu.mayo.twinkql.template.TwinkqlTemplateFactory"/>
+	<bean class="edu.mayo.twinkql.template.SpringTwinkqlTemplateFactory"/>
 </beans>

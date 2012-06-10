@@ -23,45 +23,58 @@
  */
 package edu.mayo.twinkql.template;
 
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.FactoryBean;
+
+import edu.mayo.twinkql.context.TwinkqlContext;
+
 /**
- * The Class Test.
- *
- * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
+ * A factory for creating TwinkqlTemplate objects.
  */
-public class Test {
-
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args) {
-		Test t = new Test();
-		
-		String hi = "hi";
-		t.getString(hi);
-		
-		System.out.println(hi);
-	}
+public class SpringTwinkqlTemplateFactory extends AbstractTwinkqlTemplateFactory
+	implements FactoryBean<TwinkqlTemplate> {
 	
-	/**
-	 * Gets the string.
-	 *
-	 * @param s the s
-	 * @return the string
+	@Resource
+	private TwinkqlContext twinkqlContext;
+
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.FactoryBean#getObject()
 	 */
-	void getString(String s){
-		this.getString2(s);
+	public TwinkqlTemplate getObject() throws Exception {
+		return this.getTwinkqlTemplate();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+	 */
+	public Class<?> getObjectType() {
+		return TwinkqlTemplate.class;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+	 */
+	public boolean isSingleton() {
+		return true;
 	}
 
 	/**
-	 * Gets the string2.
+	 * Gets the twinkql context.
 	 *
-	 * @param s the s
-	 * @return the string2
+	 * @return the twinkql context
 	 */
-	void getString2(String s){
-		s = new String("asdf");
+	public TwinkqlContext getTwinkqlContext() {
+		return twinkqlContext;
+	}
+
+	/**
+	 * Sets the twinkql context.
+	 *
+	 * @param twinkqlContext the new twinkql context
+	 */
+	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
+		this.twinkqlContext = twinkqlContext;
 	}
 
 }

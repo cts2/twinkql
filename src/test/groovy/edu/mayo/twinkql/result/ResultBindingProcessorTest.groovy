@@ -549,6 +549,7 @@ class ResultBindingProcessorTest {
 	
 		expect(querysolution1.get("o")).andReturn(object1).anyTimes()
 		expect(querysolution1.get("s")).andReturn(subject).anyTimes()
+		expect(querysolution1.contains("s")).andReturn(true).anyTimes()
 		
 		QuerySolution querysolution2 = createMock(QuerySolution)
 		
@@ -566,6 +567,7 @@ class ResultBindingProcessorTest {
 	
 		expect(querysolution2.get("o")).andReturn(object2).anyTimes()
 		expect(querysolution2.get("s")).andReturn(subject).anyTimes()
+		expect(querysolution2.contains("s")).andReturn(true).anyTimes()
 		
 		expect(resultset.hasNext()).andReturn(true)
 		expect(resultset.next()).andReturn(querysolution1)

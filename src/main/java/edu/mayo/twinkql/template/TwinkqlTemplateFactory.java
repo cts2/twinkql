@@ -23,90 +23,29 @@
  */
 package edu.mayo.twinkql.template;
 
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
-
 import edu.mayo.twinkql.context.TwinkqlContext;
 
 /**
  * A factory for creating TwinkqlTemplate objects.
  */
-public class TwinkqlTemplateFactory implements FactoryBean<TwinkqlTemplate> {
-	
-	@Resource
+public class TwinkqlTemplateFactory extends AbstractTwinkqlTemplateFactory {
+
 	private TwinkqlContext twinkqlContext;
-
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.FactoryBean#getObject()
-	 */
-	public TwinkqlTemplate getObject() throws Exception {
-		
-		DefaultListableBeanFactory parentBeanFactory = new DefaultListableBeanFactory();
-		
-		parentBeanFactory.registerSingleton("twinkqlContext", this.twinkqlContext);
-
-		GenericApplicationContext parentContext = 
-		        new GenericApplicationContext(parentBeanFactory);
-		
-		parentContext.refresh();
-		
-		AnnotationConfigApplicationContext annotationConfigApplicationContext = 
-			this.decorateContext(new AnnotationConfigApplicationContext());
-        annotationConfigApplicationContext.setParent(parentContext);
-        annotationConfigApplicationContext.scan("edu.mayo.twinkql");
-        annotationConfigApplicationContext.refresh();
-
-		TwinkqlTemplate template = annotationConfigApplicationContext.getBean(TwinkqlTemplate.class);
-		
-		return template;
-	}
-
+	
 	/**
-	 * Decorate context.
+	 * Instantiates a new twinkql template factory.
 	 *
-	 * @param applicationContext the application context
-	 * @return the annotation config application context
+	 * @param twinkqlContext the twinkql context
 	 */
-	protected AnnotationConfigApplicationContext decorateContext(
-			AnnotationConfigApplicationContext applicationContext) {
-		//for subclasses
-		return applicationContext;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.FactoryBean#getObjectType()
-	 */
-	public Class<?> getObjectType() {
-		return TwinkqlTemplate.class;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
-	 */
-	public boolean isSingleton() {
-		return true;
-	}
-
-	/**
-	 * Gets the twinkql context.
-	 *
-	 * @return the twinkql context
-	 */
-	public TwinkqlContext getTwinkqlContext() {
-		return twinkqlContext;
-	}
-
-	/**
-	 * Sets the twinkql context.
-	 *
-	 * @param twinkqlContext the new twinkql context
-	 */
-	public void setTwinkqlContext(TwinkqlContext twinkqlContext) {
+	public TwinkqlTemplateFactory(TwinkqlContext twinkqlContext){
 		this.twinkqlContext = twinkqlContext;
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.mayo.twinkql.template.AbstractTwinkqlTemplateFactory#getTwinkqlContext()
+	 */
+	@Override
+	protected TwinkqlContext getTwinkqlContext() {
+		return this.twinkqlContext;
+	}
 }

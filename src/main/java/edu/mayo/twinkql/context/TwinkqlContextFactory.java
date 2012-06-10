@@ -66,7 +66,7 @@ public class TwinkqlContextFactory {
 	 * The Constructor.
 	 */
 	public TwinkqlContextFactory() {
-		this(null);
+		super();
 	}
 
 	/**
@@ -78,7 +78,15 @@ public class TwinkqlContextFactory {
 	public TwinkqlContextFactory(QueryExecutionProvider queryExecutionProvider) {
 		this(queryExecutionProvider, null);
 	}
+	
+	public TwinkqlContextFactory(String sparqlEndpointUrl) {
+		this(sparqlEndpointUrl, null);
+	}
 
+	public TwinkqlContextFactory(String sparqlEndpointUrl, String mappingFiles) {
+		this(new JenaHttpQueryExecutionProvider(sparqlEndpointUrl), mappingFiles);
+	}
+	
 	/**
 	 * The Constructor.
 	 * 
@@ -143,7 +151,16 @@ public class TwinkqlContextFactory {
 
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new ContextInitializationException(
+				"There was a problem loading the Twinkql Mapping Files specified by the pattern '" + this.mappingFiles +
+				".' Set the 'mappingFiles' property to specify a different mapping files location. Exception was: " +
+				e.getMessage());
+		}
+		
+		if(returnList.size() == 0){
+			throw new ContextInitializationException(
+					"No mapping files found at: '" + this.mappingFiles +
+					".' Set the 'mappingFiles' property to specify a different mapping files location.");
 		}
 
 		return returnList;
