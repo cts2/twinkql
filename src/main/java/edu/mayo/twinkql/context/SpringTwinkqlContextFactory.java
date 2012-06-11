@@ -23,11 +23,14 @@
  */
 package edu.mayo.twinkql.context;
 
+import java.util.Set;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.instance.SpringBeanNameInstantiator;
 
 /**
@@ -47,6 +50,14 @@ public class SpringTwinkqlContextFactory extends TwinkqlContextFactory
 		context.getInstantiators().add(new SpringBeanNameInstantiator(this.applicationContext));
 		
 		return context;
+	}
+	
+	protected Set<Instantiator> getDefaultInstantiators(){
+		Set<Instantiator> instantiators = super.getDefaultInstantiators();
+		
+		instantiators.add(new SpringBeanNameInstantiator(this.applicationContext));
+		
+		return instantiators;
 	}
 
 	/* (non-Javadoc)

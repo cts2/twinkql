@@ -25,6 +25,7 @@ package edu.mayo.twinkql.context;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -38,6 +39,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
+import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
+import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.IsNotNull;
 import edu.mayo.twinkql.model.Iterator;
 import edu.mayo.twinkql.model.Select;
@@ -62,6 +65,8 @@ public class TwinkqlContextFactory {
 
 	private QueryExecutionProvider queryExecutionProvider;
 	
+	private Set<Instantiator> instantiators = new HashSet<Instantiator>();
+
 	/**
 	 * The Constructor.
 	 */
@@ -142,7 +147,14 @@ public class TwinkqlContextFactory {
 		context.setQueryExecutionProvider(this.queryExecutionProvider);
 		context.setSparqlMaps(this.loadMappingFiles());
 		
+		this.instantiators.addAll(this.getDefaultInstantiators());
+		context.setInstantiators(this.instantiators);
+		
 		return context;
+	}
+	
+	protected Set<Instantiator> getDefaultInstantiators(){
+		return new HashSet<Instantiator>(Arrays.asList(new DefaultClassForNameInstantiator()));
 	}
 	
 	/**
@@ -465,5 +477,13 @@ public class TwinkqlContextFactory {
 	 */
 	public void setConfigurationFile(String configurationFile) {
 		this.configurationFile = configurationFile;
+	}
+
+	public Set<Instantiator> getInstantiators() {
+		return instantiators;
+	}
+
+	public void setInstantiators(Set<Instantiator> instantiators) {
+		this.instantiators = instantiators;
 	}
 }

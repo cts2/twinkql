@@ -23,11 +23,18 @@
  */
 package edu.mayo.twinkql.instance;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import edu.mayo.twinkql.context.TwinkqlContext;
+import edu.mayo.twinkql.model.AliasDefinition;
+import edu.mayo.twinkql.model.TwinkqlConfig;
+import edu.mayo.twinkql.model.TwinkqlConfigItem;
 
 /**
  * The Class CallbackInstantiator.
@@ -35,7 +42,27 @@ import edu.mayo.twinkql.context.TwinkqlContext;
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 @Component
-public class BeanInstantiator extends AbstractCachingInstantiatingBean {
+public class BeanInstantiator extends AbstractCachingInstantiatingBean
+	implements InitializingBean {
+	
+	private Map<String,AliasDefinition> aliases = new HashMap<String,AliasDefinition>();
+	
+	public void afterPropertiesSet() throws Exception {
+		TwinkqlContext twinkqlContext = this.getTwinkqlContext();
+		
+		this.cacheAliases(twinkqlContext.getTwinkqlConfig());
+	}
+	
+	private void cacheAliases(TwinkqlConfig twinkqlConfig){
+		if(twinkqlConfig != null){
+			for(TwinkqlConfigItem item : twinkqlConfig.getTwinkqlConfigItem()){
+				AliasDefinition alias = item.getAlias();
+				if(alias != null){
+					this.aliases.put(alias.getId(), alias);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Instantiates a new bean instantiator.
@@ -61,17 +88,32 @@ public class BeanInstantiator extends AbstractCachingInstantiatingBean {
 	 * @param requiredType the required type
 	 * @return the after result binding
 	 */
+	public <T> T instantiate(String classNameOrAlias, boolean newInstance) {
+		return this.instantiate(classNameOrAlias, null, newInstance);
+	}
+	
 	@SuppressWarnings("unchecked")
-	public <T> T instantiateCallback(String className, Class<T> requiredType) {
-		className = StringUtils.strip(className);
+	public <T> T instantiate(String classNameOrAlias, Class<T> requiredType, boolean newInstance) {
+		classNameOrAlias = StringUtils.strip(classNameOrAlias);
 		
-		Object callback = this.instantiate(className);
+		classNameOrAlias = this.convertAliasToClassName(classNameOrAlias);
+		
+		Object callback = this.doInstantiate(classNameOrAlias, newInstance);
 			
-		if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
-			throw new RuntimeException();
+		if(requiredType != null){
+			if(! ClassUtils.isAssignable(callback.getClass(), requiredType)){
+				throw new RuntimeException();
+			}
 		}
 		
 		return (T) callback;
 	}
-
+	
+	protected String convertAliasToClassName(String classNameOrAlias){
+		if(this.aliases.containsKey(classNameOrAlias)){
+			return this.aliases.get(classNameOrAlias).getType();
+		} else {
+			return classNameOrAlias;
+		}
+	}
 }

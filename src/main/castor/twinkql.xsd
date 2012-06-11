@@ -6,6 +6,7 @@
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<xsd:element name="namespace" type="namespaceDefinition"/>
+				<xsd:element name="alias" type="aliasDefinition"/>
 				<xsd:element name="reasoner" type="reasonerDefinition"/>
 			</xsd:choice>
 		</xsd:complexType>
@@ -14,6 +15,11 @@
 	<xsd:complexType name="namespaceDefinition" >
 		<xsd:attribute name="prefix" type="xsd:string" use="required" />
 		<xsd:attribute name="uri" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="aliasDefinition" >
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+		<xsd:attribute name="type" type="xsd:string" use="required" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="reasonerDefinition" >

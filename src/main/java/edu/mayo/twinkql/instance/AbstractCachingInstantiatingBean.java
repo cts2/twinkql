@@ -35,6 +35,8 @@ import edu.mayo.twinkql.context.TwinkqlContext;
  */
 public class AbstractCachingInstantiatingBean extends AbstractInstantiatingBean {
 	
+	private Map<String,Object> cache = new HashMap<String,Object>();
+
 	/**
 	 * Instantiates a new abstract caching instantiating bean.
 	 */
@@ -51,21 +53,23 @@ public class AbstractCachingInstantiatingBean extends AbstractInstantiatingBean 
 		super(twinkqlContext);
 	}
 
-	private Map<String,Object> cache = new HashMap<String,Object>();
-
 	/**
 	 * Instantiate.
 	 *
 	 * @param className the class name
 	 * @return the object
 	 */
-	public Object instantiate(String className){
-		if(! this.cache.containsKey(className)){
-			Object callback = this.getInstantiator(className).instantiate(className);
-
-			this.cache.put(className, callback);
+	protected Object doInstantiate(String className, boolean newInstance){
+		if(newInstance){
+			return this.getInstantiator(className).instantiate(className);
+		} else {
+			if(! this.cache.containsKey(className)){
+				Object callback = this.getInstantiator(className).instantiate(className);
+	
+				this.cache.put(className, callback);
+			}
+	
+			return this.cache.get(className);
 		}
-
-		return this.cache.get(className);
 	}
 }

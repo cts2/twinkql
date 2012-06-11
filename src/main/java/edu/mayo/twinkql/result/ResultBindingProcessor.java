@@ -60,9 +60,7 @@ import edu.mayo.twinkql.result.callback.ConditionalTest;
  */
 @Component
 public class ResultBindingProcessor implements InitializingBean {
-	
-	private static final String MATCH_ALL_OTHERS = "*";
-	
+
 	@Autowired
 	private MatchExpressionParser matchExpressionParser;
 	
@@ -351,11 +349,9 @@ public class ResultBindingProcessor implements InitializingBean {
 	 * @return the object
 	 */
 	private Object createNewResult(ResultMap resultMap) {
-		try {
-			return Class.forName(resultMap.getResultClass()).newInstance();
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
+		String resultAliasOrClass = resultMap.getResultClass();
+		
+		return this.beanInstantiator.instantiate(resultAliasOrClass, true);
 	}
 
 	/**
@@ -394,8 +390,10 @@ public class ResultBindingProcessor implements InitializingBean {
 		
 		@SuppressWarnings("unchecked")
 		ConditionalTest<Object> test = this.beanInstantiator
-				.instantiateCallback(conditional.getFunction(),
-						ConditionalTest.class);
+				.instantiate(
+						conditional.getFunction(),
+						ConditionalTest.class, 
+						false);
 
 		String parameter = conditional.getParam();
 

@@ -29,7 +29,6 @@ import java.util.Set;
 
 import com.hp.hpl.jena.query.QueryExecution;
 
-import edu.mayo.twinkql.instance.DefaultClassForNameInstantiator;
 import edu.mayo.twinkql.instance.Instantiator;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.TwinkqlConfig;
@@ -56,7 +55,7 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	 * Instantiates a new default twinkql context.
 	 */
 	public DefaultTwinkqlContext(){
-		this(null,null);
+		super();
 	}
 	
 	/**
@@ -66,8 +65,8 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	 * @param queryExecutionProvider the query execution provider
 	 * @param maps the maps
 	 */
-	public DefaultTwinkqlContext(TwinkqlConfig twinkqlConfig, QueryExecutionProvider queryExecutionProvider, SparqlMap...maps){
-		this(twinkqlConfig, queryExecutionProvider, new HashSet<SparqlMap>(Arrays.asList(maps)));
+	public DefaultTwinkqlContext(TwinkqlConfig twinkqlConfig, QueryExecutionProvider queryExecutionProvider, Set<Instantiator> instantiators, SparqlMap...maps){
+		this(twinkqlConfig, queryExecutionProvider, instantiators, new HashSet<SparqlMap>(Arrays.asList(maps)));
 	}
 	
 	/**
@@ -77,23 +76,11 @@ public class DefaultTwinkqlContext implements TwinkqlContext {
 	 * @param queryExecutionProvider the query execution provider
 	 * @param sparqlMaps the sparql maps
 	 */
-	public DefaultTwinkqlContext(TwinkqlConfig twinkqlConfig, QueryExecutionProvider queryExecutionProvider, Set<SparqlMap> sparqlMaps){
+	public DefaultTwinkqlContext(TwinkqlConfig twinkqlConfig, QueryExecutionProvider queryExecutionProvider, Set<Instantiator> instantiators, Set<SparqlMap> sparqlMaps){
 		this.twinkqlConfig = twinkqlConfig;
 		this.queryExecutionProvider = queryExecutionProvider;
 		this.sparqlMaps = sparqlMaps;
-		this.instantiators = this.doAddInstantiators(new HashSet<Instantiator>());
-	}
-	
-	/**
-	 * Do add instantiators.
-	 *
-	 * @param instantiators the instantiators
-	 * @return the sets the
-	 */
-	protected Set<Instantiator> doAddInstantiators(Set<Instantiator> instantiators){
-		instantiators.add(new DefaultClassForNameInstantiator());
-		
-		return instantiators;
+		this.instantiators = instantiators;
 	}
 
 	/* (non-Javadoc)

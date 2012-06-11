@@ -180,7 +180,7 @@ public class PropertySetter {
 		
 		if(StringUtils.isNotBlank(modifierString)){
 			Modifier<Object> modifier = 
-				this.beanInstantiator.instantiateCallback(modifierString, Modifier.class);
+				this.beanInstantiator.instantiate(modifierString, Modifier.class, false);
 			
 			result = modifier.beforeSetting(result);
 		}

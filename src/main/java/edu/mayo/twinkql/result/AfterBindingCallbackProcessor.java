@@ -73,7 +73,7 @@ public class AfterBindingCallbackProcessor {
 				resultObject != null){
 			@SuppressWarnings("unchecked")
 			AfterResultBinding<Object> callback = 
-				this.beanInstantiator.instantiateCallback(callbackClass, AfterResultBinding.class);
+				this.beanInstantiator.instantiate(callbackClass, AfterResultBinding.class, false);
 			
 			callback.afterBinding(resultObject, context);
 		}

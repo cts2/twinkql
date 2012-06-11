@@ -347,6 +347,7 @@ class ResultBindingProcessorTest {
 		);
 	
 		def twinkqlContext = [
+			getInstantiators:{ [new DefaultClassForNameInstantiator() ] as Set },
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
@@ -617,6 +618,7 @@ class ResultBindingProcessorTest {
 		);
 	
 		def twinkqlContext = [
+			getInstantiators:{ [new DefaultClassForNameInstantiator() ] as Set },
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",
@@ -683,6 +685,7 @@ class ResultBindingProcessorTest {
 		);
 	
 		def twinkqlContext = [
+			getInstantiators:{ [new DefaultClassForNameInstantiator() ] as Set },
 			getSparqlMaps:{
 				[new SparqlMap(
 					namespace:"ns",

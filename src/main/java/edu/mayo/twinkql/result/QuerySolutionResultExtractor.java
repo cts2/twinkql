@@ -109,7 +109,7 @@ public class QuerySolutionResultExtractor {
 		if (StringUtils.isNotBlank(modifier)) {
 			@SuppressWarnings("unchecked")
 			Modifier<String> modifierObject = this.beanInstantiator
-					.instantiateCallback(modifier, Modifier.class);
+					.instantiate(modifier, Modifier.class, false);
 
 			result = modifierObject.beforeSetting(result);
 		}
