@@ -41,7 +41,9 @@ import edu.mayo.twinkql.result.callback.Modifier;
  */
 @Component
 public class QuerySolutionResultExtractor {
-
+	
+	private UriParser uriParser = new UriParser();
+	
 	@Autowired
 	private BeanInstantiator beanInstantiator;
 	
@@ -80,11 +82,8 @@ public class QuerySolutionResultExtractor {
 
 		switch (part) {
 		case LOCALNAME: {
-			result = rdfNode.asNode().getLocalName();
-			if (StringUtils.isBlank(result)) {
-				result = StringUtils.substringAfterLast(rdfNode.asNode()
-						.getURI(), "/");
-			}
+			result = this.uriParser.getLocalPart(
+					rdfNode.asNode().getURI());
 			break;
 		}
 		case URI: {
@@ -92,11 +91,8 @@ public class QuerySolutionResultExtractor {
 			break;
 		}
 		case NAMESPACE: {
-			result = rdfNode.asNode().getNameSpace();
-			if (StringUtils.equals(result, rdfNode.asNode().getURI())) {
-				result = StringUtils.substringBeforeLast(rdfNode.asNode()
-						.getURI(), "/") + "/";
-			}
+			result = this.uriParser.getNamespace(
+					rdfNode.asNode().getURI());
 			break;
 		}
 		case LITERALVALUE: {

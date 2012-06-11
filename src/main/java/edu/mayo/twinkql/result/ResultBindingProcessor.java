@@ -24,16 +24,12 @@
 package edu.mayo.twinkql.result;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import jodd.bean.BeanUtil;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +51,6 @@ import edu.mayo.twinkql.model.ResultMapChoiceItem;
 import edu.mayo.twinkql.model.RowMap;
 import edu.mayo.twinkql.model.SparqlMap;
 import edu.mayo.twinkql.model.SparqlMapItem;
-import edu.mayo.twinkql.result.beans.reasoning.PropertyReasoner;
 import edu.mayo.twinkql.result.callback.ConditionalTest;
 
 /**
@@ -84,10 +79,8 @@ public class ResultBindingProcessor implements InitializingBean {
 	
 	private Map<ResultMap,String> namespaces = new HashMap<ResultMap, String>();
 	
-	private Map<String,PropertyReasoner> reasoners;
-	
 	private QuerySolutionGrouper querySolutionGrouper = new QuerySolutionGrouper();
-	
+
 	@Autowired
 	private PropertySetter propertySetter;
 	
@@ -163,6 +156,7 @@ public class ResultBindingProcessor implements InitializingBean {
 	 * @param resultMapQname the result map qname
 	 * @return the list
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> List<T> bind(
 			ResultSet resultSet,
 			Qname resultMapQname) {
