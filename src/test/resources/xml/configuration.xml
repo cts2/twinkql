@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <twinkqlConfig
 	xmlns="http://mayo.edu/twinkql" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	
-	<namespace prefix="test" uri="http://something"/>
+	<namespace prefix="rdfs" uri="http://www.w3.org/2000/01/rdf-schema#"/>
 
 </twinkqlConfig>

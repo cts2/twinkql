@@ -79,10 +79,21 @@ public class TwinkqlContextFactory {
 		this(queryExecutionProvider, null);
 	}
 	
+	/**
+	 * Instantiates a new twinkql context factory.
+	 *
+	 * @param sparqlEndpointUrl the sparql endpoint url
+	 */
 	public TwinkqlContextFactory(String sparqlEndpointUrl) {
 		this(sparqlEndpointUrl, null);
 	}
 
+	/**
+	 * Instantiates a new twinkql context factory.
+	 *
+	 * @param sparqlEndpointUrl the sparql endpoint url
+	 * @param mappingFiles the mapping files
+	 */
 	public TwinkqlContextFactory(String sparqlEndpointUrl, String mappingFiles) {
 		this(new JenaHttpQueryExecutionProvider(sparqlEndpointUrl), mappingFiles);
 	}
@@ -185,7 +196,7 @@ public class TwinkqlContextFactory {
 		
 		return config;
 	}
-	
+
 	/**
 	 * Creates a new TwinkqlContext object.
 	 *
@@ -436,5 +447,23 @@ public class TwinkqlContextFactory {
 	 */
 	public void setMappingFiles(String mappingFiles) {
 		this.mappingFiles = mappingFiles;
+	}
+	
+	/**
+	 * Gets the configuration file.
+	 *
+	 * @return the configuration file
+	 */
+	public String getConfigurationFile() {
+		return configurationFile;
+	}
+
+	/**
+	 * Sets the configuration file.
+	 *
+	 * @param configurationFile the new configuration file
+	 */
+	public void setConfigurationFile(String configurationFile) {
+		this.configurationFile = configurationFile;
 	}
 }
