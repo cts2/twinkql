@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Twinkql : Installation</title>
+        <title>Twinkql : A sparqlMap</title>
         <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" type="text/css" href="../css/styles.css" />
         <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
@@ -43,7 +43,7 @@
         SyntaxHighlighter.all();
         
         // Highlight current top menu item
-        var desiredMenuItem = 'installation' || 'documentation';
+        var desiredMenuItem = '' || 'documentation';
         $(".main-menu a[rel=" + desiredMenuItem + "]").addClass("active");
         
         // Highlight current left-hand-nav menu item
@@ -140,28 +140,39 @@
 	<div class="rightCol">
 		<div class="documentation sticker">
 		    <div class="content">
-		    	<h1>Installation</h1>	
-		    	<p>Knockout&#8217;s core library is pure JavaScript and doesn&#8217;t depend on any other libraries. So, to add KO to your project, just follow these steps:</p>
+		    	<h1>A sparqlMap</h1>	
+		    	<h3 id='purpose'>Purpose</h3>
 
-<ol>
-<li>
-<p><strong>Download</strong> the latest version of the Knockout JavaScript file from <a href='http://github.com/SteveSanderson/knockout/downloads'>the downloads page</a>. For normal development and production use, use the default, minified version (<code>knockout-x.y.z.js</code>).</p>
+<p>A <code>sparqlMap</code> is the basic logical unit of Twinqkl. This XML file is where all SPARQL selects and bindings are described.</p>
 
-<p><em>For debugging only, use the larger, non-minified version (<code>knockout-x.y.z.debug.js</code>). This behaves the same as the minified version, but has human-readable source code with full variable names and comments, and does not hide internal APIs.</em></p>
-</li>
+<h3 id='example'>Example</h3>
 
-<li>
-<p>Reference the file using a <code>&lt;script&gt;</code> tag somewhere on your HTML pages.</p>
-</li>
-</ol>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;sparqlMap namespace=&quot;org.twinkql.example&quot;
+	xmlns=&quot;http://mayo.edu/twinkql&quot; 
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+	
+	&lt;resultMap id=&quot;whatGovernorsAreShort&quot; resultClass=&quot;org.twinkql.example.Governor&quot;&gt;
+		&lt;uniqueResult&gt;s&lt;/uniqueResult&gt;
+		&lt;rowMap  var=&quot;s&quot; varType=&quot;localName&quot; beanProperty=&quot;name&quot; /&gt;
+		&lt;rowMap var=&quot;isa&quot; varType=&quot;localName&quot; beanProperty=&quot;isA[]&quot;/&gt;
+	&lt;/resultMap&gt;
 
-<p>For example,</p>
+	&lt;select id=&quot;whatGovernorsAre&quot; resultMap=&quot;whatGovernorsAreResultMap&quot;&gt;
 
-<pre><code>&lt;script type=&#39;text/javascript&#39; src=&#39;knockout-2.1.0.js&#39;&gt;&lt;/script&gt;</code></pre>
+		SELECT DISTINCT ?s ?isa 
+		WHERE {
+		
+		&lt;![CDATA[
+		?s a &lt;http://dbpedia.org/ontology/Governor&gt; ;
+		&lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; ?isa
+		]]&gt;
+		
+		} LIMIT 100
+	
+	&lt;/select&gt;
 
-<p>&#8230; and now you&#8217;re ready to use it. (Obviously, update the <code>src</code> attribute to match the location where you put the downloaded file.)</p>
-
-<p>If you&#8217;re new to Knockout, get started with <a href='http://learn.knockoutjs.com'>interactive tutorials</a>, see some <a href='../examples/'>live examples</a>, or dig into documentation about <a href='observables.html'>observables</a>.</p>    
+&lt;/sparqlMap&gt;</code></pre>    
 		    </div>
 		    
 		    <div class="clear"></div>
