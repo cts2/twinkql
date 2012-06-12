@@ -88,7 +88,7 @@ public class BeanInstantiator extends AbstractCachingInstantiatingBean
 	 * @param requiredType the required type
 	 * @return the after result binding
 	 */
-	public <T> T instantiate(String classNameOrAlias, boolean newInstance) {
+	public Object instantiate(String classNameOrAlias, boolean newInstance) {
 		return this.instantiate(classNameOrAlias, null, newInstance);
 	}
 	
@@ -105,12 +105,8 @@ public class BeanInstantiator extends AbstractCachingInstantiatingBean
 				throw new RuntimeException();
 			}
 		}
-		
-		if(requiredType == null){
-			return (T) callback;
-		} else {
-			return requiredType.cast(callback);
-		}
+	
+		return (T) callback;
 	}
 	
 	protected String convertAliasToClassName(String classNameOrAlias){
