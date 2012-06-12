@@ -24,4 +24,18 @@
 	]]>
 	</select>
 	
+	<select id="getTetrisCommentsWithNamespaces" resultMap="tetrisCommentsResultMap">
+	<![CDATA[
+		SELECT 
+		(dbpedia:Tetris as ?s)
+		?comment
+		
+		WHERE {
+
+			dbpedia:Tetris rdfs:comment ?comment
+		
+		} LIMIT 100
+	]]>
+	</select>
+	
 </sparqlMap>
