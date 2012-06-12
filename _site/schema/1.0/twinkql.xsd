@@ -1,0 +1,161 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://mayo.edu/twinkql" targetNamespace="http://mayo.edu/twinkql"
+	elementFormDefault="qualified">
+	
+	<xsd:element name="twinkqlConfig">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="namespace" type="namespaceDefinition"/>
+				<xsd:element name="alias" type="aliasDefinition"/>
+				<xsd:element name="reasoner" type="reasonerDefinition"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="namespaceDefinition" >
+		<xsd:attribute name="prefix" type="xsd:string" use="required" />
+		<xsd:attribute name="uri" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="aliasDefinition" >
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+		<xsd:attribute name="type" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="reasonerDefinition" >
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+		<xsd:attribute name="class" type="xsd:string" use="required" />
+	</xsd:complexType>
+
+	<xsd:element name="sparqlMap">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="resultMap" type="namedResultMap" />
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="select" type="select" />
+				</xsd:choice>
+			</xsd:choice>
+			<xsd:attribute name="namespace" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="select" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="iterator" type="iterator" />
+			<xsd:element name="isNotNull" type="isNotNull" />
+			<xsd:element name="test" type="test" />
+		</xsd:choice>
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+		<xsd:attribute name="resultMap" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="iterator">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="property" type="xsd:string" use="required" />
+				<xsd:attribute name="collection" type="xsd:string" use="required" />
+				<xsd:attribute name="open" type="xsd:string" />
+				<xsd:attribute name="separator" type="xsd:string" />
+				<xsd:attribute name="close" type="xsd:string" />
+				<xsd:attribute name="id" use="prohibited" type="xsd:string" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="isNotNull">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="property" type="xsd:string" use="required" />
+				<xsd:attribute name="id" use="prohibited" type="xsd:string" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="test">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="property" type="xsd:string" use="required" />
+				<xsd:attribute name="testType" type="testType" use="required" />
+				<xsd:attribute name="id" use="prohibited" type="xsd:string" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<xsd:simpleType name="testType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="IS_NULL" />
+			<xsd:enumeration value="IS_NOT_NULL" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="resultMap">
+		<xsd:sequence>
+			<xsd:element name="uniqueResult" type="xsd:string" minOccurs="0"/>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="association" type="association" />
+				<xsd:element name="rowMap" type="rowMap" />
+				<xsd:element name="if" type="conditional" />
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="extends" type="xsd:string" />
+		<xsd:attribute name="resultClass" type="xsd:string" />
+		<xsd:attribute name="afterMap" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="namedResultMap">
+		<xsd:complexContent>
+			<xsd:extension base="resultMap">
+				<xsd:attribute name="id" type="xsd:string" use="required" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="reasoner">
+		<xsd:attribute name="id" type="xsd:string" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="bindingPart">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="localName" />
+			<xsd:enumeration value="uri" />
+			<xsd:enumeration value="namespace" />
+			<xsd:enumeration value="literalValue" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="association">
+		<xsd:complexContent>
+			<xsd:extension base="resultMap">
+				<xsd:attribute name="isCollection" type="xsd:boolean" default="false" />
+				<xsd:attribute name="resultMap" type="xsd:string" />
+				<xsd:attribute name="beanProperty" type="xsd:string" />
+				<xsd:attribute name="callbackId" type="xsd:string" />
+				<xsd:attribute name="modifier" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="rowMap">
+		<xsd:attribute name="var" use="required" type="xsd:string" />
+		<xsd:attribute name="varType" use="required" type="bindingPart" />
+		<xsd:attribute name="match" type="xsd:string" />
+		<xsd:attribute name="beanProperty" type="xsd:string" />
+		<xsd:attribute name="callbackId" type="xsd:string" />
+		<xsd:attribute name="modifier" type="xsd:string" />
+	</xsd:complexType>
+
+	<xsd:complexType name="case">
+		<xsd:attribute name="value" type="xsd:string" />
+		<xsd:attribute name="resultMapping" type="xsd:string" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="conditional" abstract="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="association" type="association" />
+			<xsd:element name="rowMap" type="rowMap" />
+		</xsd:choice>
+		<xsd:attribute name="function" type="xsd:string" use="required" />
+		<xsd:attribute name="param" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+</xsd:schema>
