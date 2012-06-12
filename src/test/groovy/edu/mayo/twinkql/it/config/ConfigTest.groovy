@@ -18,6 +18,8 @@ class ConfigTest {
 				"classpath:edu/mayo/twinkql/it/config/*.xml").getTwinkqlContext();
 		
 		def template = new TwinkqlTemplateFactory(context).getTwinkqlTemplate()
+		
+		assertNotNull template
 	}
 	
 	@Test(expected=ContextInitializationException)
@@ -27,5 +29,7 @@ class ConfigTest {
 				"classpath:edu/mayo/twinkql/it/config/WONT-FIND-ANY*.xml").getTwinkqlContext();
 		
 		def template = new TwinkqlTemplateFactory(context).getTwinkqlTemplate()
+		
+		assertNotNull template
 	}
 }

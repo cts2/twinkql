@@ -479,23 +479,13 @@ public class TwinkqlTemplate implements InitializingBean {
 	 *            the required type
 	 * @return the list
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> List<T> selectForList(
 			String namespace, 
 			String selectId,
 			final Map<String, Object> parameters, 
 			Class<T> requiredType) {
 
-		List<T> result = this.doBind(namespace, selectId, parameters,
-				new DoBind<List<T>>() {
-
-					public List<T> doBind(ResultSet resultSet, Qname resultMap) {
-						return (List<T>) resultBindingProcessor.bind(
-								resultSet, 
-								//parameters,
-								resultMap);
-					}
-				});
+		List<T> result = this.doBind(namespace, selectId, parameters);
 
 		//return the empty list instead of null
 		if(result == null){
@@ -520,44 +510,24 @@ public class TwinkqlTemplate implements InitializingBean {
 	 *            the required type
 	 * @return the t
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T selectForObject(
 			String namespace, 
 			String selectId,
 			final Map<String, Object> parameters, 
 			Class<T> requiredType) {
-		return this.doBind(namespace, selectId, parameters, new DoBind<T>() {
-
-			public T doBind(ResultSet resultSet, Qname resultMap) {
-				return (T) resultBindingProcessor.bind(
-						resultSet,
-						//parameters,
-						resultMap);
-			}
-
-		});
+		List<T> result = this.doBind(namespace, selectId, parameters);
+		
+		if(result != null && result.size() > 1){
+			throw new TooManyResultsException();
+		}
+		
+		if(CollectionUtils.isEmpty(result)){
+			return null;
+		}
+		
+		return result.get(0);
 	}
 
-	/**
-	 * The Interface DoBind.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
-	 */
-	private interface DoBind<T> {
-
-		/**
-		 * Do bind.
-		 * 
-		 * @param resultSet
-		 *            the result set
-		 * @param resultMap
-		 *            the result map
-		 * @return the t
-		 */
-		public T doBind(ResultSet resultSet, Qname resultMap);
-	}
 
 	/**
 	 * Do bind.
@@ -574,8 +544,9 @@ public class TwinkqlTemplate implements InitializingBean {
 	 *            the do bind
 	 * @return the t
 	 */
-	public <T> T doBind(String namespace, String selectId,
-			Map<String, Object> parameters, DoBind<T> doBind) {
+	@SuppressWarnings("unchecked")
+	protected <T> List<T> doBind(String namespace, String selectId,
+			Map<String, Object> parameters) {
 		Select select = this.selectMap.get(new Qname(namespace, selectId));
 
 		String queryString = this.getSelectQueryString(namespace, selectId,
@@ -591,7 +562,10 @@ public class TwinkqlTemplate implements InitializingBean {
 		} else {
 			Qname resultQname = Qname.toQname(select.getResultMap(), namespace);
 	
-			return doBind.doBind(resultSet, resultQname);
+			return (List<T>) resultBindingProcessor.bind(
+					resultSet, 
+					//parameters,
+					resultQname);
 		}
 	}
 

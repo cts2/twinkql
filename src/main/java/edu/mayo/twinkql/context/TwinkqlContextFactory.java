@@ -66,6 +66,8 @@ public class TwinkqlContextFactory {
 	private QueryExecutionProvider queryExecutionProvider;
 	
 	private Set<Instantiator> instantiators = new HashSet<Instantiator>();
+	
+	private ConfigBuilder configBuilder;
 
 	/**
 	 * The Constructor.
@@ -142,7 +144,13 @@ public class TwinkqlContextFactory {
 	protected TwinkqlContext doCreateTwinkqlContext(){
 		DefaultTwinkqlContext context = new DefaultTwinkqlContext();
 		
-		TwinkqlConfig twinkqlConfig = this.loadConfigurationFile();
+		TwinkqlConfig twinkqlConfig;
+		if(this.configBuilder != null){
+			twinkqlConfig = this.configBuilder.build();
+		} else {
+			twinkqlConfig = this.loadConfigurationFile();
+		}
+	
 		context.setTwinkqlConfig(twinkqlConfig);
 		context.setQueryExecutionProvider(this.queryExecutionProvider);
 		context.setSparqlMaps(this.loadMappingFiles());
@@ -485,5 +493,13 @@ public class TwinkqlContextFactory {
 
 	public void setInstantiators(Set<Instantiator> instantiators) {
 		this.instantiators = instantiators;
+	}
+
+	public ConfigBuilder getConfigBuilder() {
+		return configBuilder;
+	}
+
+	public void setConfigBuilder(ConfigBuilder configBuilder) {
+		this.configBuilder = configBuilder;
 	}
 }
