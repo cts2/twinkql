@@ -27,12 +27,12 @@
 	<select id="getTetrisCommentsWithNamespaces" resultMap="tetrisCommentsResultMap">
 	<![CDATA[
 		SELECT 
-		(dbpedia:Tetris as ?s)
+		(dbpedia_alias:Tetris as ?s)
 		?comment
 		
 		WHERE {
 
-			dbpedia:Tetris rdfs:comment ?comment
+			dbpedia_alias:Tetris rdfs_alias:comment ?comment
 		
 		} LIMIT 100
 	]]>

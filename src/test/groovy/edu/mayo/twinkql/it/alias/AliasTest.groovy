@@ -40,8 +40,8 @@ class AliasTest {
 		
 		def configBuilder = new ConfigBuilder().
 			addAlias(new AliasDefinition(id:"tetris", type:"edu.mayo.twinkql.it.alias.Tetris")).
-			addNamespace(new NamespaceDefinition(prefix:"rdfs", uri:"http://www.w3.org/2000/01/rdf-schema#")).
-			addNamespace(new NamespaceDefinition(prefix:"dbpedia", uri:"http://dbpedia.org/resource/"))
+			addNamespace(new NamespaceDefinition(prefix:"rdfs_alias", uri:"http://www.w3.org/2000/01/rdf-schema#")).
+			addNamespace(new NamespaceDefinition(prefix:"dbpedia_alias", uri:"http://dbpedia.org/resource/"))
 		
 		factory.setConfigBuilder(configBuilder)
 		
