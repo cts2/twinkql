@@ -106,7 +106,11 @@ public class BeanInstantiator extends AbstractCachingInstantiatingBean
 			}
 		}
 		
-		return (T) callback;
+		if(requiredType == null){
+			return (T) callback;
+		} else {
+			return requiredType.cast(callback);
+		}
 	}
 	
 	protected String convertAliasToClassName(String classNameOrAlias){
