@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -140,100 +137,9 @@
 <p>The contents of an element using the <code>foreach</code> binding are repeated for each item in the collection and <code>foreach</code> bindings can easily be nested. As you can see from this demonstration (enable &#8216;Show render times&#8217;), Knockout knows that it only needs to render additional content for items that are added a collection.</p>
 <style type='text/css'>
     .renderTime { color: #777; font-style: italic; font-size: 0.8em; }
-</style><h2>Live example</h2><div class='liveExample'>
- 
-<h2>People</h2>
-<ul data-bind='foreach: people'>
-    <li>
-        <div>
-            <span data-bind='text: name'> </span> has <span data-bind='text: children().length'>&nbsp;</span> children:
-            <a href='#' data-bind='click: addChild '>Add child</a>
-            <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
-                (person rendered at <span data-bind='text: new Date().getSeconds()'> </span>)
-            </span>
-        </div>
-        <ul data-bind='foreach: children'>
-            <li>
-                <span data-bind='text: $data'> </span>
-                <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
-                    (child rendered at <span data-bind='text: new Date().getSeconds()'> </span>)
-                </span>
-            </li>
-        </ul>
-    </li>
-</ul>
-<label><input data-bind='checked: showRenderTimes' type='checkbox' /> Show render times</label> 
+</style>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<script type='text/javascript'>
-/*<![CDATA[*/
-    // Define a "Person" class that tracks its own name and children, and has a method to add a new child
-    var Person = function(name, children) {
-        this.name = name;
-        this.children = ko.observableArray(children);
-
-        this.addChild = function() {
-            this.children.push("New child");
-        }.bind(this);
-    }
-    
-    // The view model is an abstract description of the state of the UI, but without any knowledge of the UI technology (HTML)
-    var viewModel = {
-        people: [
-            new Person("Annabelle", ["Arnie", "Anders", "Apple"]),
-            new Person("Bertie", ["Boutros-Boutros", "Brianna", "Barbie", "Bee-bop"]),
-            new Person("Charles", ["Cayenne", "Cleopatra"])
-            ],
-        showRenderTimes: ko.observable(false)
-    };
-
-    ko.applyBindings(viewModel);
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'> 
-&lt;h2&gt;People&lt;/h2&gt;
-&lt;ul data-bind=&quot;foreach: people&quot;&gt;
-    &lt;li&gt;
-        &lt;div&gt;
-            &lt;span data-bind=&quot;text: name&quot;&gt; &lt;/span&gt; has &lt;span data-bind='text: children().length'&gt;&amp;nbsp;&lt;/span&gt; children:
-            &lt;a href='#' data-bind='click: addChild '&gt;Add child&lt;/a&gt;
-            &lt;span class='renderTime' data-bind='visible: $root.showRenderTimes'&gt;
-                (person rendered at &lt;span data-bind='text: new Date().getSeconds()' &gt; &lt;/span&gt;)
-            &lt;/span&gt;
-        &lt;/div&gt;
-        &lt;ul data-bind=&quot;foreach: children&quot;&gt;
-            &lt;li&gt;
-                &lt;span data-bind=&quot;text: $data&quot;&gt; &lt;/span&gt;
-                &lt;span class='renderTime' data-bind='visible: $root.showRenderTimes'&gt;
-                    (child rendered at &lt;span data-bind='text: new Date().getSeconds()' &gt; &lt;/span&gt;)
-                &lt;/span&gt;
-            &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/li&gt;
-&lt;/ul&gt;
-&lt;label&gt;&lt;input data-bind='checked: showRenderTimes' type='checkbox' /&gt; Show render times&lt;/label&gt; 
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    // Define a &quot;Person&quot; class that tracks its own name and children, and has a method to add a new child
-    var Person = function(name, children) {
-        this.name = name;
-        this.children = ko.observableArray(children);
-
-        this.addChild = function() {
-            this.children.push(&quot;New child&quot;);
-        }.bind(this);
-    }
-    
-    // The view model is an abstract description of the state of the UI, but without any knowledge of the UI technology (HTML)
-    var viewModel = {
-        people: [
-            new Person(&quot;Annabelle&quot;, [&quot;Arnie&quot;, &quot;Anders&quot;, &quot;Apple&quot;]),
-            new Person(&quot;Bertie&quot;, [&quot;Boutros-Boutros&quot;, &quot;Brianna&quot;, &quot;Barbie&quot;, &quot;Bee-bop&quot;]),
-            new Person(&quot;Charles&quot;, [&quot;Cayenne&quot;, &quot;Cleopatra&quot;])
-            ],
-        showRenderTimes: ko.observable(false)
-    };
-
-    ko.applyBindings(viewModel);
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/GSvnh/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -246,10 +152,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -144,176 +141,9 @@ td.label { text-align: right; padding-right: 0.5em; }
 input[type=radio] { margin: 0 0.25em 0 0.25em }
 </style>
 <p>For reference, here&#8217;s an example of binding view model properties to a range of HTML control types. There&#8217;s nothing interesting about the view model here - this is just to make clear how bindings work with select elements, radio buttons, etc.</p>
-<h2>Live example</h2><div class='liveExample'>
-            
-<div class='readout'>
-    <h3>What's in the model?</h3>
-    <table>
-        <tr>
-            <td class='label'>Text value:</td>
-            <td data-bind='text: stringValue' />
-        </tr>
-        <tr>
-            <td class='label'>Password:</td>
-            <td data-bind='text: passwordValue' />
-        </tr>
-        <tr>
-            <td class='label'>Bool value:</td>
-            <td data-bind='text: booleanValue() ? "True" : "False"' />
-        </tr>
-        <tr>
-            <td class='label'>Selected option:</td>
-            <td data-bind='text: selectedOptionValue' />
-        </tr>
-        <tr>
-            <td class='label'>Multi-selected options:</td>
-            <td data-bind='text: multipleSelectedOptionValues' />
-        </tr>
-        <tr>
-            <td class='label'>Radio button selection:</td>
-            <td data-bind='text: radioSelectedOptionValue' />
-        </tr>
-    </table>
-</div>
 
-<h3>HTML controls</h3>
-<table>
-    <tr>
-        <td class='label'>Text value (updates on change):</td>
-        <td><input data-bind='value: stringValue' /></td>
-    </tr>
-    <tr>
-        <td class='label'>Text value (updates on keystroke):</td>
-        <td><input data-bind='value: stringValue, valueUpdate: "afterkeydown"' /></td>
-    </tr>
-    <tr>
-        <td class='label'>Text value (multi-line):</td>
-        <td><textarea data-bind='value: stringValue'> </textarea></td>
-    </tr>
-    <tr>
-        <td class='label'>Password:</td>
-        <td><input data-bind='value: passwordValue' type='password' /></td>
-    </tr>
-    <tr>
-        <td class='label'>Checkbox:</td>
-        <td><input data-bind='checked: booleanValue' type='checkbox' /></td>
-    </tr>
-    <tr>
-        <td class='label'>Drop-down list:</td>
-        <td><select data-bind='options: optionValues, value: selectedOptionValue' /></td>
-    </tr>
-    <tr>
-        <td class='label'>Multi-select drop-down list:</td>
-        <td><select data-bind='options: optionValues, selectedOptions: multipleSelectedOptionValues' multiple='multiple' /></td>
-    </tr>
-    <tr>
-        <td class='label'>Radio buttons:</td>
-        <td>
-            <label><input data-bind='checked: radioSelectedOptionValue' type='radio' value='Alpha' />Alpha</label>
-            <label><input data-bind='checked: radioSelectedOptionValue' type='radio' value='Beta' />Beta</label>
-            <label><input data-bind='checked: radioSelectedOptionValue' type='radio' value='Gamma' />Gamma</label>
-        </td>
-    </tr>
-</table>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-    var viewModel = {
-        stringValue : ko.observable("Hello"),
-        passwordValue : ko.observable("mypass"),
-        booleanValue : ko.observable(true),
-        optionValues : ["Alpha", "Beta", "Gamma"],
-        selectedOptionValue : ko.observable("Gamma"),
-        multipleSelectedOptionValues : ko.observable(["Alpha"]),
-        radioSelectedOptionValue : ko.observable("Beta")
-    };
-    ko.applyBindings(viewModel);
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>            
-&lt;div class=&quot;readout&quot;&gt;
-    &lt;h3&gt;What's in the model?&lt;/h3&gt;
-    &lt;table&gt;
-        &lt;tr&gt;
-            &lt;td class=&quot;label&quot;&gt;Text value:&lt;/td&gt;
-            &lt;td data-bind=&quot;text: stringValue&quot;&gt;&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td class=&quot;label&quot;&gt;Password:&lt;/td&gt;
-            &lt;td data-bind=&quot;text: passwordValue&quot;&gt;&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td class=&quot;label&quot;&gt;Bool value:&lt;/td&gt;
-            &lt;td data-bind='text: booleanValue() ? &quot;True&quot; : &quot;False&quot;'&gt;&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td class=&quot;label&quot;&gt;Selected option:&lt;/td&gt;
-            &lt;td data-bind=&quot;text: selectedOptionValue&quot;&gt;&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td class=&quot;label&quot;&gt;Multi-selected options:&lt;/td&gt;
-            &lt;td data-bind=&quot;text: multipleSelectedOptionValues&quot;&gt;&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td class=&quot;label&quot;&gt;Radio button selection:&lt;/td&gt;
-            &lt;td data-bind=&quot;text: radioSelectedOptionValue&quot;&gt;&lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/table&gt;
-&lt;/div&gt;
-
-&lt;h3&gt;HTML controls&lt;/h3&gt;
-&lt;table&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Text value (updates on change):&lt;/td&gt;
-        &lt;td&gt;&lt;input data-bind=&quot;value: stringValue&quot; /&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Text value (updates on keystroke):&lt;/td&gt;
-        &lt;td&gt;&lt;input data-bind='value: stringValue, valueUpdate: &quot;afterkeydown&quot;' /&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Text value (multi-line):&lt;/td&gt;
-        &lt;td&gt;&lt;textarea data-bind=&quot;value: stringValue&quot;&gt; &lt;/textarea&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Password:&lt;/td&gt;
-        &lt;td&gt;&lt;input type=&quot;password&quot; data-bind=&quot;value: passwordValue&quot; /&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Checkbox:&lt;/td&gt;
-        &lt;td&gt;&lt;input type=&quot;checkbox&quot; data-bind=&quot;checked: booleanValue&quot; /&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Drop-down list:&lt;/td&gt;
-        &lt;td&gt;&lt;select data-bind=&quot;options: optionValues, value: selectedOptionValue&quot;&gt;&lt;/select&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Multi-select drop-down list:&lt;/td&gt;
-        &lt;td&gt;&lt;select multiple=&quot;multiple&quot; data-bind=&quot;options: optionValues, selectedOptions: multipleSelectedOptionValues&quot;&gt;&lt;/select&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td class=&quot;label&quot;&gt;Radio buttons:&lt;/td&gt;
-        &lt;td&gt;
-            &lt;label&gt;&lt;input type=&quot;radio&quot; value=&quot;Alpha&quot; data-bind=&quot;checked: radioSelectedOptionValue&quot; /&gt;Alpha&lt;/label&gt;
-            &lt;label&gt;&lt;input type=&quot;radio&quot; value=&quot;Beta&quot; data-bind=&quot;checked: radioSelectedOptionValue&quot; /&gt;Beta&lt;/label&gt;
-            &lt;label&gt;&lt;input type=&quot;radio&quot; value=&quot;Gamma&quot; data-bind=&quot;checked: radioSelectedOptionValue&quot; /&gt;Gamma&lt;/label&gt;
-        &lt;/td&gt;
-    &lt;/tr&gt;
-&lt;/table&gt;
-
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    var viewModel = {
-        stringValue : ko.observable(&quot;Hello&quot;),
-        passwordValue : ko.observable(&quot;mypass&quot;),
-        booleanValue : ko.observable(true),
-        optionValues : [&quot;Alpha&quot;, &quot;Beta&quot;, &quot;Gamma&quot;],
-        selectedOptionValue : ko.observable(&quot;Gamma&quot;),
-        multipleSelectedOptionValues : ko.observable([&quot;Alpha&quot;]),
-        radioSelectedOptionValue : ko.observable(&quot;Beta&quot;)
-    };
-    ko.applyBindings(viewModel);
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/ZbrB7/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -326,10 +156,8 @@ input[type=radio] { margin: 0 0.25em 0 0.25em }
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

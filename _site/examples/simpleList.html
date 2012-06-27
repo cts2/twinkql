@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -138,56 +135,9 @@
 		    	<p>This example demonstrates binding to an array of values.</p>
 
 <p>Notice how the &#8220;Add&#8221; button is enabled only when you have entered some text - check the HTML source code to see how to use the &#8220;enable&#8221; binding.</p>
-<h2>Live example</h2><div class='liveExample'>
 
-<form data-bind='submit: addItem'>
-    New item:
-    <input data-bind='value: itemToAdd, valueUpdate: "afterkeydown"' />
-    <button data-bind='enable: itemToAdd().length > 0' type='submit'>Add</button>
-    <p>Your items:</p>
-    <select data-bind='options: items' multiple='multiple' width='50'> </select>
-</form>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-    var SimpleListModel = function(items) {
-        this.items = ko.observableArray(items);
-        this.itemToAdd = ko.observable("");
-        this.addItem = function() {
-            if (this.itemToAdd() != "") {
-                this.items.push(this.itemToAdd()); // Adds the item. Writing to the "items" observableArray causes any associated UI to update.
-                this.itemToAdd(""); // Clears the text box, because it's bound to the "itemToAdd" observable
-            }
-        }.bind(this);  // Ensure that "this" is always this view model
-    };
-
-    ko.applyBindings(new SimpleListModel(["Alpha", "Beta", "Gamma"]));
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>
-&lt;form data-bind=&quot;submit: addItem&quot;&gt;
-    New item:
-    &lt;input data-bind='value: itemToAdd, valueUpdate: &quot;afterkeydown&quot;' /&gt;
-    &lt;button type=&quot;submit&quot; data-bind=&quot;enable: itemToAdd().length &gt; 0&quot;&gt;Add&lt;/button&gt;
-    &lt;p&gt;Your items:&lt;/p&gt;
-    &lt;select multiple=&quot;multiple&quot; width=&quot;50&quot; data-bind=&quot;options: items&quot;&gt; &lt;/select&gt;
-&lt;/form&gt;
-
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    var SimpleListModel = function(items) {
-        this.items = ko.observableArray(items);
-        this.itemToAdd = ko.observable(&quot;&quot;);
-        this.addItem = function() {
-            if (this.itemToAdd() != &quot;&quot;) {
-                this.items.push(this.itemToAdd()); // Adds the item. Writing to the &quot;items&quot; observableArray causes any associated UI to update.
-                this.itemToAdd(&quot;&quot;); // Clears the text box, because it's bound to the &quot;itemToAdd&quot; observable
-            }
-        }.bind(this);  // Ensure that &quot;this&quot; is always this view model
-    };
-
-    ko.applyBindings(new SimpleListModel([&quot;Alpha&quot;, &quot;Beta&quot;, &quot;Gamma&quot;]));
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/bxfXd/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -200,10 +150,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

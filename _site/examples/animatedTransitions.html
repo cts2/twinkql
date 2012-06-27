@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -150,174 +147,9 @@
     .planet { background-color: #AAEECC; padding: 0.25em; border: 1px solid silver; margin-bottom: 0.5em; font-size: 0.75em; }
     .planet.rock { background-color: #EECCAA; }
     .liveExample input { margin: 0 0.3em 0 1em; }
-</style><h2>Live example</h2><div class='liveExample'>
-   
-<h2>Planets</h2>
-<p> 
-    <label>
-        <input data-bind='checked: displayAdvancedOptions' type='checkbox' />
-        Display advanced options
-    </label>
-</p>
+</style>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<p data-bind='fadeVisible: displayAdvancedOptions'>
-    Show:
-    <label><input name='type' data-bind='checked: typeToShow' type='radio' value='all' />All</label>
-    <label><input name='type' data-bind='checked: typeToShow' type='radio' value='rock' />Rocky planets</label>
-    <label><input name='type' data-bind='checked: typeToShow' type='radio' value='gasgiant' />Gas giants</label>
-</p>
-
-<div data-bind='template: { foreach: planetsToShow,
-                            beforeRemove: hidePlanetElement,
-                            afterAdd: showPlanetElement }'>
-    <div data-bind='attr: { "class": "planet " + type }, text: name'> </div>
-</div>
-
-<p data-bind='fadeVisible: displayAdvancedOptions'>
-    <button data-bind='click: addPlanet.bind($data, "rock")'>Add rocky planet</button>
-    <button data-bind='click: addPlanet.bind($data, "gasgiant")'>Add gas giant</button>
-</p>
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-    var PlanetsModel = function() {
-        this.planets = ko.observableArray([
-            { name: "Mercury", type: "rock"},
-            { name: "Venus", type: "rock"},
-            { name: "Earth", type: "rock"},
-            { name: "Mars", type: "rock"},
-            { name: "Jupiter", type: "gasgiant"},
-            { name: "Saturn", type: "gasgiant"},
-            { name: "Uranus", type: "gasgiant"},
-            { name: "Neptune", type: "gasgiant"},
-            { name: "Pluto", type: "rock"}
-        ]);
-
-        this.typeToShow = ko.observable("all");
-        this.displayAdvancedOptions = ko.observable(false);
-
-        this.addPlanet = function(type) {
-            this.planets.push({
-                name: "New planet",
-                type: type
-            });
-        };
-
-        this.planetsToShow = ko.computed(function() {
-            // Represents a filtered list of planets
-            // i.e., only those matching the "typeToShow" condition
-            var desiredType = this.typeToShow();
-            if (desiredType == "all") return this.planets();
-            return ko.utils.arrayFilter(this.planets(), function(planet) {
-                return planet.type == desiredType;
-            });
-        }, this);
-
-        // Animation callbacks for the planets list
-        this.showPlanetElement = function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() }
-        this.hidePlanetElement = function(elem) { if (elem.nodeType === 1) $(elem).slideUp(function() { $(elem).remove(); }) }
-    };
-
-    // Here's a custom Knockout binding that makes elements shown/hidden via jQuery's fadeIn()/fadeOut() methods
-    // Could be stored in a separate utility library
-    ko.bindingHandlers.fadeVisible = {
-        init: function(element, valueAccessor) {
-            // Initially set the element to be instantly visible/hidden depending on the value
-            var value = valueAccessor();
-            $(element).toggle(ko.utils.unwrapObservable(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
-        },
-        update: function(element, valueAccessor) {
-            // Whenever the value subsequently changes, slowly fade the element in or out
-            var value = valueAccessor();
-            ko.utils.unwrapObservable(value) ? $(element).fadeIn() : $(element).fadeOut();
-        }
-    };
-
-    ko.applyBindings(new PlanetsModel());
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>   
-&lt;h2&gt;Planets&lt;/h2&gt;
-&lt;p&gt; 
-    &lt;label&gt;
-        &lt;input type='checkbox' data-bind='checked: displayAdvancedOptions' /&gt;
-        Display advanced options
-    &lt;/label&gt;
-&lt;/p&gt;
-
-&lt;p data-bind='fadeVisible: displayAdvancedOptions'&gt;
-    Show:
-    &lt;label&gt;&lt;input type='radio' name=&quot;type&quot; value='all' data-bind='checked: typeToShow' /&gt;All&lt;/label&gt;
-    &lt;label&gt;&lt;input type='radio' name=&quot;type&quot; value='rock' data-bind='checked: typeToShow' /&gt;Rocky planets&lt;/label&gt;
-    &lt;label&gt;&lt;input type='radio' name=&quot;type&quot; value='gasgiant' data-bind='checked: typeToShow' /&gt;Gas giants&lt;/label&gt;
-&lt;/p&gt;
-
-&lt;div data-bind='template: { foreach: planetsToShow,
-                            beforeRemove: hidePlanetElement,
-                            afterAdd: showPlanetElement }'&gt;
-    &lt;div data-bind='attr: { &quot;class&quot;: &quot;planet &quot; + type }, text: name'&gt; &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;p data-bind='fadeVisible: displayAdvancedOptions'&gt;
-    &lt;button data-bind='click: addPlanet.bind($data, &quot;rock&quot;)'&gt;Add rocky planet&lt;/button&gt;
-    &lt;button data-bind='click: addPlanet.bind($data, &quot;gasgiant&quot;)'&gt;Add gas giant&lt;/button&gt;
-&lt;/p&gt;
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    var PlanetsModel = function() {
-        this.planets = ko.observableArray([
-            { name: &quot;Mercury&quot;, type: &quot;rock&quot;},
-            { name: &quot;Venus&quot;, type: &quot;rock&quot;},
-            { name: &quot;Earth&quot;, type: &quot;rock&quot;},
-            { name: &quot;Mars&quot;, type: &quot;rock&quot;},
-            { name: &quot;Jupiter&quot;, type: &quot;gasgiant&quot;},
-            { name: &quot;Saturn&quot;, type: &quot;gasgiant&quot;},
-            { name: &quot;Uranus&quot;, type: &quot;gasgiant&quot;},
-            { name: &quot;Neptune&quot;, type: &quot;gasgiant&quot;},
-            { name: &quot;Pluto&quot;, type: &quot;rock&quot;}
-        ]);
-
-        this.typeToShow = ko.observable(&quot;all&quot;);
-        this.displayAdvancedOptions = ko.observable(false);
-
-        this.addPlanet = function(type) {
-            this.planets.push({
-                name: &quot;New planet&quot;,
-                type: type
-            });
-        };
-
-        this.planetsToShow = ko.computed(function() {
-            // Represents a filtered list of planets
-            // i.e., only those matching the &quot;typeToShow&quot; condition
-            var desiredType = this.typeToShow();
-            if (desiredType == &quot;all&quot;) return this.planets();
-            return ko.utils.arrayFilter(this.planets(), function(planet) {
-                return planet.type == desiredType;
-            });
-        }, this);
-
-        // Animation callbacks for the planets list
-        this.showPlanetElement = function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() }
-        this.hidePlanetElement = function(elem) { if (elem.nodeType === 1) $(elem).slideUp(function() { $(elem).remove(); }) }
-    };
-
-    // Here's a custom Knockout binding that makes elements shown/hidden via jQuery's fadeIn()/fadeOut() methods
-    // Could be stored in a separate utility library
-    ko.bindingHandlers.fadeVisible = {
-        init: function(element, valueAccessor) {
-            // Initially set the element to be instantly visible/hidden depending on the value
-            var value = valueAccessor();
-            $(element).toggle(ko.utils.unwrapObservable(value)); // Use &quot;unwrapObservable&quot; so we can handle values that may or may not be observable
-        },
-        update: function(element, valueAccessor) {
-            // Whenever the value subsequently changes, slowly fade the element in or out
-            var value = valueAccessor();
-            ko.utils.unwrapObservable(value) ? $(element).fadeIn() : $(element).fadeOut();
-        }
-    };
-
-    ko.applyBindings(new PlanetsModel());
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/8k8V5/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -330,10 +162,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -140,66 +137,9 @@
 <p>Knockout tracks dependencies. Internally, <code>hasClickedTooManyTimes</code> has a subscription on <code>numberOfClicks</code>, so when <code>numberOfClicks</code> changes, that forces <code>hasClickedTooManyTimes</code> to be re-evaluated. Similarly, multiple parts of the UI reference <code>hasClickedTooManyTimes</code> and are therefore subscribed to it. Whenever <code>hasClickedTooManyTimes</code> changes, this causes the UI to be updated.</p>
 
 <p>You don&#8217;t have to define or manage these subscriptions manually. They are created and destroyed as needed by the framework. Check the HTML source code to see how simple this is.</p>
-<h2>Live example</h2><div class='liveExample'>
 
-<div>You've clicked <span data-bind='text: numberOfClicks'>&nbsp;</span> times</div>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<button data-bind='click: registerClick, disable: hasClickedTooManyTimes'>Click me</button>
-
-<div data-bind='visible: hasClickedTooManyTimes'>
-    That's too many clicks! Please stop before you wear out your fingers.
-    <button data-bind='click: resetClicks'>Reset clicks</button>
-</div>
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-    var ClickCounterViewModel = function() {
-        this.numberOfClicks = ko.observable(0);
-
-        this.registerClick = function() {
-            this.numberOfClicks(this.numberOfClicks() + 1);
-        };
-
-        this.resetClicks = function() {
-            this.numberOfClicks(0);
-        };
-
-        this.hasClickedTooManyTimes = ko.computed(function() {
-            return this.numberOfClicks() >= 3;
-        }, this);
-    };
-
-    ko.applyBindings(new ClickCounterViewModel());
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>
-&lt;div&gt;You've clicked &lt;span data-bind='text: numberOfClicks'&gt;&amp;nbsp;&lt;/span&gt; times&lt;/div&gt;
-
-&lt;button data-bind='click: registerClick, disable: hasClickedTooManyTimes'&gt;Click me&lt;/button&gt;
-
-&lt;div data-bind='visible: hasClickedTooManyTimes'&gt;
-    That's too many clicks! Please stop before you wear out your fingers.
-    &lt;button data-bind='click: resetClicks'&gt;Reset clicks&lt;/button&gt;
-&lt;/div&gt;
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    var ClickCounterViewModel = function() {
-        this.numberOfClicks = ko.observable(0);
-
-        this.registerClick = function() {
-            this.numberOfClicks(this.numberOfClicks() + 1);
-        };
-
-        this.resetClicks = function() {
-            this.numberOfClicks(0);
-        };
-
-        this.hasClickedTooManyTimes = ko.computed(function() {
-            return this.numberOfClicks() &gt;= 3;
-        }, this);
-    };
-
-    ko.applyBindings(new ClickCounterViewModel());
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/3Lqsx/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -212,10 +152,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

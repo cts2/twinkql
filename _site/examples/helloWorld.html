@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -138,46 +135,9 @@
 		    	<p>In this example, the two text boxes are bound to <em>observable</em> variables on a data model. The &#8220;full name&#8221; display is bound to a <em>computed observable</em>, whose value is calculated in terms of the observables.</p>
 
 <p>Edit either text box to see the &#8220;full name&#8221; display update. See the HTML source code and notice there&#8217;s no need to catch &#8220;onchange&#8221; events. Knockout knows when to update the UI.</p>
-<h2>Live example</h2><div class='liveExample'>
 
-<p>First name: <input data-bind='value: firstName' /></p>
-<p>Last name: <input data-bind='value: lastName' /></p>
-<h2>Hello, <span data-bind='text: fullName'> </span>!</h2>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<script type='text/javascript'>
-/*<![CDATA[*/
-    // Here's my data model
-    var ViewModel = function(first, last) {
-        this.firstName = ko.observable(first);
-        this.lastName = ko.observable(last);
-
-        this.fullName = ko.computed(function() {
-            // Knockout tracks dependencies automatically. It knows that fullName depends on firstName and lastName, because these get called when evaluating fullName.
-            return this.firstName() + " " + this.lastName();
-        }, this);
-    };
-
-    ko.applyBindings(new ViewModel("Planet", "Earth")); // This makes Knockout get to work
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>
-&lt;p&gt;First name: &lt;input data-bind=&quot;value: firstName&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;Last name: &lt;input data-bind=&quot;value: lastName&quot; /&gt;&lt;/p&gt;
-&lt;h2&gt;Hello, &lt;span data-bind=&quot;text: fullName&quot;&gt; &lt;/span&gt;!&lt;/h2&gt;
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    // Here's my data model
-    var ViewModel = function(first, last) {
-        this.firstName = ko.observable(first);
-        this.lastName = ko.observable(last);
-
-        this.fullName = ko.computed(function() {
-            // Knockout tracks dependencies automatically. It knows that fullName depends on firstName and lastName, because these get called when evaluating fullName.
-            return this.firstName() + &quot; &quot; + this.lastName();
-        }, this);
-    };
-
-    ko.applyBindings(new ViewModel(&quot;Planet&quot;, &quot;Earth&quot;)); // This makes Knockout get to work
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/LkqTU/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -190,10 +150,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

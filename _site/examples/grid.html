@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -151,120 +148,9 @@
     .ko-grid-pageLinks a { padding: 0.5em; }
     .ko-grid-pageLinks a.selected { background-color: Black; color: White; }
     .liveExample { height:20em; overflow:auto } /* Mobile Safari reflows pages slowly, so fix the height to avoid the need for reflows */
-</style><h2>Live example</h2><div class='liveExample'>
- 
-<div data-bind='simpleGrid: gridViewModel'> </div>
+</style>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<button data-bind='click: addItem'>
-    Add item
-</button>
-
-<button data-bind='click: sortByName'>
-    Sort by name
-</button>
-
-<button data-bind='click: jumpToFirstPage, enable: gridViewModel.currentPageIndex'>
-    Jump to first page
-</button> 
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-    var initialData = [
-        { name: "Well-Travelled Kitten", sales: 352, price: 75.95 },
-        { name: "Speedy Coyote", sales: 89, price: 190.00 },
-        { name: "Furious Lizard", sales: 152, price: 25.00 },
-        { name: "Indifferent Monkey", sales: 1, price: 99.95 },
-        { name: "Brooding Dragon", sales: 0, price: 6350 },
-        { name: "Ingenious Tadpole", sales: 39450, price: 0.35 },
-        { name: "Optimistic Snail", sales: 420, price: 1.50 }
-    ];
-
-    var PagedGridModel = function(items) {
-        this.items = ko.observableArray(items);
-
-        this.addItem = function() {
-            this.items.push({ name: "New item", sales: 0, price: 100 });
-        };
-
-        this.sortByName = function() {
-            this.items.sort(function(a, b) {
-                return a.name < b.name ? -1 : 1;
-            });
-        };
-
-        this.jumpToFirstPage = function() {
-            this.gridViewModel.currentPageIndex(0);
-        };
-
-        this.gridViewModel = new ko.simpleGrid.viewModel({
-            data: this.items,
-            columns: [
-                { headerText: "Item Name", rowText: "name" },
-                { headerText: "Sales Count", rowText: "sales" },
-                { headerText: "Price", rowText: function (item) { return "$" + item.price.toFixed(2) } }
-            ],
-            pageSize: 4
-        });
-    };
-
-    ko.applyBindings(new PagedGridModel(initialData));
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'> 
-&lt;div data-bind='simpleGrid: gridViewModel'&gt; &lt;/div&gt;
-
-&lt;button data-bind='click: addItem'&gt;
-    Add item
-&lt;/button&gt;
-
-&lt;button data-bind='click: sortByName'&gt;
-    Sort by name
-&lt;/button&gt;
-
-&lt;button data-bind='click: jumpToFirstPage, enable: gridViewModel.currentPageIndex'&gt;
-    Jump to first page
-&lt;/button&gt; 
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    var initialData = [
-        { name: &quot;Well-Travelled Kitten&quot;, sales: 352, price: 75.95 },
-        { name: &quot;Speedy Coyote&quot;, sales: 89, price: 190.00 },
-        { name: &quot;Furious Lizard&quot;, sales: 152, price: 25.00 },
-        { name: &quot;Indifferent Monkey&quot;, sales: 1, price: 99.95 },
-        { name: &quot;Brooding Dragon&quot;, sales: 0, price: 6350 },
-        { name: &quot;Ingenious Tadpole&quot;, sales: 39450, price: 0.35 },
-        { name: &quot;Optimistic Snail&quot;, sales: 420, price: 1.50 }
-    ];
-
-    var PagedGridModel = function(items) {
-        this.items = ko.observableArray(items);
-
-        this.addItem = function() {
-            this.items.push({ name: &quot;New item&quot;, sales: 0, price: 100 });
-        };
-
-        this.sortByName = function() {
-            this.items.sort(function(a, b) {
-                return a.name &lt; b.name ? -1 : 1;
-            });
-        };
-
-        this.jumpToFirstPage = function() {
-            this.gridViewModel.currentPageIndex(0);
-        };
-
-        this.gridViewModel = new ko.simpleGrid.viewModel({
-            data: this.items,
-            columns: [
-                { headerText: &quot;Item Name&quot;, rowText: &quot;name&quot; },
-                { headerText: &quot;Sales Count&quot;, rowText: &quot;sales&quot; },
-                { headerText: &quot;Price&quot;, rowText: function (item) { return &quot;$&quot; + item.price.toFixed(2) } }
-            ],
-            pageSize: 4
-        });
-    };
-
-    ko.applyBindings(new PagedGridModel(initialData));
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/QSRBR/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -277,10 +163,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

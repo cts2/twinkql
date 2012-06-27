@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -149,182 +146,9 @@
 <p>This example shows how computed observables can be chained together. Each cart line has a <code>ko.computed</code> property for its own subtotal, and these in turn are combined in a further <code>ko.computed</code> property for the grand total. When you change the data, your changes ripple out through this chain of computed properties, and all associated UI is updated.</p>
 
 <p>This example also demonstrates a simple way to create cascading dropdowns.</p>
-<h2>Live example</h2><div class='liveExample'>
 
-<table width='100%'>
-    <thead>
-        <tr>
-            <th width='25%'>Category</th>
-            <th width='25%'>Product</th>
-            <th class='price' width='15%'>Price</th>
-            <th class='quantity' width='10%'>Quantity</th>
-            <th class='price' width='15%'>Subtotal</th>
-            <th width='10%'> </th>
-        </tr>
-    </thead>
-    <tbody data-bind='foreach: lines'>
-        <tr>
-            <td>
-                <select data-bind='options: sampleProductCategories, optionsText: "name", optionsCaption: "Select...", value: category'> </select>
-            </td>
-            <td data-bind='with: category'>
-                <select data-bind='options: products, optionsText: "name", optionsCaption: "Select...", value: $parent.product'> </select>
-            </td>
-            <td class='price' data-bind='with: product'>
-                <span data-bind='text: formatCurrency(price)'> </span>
-            </td>
-            <td class='quantity'>
-                <input data-bind='visible: product, value: quantity, valueUpdate: "afterkeydown"' />
-            </td>
-            <td class='price'>
-                <span data-bind='visible: product, text: formatCurrency(subtotal())'> </span>
-            </td>
-            <td>
-                <a href='#' data-bind='click: $parent.removeLine'>Remove</a>
-            </td>
-        </tr>
-    </tbody>
-</table>
-<p class='grandTotal'>
-    Total value: <span data-bind='text: formatCurrency(grandTotal())'> </span>
-</p>
-<button data-bind='click: addLine'>Add product</button>
-<button data-bind='click: save'>Submit order</button>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<script type='text/javascript'>
-/*<![CDATA[*/
-    function formatCurrency(value) {
-        return "$" + value.toFixed(2);
-    }
-
-    var CartLine = function() {
-        var self = this;
-        self.category = ko.observable();
-        self.product = ko.observable();
-        self.quantity = ko.observable(1);
-        self.subtotal = ko.computed(function() {
-            return self.product() ? self.product().price * parseInt("0" + self.quantity(), 10) : 0;
-        });
-
-        // Whenever the category changes, reset the product selection
-        self.category.subscribe(function() {
-            self.product(undefined);
-        });
-    };
-    
-    var Cart = function() {
-        // Stores an array of lines, and from these, can work out the grandTotal
-        var self = this;
-        self.lines = ko.observableArray([new CartLine()]); // Put one line in by default
-        self.grandTotal = ko.computed(function() {
-            var total = 0;
-            $.each(self.lines(), function() { total += this.subtotal() })
-            return total;
-        });
-
-        // Operations
-        self.addLine = function() { self.lines.push(new CartLine()) };
-        self.removeLine = function(line) { self.lines.remove(line) };
-        self.save = function() {
-            var dataToSave = $.map(self.lines(), function(line) {
-                return line.product() ? {
-                    productName: line.product().name,
-                    quantity: line.quantity()
-                } : undefined
-            });
-            alert("Could now send this to server: " + JSON.stringify(dataToSave));
-        };
-    };
-
-    ko.applyBindings(new Cart());
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>
-&lt;table width='100%'&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th width='25%'&gt;Category&lt;/th&gt;
-            &lt;th width='25%'&gt;Product&lt;/th&gt;
-            &lt;th class='price' width='15%'&gt;Price&lt;/th&gt;
-            &lt;th class='quantity' width='10%'&gt;Quantity&lt;/th&gt;
-            &lt;th class='price' width='15%'&gt;Subtotal&lt;/th&gt;
-            &lt;th width='10%'&gt; &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody data-bind='foreach: lines'&gt;
-        &lt;tr&gt;
-            &lt;td&gt;
-                &lt;select data-bind='options: sampleProductCategories, optionsText: &quot;name&quot;, optionsCaption: &quot;Select...&quot;, value: category'&gt; &lt;/select&gt;
-            &lt;/td&gt;
-            &lt;td data-bind=&quot;with: category&quot;&gt;
-                &lt;select data-bind='options: products, optionsText: &quot;name&quot;, optionsCaption: &quot;Select...&quot;, value: $parent.product'&gt; &lt;/select&gt;
-            &lt;/td&gt;
-            &lt;td class='price' data-bind='with: product'&gt;
-                &lt;span data-bind='text: formatCurrency(price)'&gt; &lt;/span&gt;
-            &lt;/td&gt;
-            &lt;td class='quantity'&gt;
-                &lt;input data-bind='visible: product, value: quantity, valueUpdate: &quot;afterkeydown&quot;' /&gt;
-            &lt;/td&gt;
-            &lt;td class='price'&gt;
-                &lt;span data-bind='visible: product, text: formatCurrency(subtotal())' &gt; &lt;/span&gt;
-            &lt;/td&gt;
-            &lt;td&gt;
-                &lt;a href='#' data-bind='click: $parent.removeLine'&gt;Remove&lt;/a&gt;
-            &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p class='grandTotal'&gt;
-    Total value: &lt;span data-bind='text: formatCurrency(grandTotal())'&gt; &lt;/span&gt;
-&lt;/p&gt;
-&lt;button data-bind='click: addLine'&gt;Add product&lt;/button&gt;
-&lt;button data-bind='click: save'&gt;Submit order&lt;/button&gt;
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    function formatCurrency(value) {
-        return &quot;$&quot; + value.toFixed(2);
-    }
-
-    var CartLine = function() {
-        var self = this;
-        self.category = ko.observable();
-        self.product = ko.observable();
-        self.quantity = ko.observable(1);
-        self.subtotal = ko.computed(function() {
-            return self.product() ? self.product().price * parseInt(&quot;0&quot; + self.quantity(), 10) : 0;
-        });
-
-        // Whenever the category changes, reset the product selection
-        self.category.subscribe(function() {
-            self.product(undefined);
-        });
-    };
-    
-    var Cart = function() {
-        // Stores an array of lines, and from these, can work out the grandTotal
-        var self = this;
-        self.lines = ko.observableArray([new CartLine()]); // Put one line in by default
-        self.grandTotal = ko.computed(function() {
-            var total = 0;
-            $.each(self.lines(), function() { total += this.subtotal() })
-            return total;
-        });
-
-        // Operations
-        self.addLine = function() { self.lines.push(new CartLine()) };
-        self.removeLine = function(line) { self.lines.remove(line) };
-        self.save = function() {
-            var dataToSave = $.map(self.lines(), function(line) {
-                return line.product() ? {
-                    productName: line.product().name,
-                    quantity: line.quantity()
-                } : undefined
-            });
-            alert(&quot;Could now send this to server: &quot; + JSON.stringify(dataToSave));
-        };
-    };
-
-    ko.applyBindings(new Cart());
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/adNuR/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -337,10 +161,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

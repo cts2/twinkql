@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -138,84 +135,9 @@
 		    	<p>This example builds on the earlier <a href='simpleList.html'>simple list example</a> by making it possible to remove items (with multi-selection) and to sort the list. The &#8220;remove&#8221; and &#8220;sort&#8221; buttons become disabled if they are not applicable (e.g., if there aren&#8217;t enough items to sort).</p>
 
 <p>Check out the HTML source code to see how little code all this takes. This example also shows how you can use function literals in bindings (see the binding for &#8216;sort&#8217;).</p>
-<h2>Live example</h2><div class='liveExample'>
 
-<form data-bind='submit:addItem'>
-    Add item: <input data-bind='value:itemToAdd, valueUpdate: "afterkeydown"' type='text' />
-    <button data-bind='enable: itemToAdd().length > 0' type='submit'>Add</button>
-</form>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<p>Your values:</p>
-<select data-bind='options:allItems, selectedOptions:selectedItems' multiple='multiple' height='5'> </select>
-
-<div>
-    <button data-bind='click: removeSelected, enable: selectedItems().length > 0'>Remove</button>
-    <button data-bind='click: sortItems, enable: allItems().length > 1'>Sort</button>
-</div>
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-    var BetterListModel = function () {
-        this.itemToAdd = ko.observable("");
-        this.allItems = ko.observableArray(["Fries", "Eggs Benedict", "Ham", "Cheese"]); // Initial items
-        this.selectedItems = ko.observableArray(["Ham"]);                                // Initial selection
-
-        this.addItem = function () {
-            if ((this.itemToAdd() != "") && (this.allItems.indexOf(this.itemToAdd()) < 0)) // Prevent blanks and duplicates
-                this.allItems.push(this.itemToAdd());
-            this.itemToAdd(""); // Clear the text box
-        };
-
-        this.removeSelected = function () {
-            this.allItems.removeAll(this.selectedItems());
-            this.selectedItems([]); // Clear selection
-        };
-
-        this.sortItems = function() {
-            this.allItems.sort();
-        };
-    };
-
-    ko.applyBindings(new BetterListModel());
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>
-&lt;form data-bind=&quot;submit:addItem&quot;&gt;
-    Add item: &lt;input type=&quot;text&quot; data-bind='value:itemToAdd, valueUpdate: &quot;afterkeydown&quot;' /&gt;
-    &lt;button type=&quot;submit&quot; data-bind=&quot;enable: itemToAdd().length &gt; 0&quot;&gt;Add&lt;/button&gt;
-&lt;/form&gt;
-
-&lt;p&gt;Your values:&lt;/p&gt;
-&lt;select multiple=&quot;multiple&quot; height=&quot;5&quot; data-bind=&quot;options:allItems, selectedOptions:selectedItems&quot;&gt; &lt;/select&gt;
-
-&lt;div&gt;
-    &lt;button data-bind=&quot;click: removeSelected, enable: selectedItems().length &gt; 0&quot;&gt;Remove&lt;/button&gt;
-    &lt;button data-bind=&quot;click: sortItems, enable: allItems().length &gt; 1&quot;&gt;Sort&lt;/button&gt;
-&lt;/div&gt;
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    var BetterListModel = function () {
-        this.itemToAdd = ko.observable(&quot;&quot;);
-        this.allItems = ko.observableArray([&quot;Fries&quot;, &quot;Eggs Benedict&quot;, &quot;Ham&quot;, &quot;Cheese&quot;]); // Initial items
-        this.selectedItems = ko.observableArray([&quot;Ham&quot;]);                                // Initial selection
-
-        this.addItem = function () {
-            if ((this.itemToAdd() != &quot;&quot;) &amp;&amp; (this.allItems.indexOf(this.itemToAdd()) &lt; 0)) // Prevent blanks and duplicates
-                this.allItems.push(this.itemToAdd());
-            this.itemToAdd(&quot;&quot;); // Clear the text box
-        };
-
-        this.removeSelected = function () {
-            this.allItems.removeAll(this.selectedItems());
-            this.selectedItems([]); // Clear selection
-        };
-
-        this.sortItems = function() {
-            this.allItems.sort();
-        };
-    };
-
-    ko.applyBindings(new BetterListModel());
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/aDahT/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -228,10 +150,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

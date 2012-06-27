@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -144,118 +141,9 @@
     tr { vertical-align: top; }
     .liveExample input.error { border: 1px solid red; background-color: #FDC; }
     .liveExample label.error { display: block; color: Red; font-size: 0.8em; }    
-</style><script src='../js/jquery.validate.js' type='text/javascript'> </script><h2>Live example</h2><div class='liveExample'>
+</style><script src='../js/jquery.validate.js' type='text/javascript'> </script>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<form action='/someServerSideHandler'>
-    <p>You have asked for <span data-bind='text: gifts().length'>&nbsp;</span> gift(s)</p>
-    <table data-bind='visible: gifts().length > 0'>
-        <thead>
-            <tr>
-                <th>Gift name</th>
-                <th>Price</th>
-                <th />
-            </tr>
-        </thead>
-        <tbody data-bind='foreach: gifts'>
-            <tr>
-                <td><input class='required' data-bind='value: name, uniqueName: true' /></td>
-                <td><input class='required number' data-bind='value: price, uniqueName: true' /></td>
-                <td><a href='#' data-bind='click: $root.removeGift'>Delete</a></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <button data-bind='click: addGift'>Add Gift</button>
-    <button data-bind='enable: gifts().length > 0' type='submit'>Submit</button>
-</form>
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-var GiftModel = function(gifts) {
-    var self = this;
-    self.gifts = ko.observableArray(gifts);
-
-    self.addGift = function() {
-        self.gifts.push({
-            name: "",
-            price: ""
-        });
-    };
-
-    self.removeGift = function(gift) {
-        self.gifts.remove(gift);
-    };
-
-    self.save = function(form) {
-        alert("Could now transmit to server: " + ko.utils.stringifyJson(self.gifts));
-        // To actually transmit to server as a regular form post, write this: ko.utils.postJson($("form")[0], self.gifts);
-    };
-};
-
-var viewModel = new GiftModel([
-    { name: "Tall Hat", price: "39.95"},
-    { name: "Long Cloak", price: "120.00"}
-]);
-ko.applyBindings(viewModel);
-
-// Activate jQuery Validation
-$("form").validate({ submitHandler: viewModel.save });
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>
-&lt;form action='/someServerSideHandler'&gt;
-    &lt;p&gt;You have asked for &lt;span data-bind='text: gifts().length'&gt;&amp;nbsp;&lt;/span&gt; gift(s)&lt;/p&gt;
-    &lt;table data-bind='visible: gifts().length &gt; 0'&gt;
-        &lt;thead&gt;
-            &lt;tr&gt;
-                &lt;th&gt;Gift name&lt;/th&gt;
-                &lt;th&gt;Price&lt;/th&gt;
-                &lt;th /&gt;
-            &lt;/tr&gt;
-        &lt;/thead&gt;
-        &lt;tbody data-bind='foreach: gifts'&gt;
-            &lt;tr&gt;
-                &lt;td&gt;&lt;input class='required' data-bind='value: name, uniqueName: true' /&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;input class='required number' data-bind='value: price, uniqueName: true' /&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;a href='#' data-bind='click: $root.removeGift'&gt;Delete&lt;/a&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-        &lt;/tbody&gt;
-    &lt;/table&gt;
-
-    &lt;button data-bind='click: addGift'&gt;Add Gift&lt;/button&gt;
-    &lt;button data-bind='enable: gifts().length &gt; 0' type='submit'&gt;Submit&lt;/button&gt;
-&lt;/form&gt;
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-var GiftModel = function(gifts) {
-    var self = this;
-    self.gifts = ko.observableArray(gifts);
-
-    self.addGift = function() {
-        self.gifts.push({
-            name: &quot;&quot;,
-            price: &quot;&quot;
-        });
-    };
-
-    self.removeGift = function(gift) {
-        self.gifts.remove(gift);
-    };
-
-    self.save = function(form) {
-        alert(&quot;Could now transmit to server: &quot; + ko.utils.stringifyJson(self.gifts));
-        // To actually transmit to server as a regular form post, write this: ko.utils.postJson($(&quot;form&quot;)[0], self.gifts);
-    };
-};
-
-var viewModel = new GiftModel([
-    { name: &quot;Tall Hat&quot;, price: &quot;39.95&quot;},
-    { name: &quot;Long Cloak&quot;, price: &quot;120.00&quot;}
-]);
-ko.applyBindings(viewModel);
-
-// Activate jQuery Validation
-$(&quot;form&quot;).validate({ submitHandler: viewModel.save });
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/7RDc3/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -268,10 +156,8 @@ $(&quot;form&quot;).validate({ submitHandler: viewModel.save });
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	

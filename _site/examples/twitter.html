@@ -10,7 +10,6 @@
         <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
         <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
         <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/knockout-2.1.0.js"></script>
 <script type="text/javascript" src="../js/cufon-yui.js"></script>
 <script type="text/javascript" src="../js/titilliummaps.font.js"></script>
 <script type="text/javascript" src="../js/json2.js"></script>
@@ -61,10 +60,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
@@ -147,294 +144,9 @@
 <link href='resources/twitterExample.css' rel='Stylesheet' /><script src='resources/twitterApi.js' type='text/javascript'> </script><style type='text/css'>
    .liveExample select { height: 1.7em; }
    .liveExample button { height: 2em; }
-</style><h2>Live example</h2><div class='liveExample'>
+</style>
+<p>Included file &#8216;live-example-tabs.html&#8217; not found in <em>includes directory</em></p>
 
-<div class='configuration'>
-    <div class='listChooser'>
-        <button data-bind='click: deleteList, enable: editingList.name'>Delete</button>
-        <button data-bind='click: saveChanges, enable: hasUnsavedChanges'>Save</button>
-        <select data-bind='options: savedLists, optionsValue: "name", value: editingList.name'> </select>
-    </div>
-
-    <p>Currently viewing <span data-bind='text: editingList.userNames().length'> </span> user(s):</p>
-    <div class='currentUsers' data-bind='with: editingList'>
-        <ul data-bind='foreach: userNames'>
-            <li>
-                <button data-bind='click: $root.removeUser'>Remove</button>
-                <div data-bind='text: $data'> </div>
-            </li>
-        </ul>
-    </div>
-
-    <form data-bind='submit: addUser'>
-        <label>Add user:</label>
-        <input data-bind='value: userNameToAdd, valueUpdate: "keyup", css: { invalid: !userNameToAddIsValid() }' />
-        <button data-bind='enable: canAddUserName' type='submit'>Add</button>
-    </form>
-</div>
-<div class='tweets'>
-    <div class='loadingIndicator'>Loading...</div>
-    <table data-bind='foreach: currentTweets' width='100%'>
-        <tr>
-            <td><img data-bind='attr: { src: profile_image_url }' /></td>
-            <td>
-                <a href='http://twitter.com/${ from_user }' class='twitterUser' data-bind='attr: { href: "http://twitter.com/" + from_user }, text: from_user'> </a>
-                <span data-bind='text: text'> </span>
-                <div class='tweetInfo' data-bind='text: created_at'> </div>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-    // The view model holds all the state we're working with. It also has methods that can edit it, and it uses
-    // computed observables to calculate more state in terms of the underlying data
-    // --
-    // The view (i.e., the HTML UI) binds to this using data-bind attributes, so it always stays up-to-date with
-    // the view model, even though the view model does not know or care about any view that binds to it
-    var savedLists = [
-        { name: "Celebrities", userNames: ['JohnCleese', 'MCHammer', 'StephenFry', 'algore', 'StevenSanderson']},
-        { name: "Microsoft people", userNames: ['BillGates', 'shanselman', 'ScottGu']},
-        { name: "Tech pundits", userNames: ['Scobleizer', 'LeoLaporte', 'techcrunch', 'BoingBoing', 'timoreilly', 'codinghorror']}
-    ];
-
-    var TwitterListModel = function(lists, selectedList) {
-        this.savedLists = ko.observableArray(lists);
-        this.editingList = {
-            name: ko.observable(selectedList),
-            userNames: ko.observableArray()
-        };
-        this.userNameToAdd = ko.observable("");
-        this.currentTweets = ko.observableArray([])
-
-        this.findSavedList = function(name) {
-            var lists = this.savedLists();
-            return ko.utils.arrayFirst(lists, function(list) {
-                return list.name === name;
-            });
-        };
-
-        this.addUser = function() {
-            if (this.userNameToAdd() && this.userNameToAddIsValid()) {
-                this.editingList.userNames.push(this.userNameToAdd());
-                this.userNameToAdd("");
-            }
-        };
-
-        this.removeUser = function(userName) { 
-            this.editingList.userNames.remove(userName) 
-        }.bind(this);
-
-        this.saveChanges = function() {
-            var saveAs = prompt("Save as", this.editingList.name());
-            if (saveAs) {
-                var dataToSave = this.editingList.userNames().slice(0);
-                var existingSavedList = this.findSavedList(saveAs);
-                if (existingSavedList) existingSavedList.userNames = dataToSave; // Overwrite existing list
-                else this.savedLists.push({
-                    name: saveAs,
-                    userNames: dataToSave
-                }); // Add new list
-                this.editingList.name(saveAs);
-            }
-        };
-
-        this.deleteList = function() {
-            var nameToDelete = this.editingList.name();
-            var savedListsExceptOneToDelete = $.grep(this.savedLists(), function(list) {
-                return list.name != nameToDelete
-            });
-            this.editingList.name(savedListsExceptOneToDelete.length == 0 ? null : savedListsExceptOneToDelete[0].name);
-            this.savedLists(savedListsExceptOneToDelete);
-        };
-
-        ko.computed(function() {
-            // Observe viewModel.editingList.name(), so when it changes (i.e., user selects a different list) we know to copy the saved list into the editing list
-            var savedList = this.findSavedList(this.editingList.name());
-            if (savedList) {
-                var userNamesCopy = savedList.userNames.slice(0);
-                this.editingList.userNames(userNamesCopy);
-            } else {
-                this.editingList.userNames([]);
-            }
-        }, this);
-
-        this.hasUnsavedChanges = ko.computed(function() {
-            if (!this.editingList.name()) {
-                return this.editingList.userNames().length > 0;
-            }
-            var savedData = this.findSavedList(this.editingList.name()).userNames;
-            var editingData = this.editingList.userNames();
-            return savedData.join("|") != editingData.join("|");
-        }, this);
-
-        this.userNameToAddIsValid = ko.computed(function() {
-            return (this.userNameToAdd() == "") || (this.userNameToAdd().match(/^\s*[a-zA-Z0-9_]{1,15}\s*$/) != null);
-        }, this);
-
-        this.canAddUserName = ko.computed(function() {
-            return this.userNameToAddIsValid() && this.userNameToAdd() != "";
-        }, this);
-
-        // The active user tweets are (asynchronously) computed from editingList.userNames
-        ko.computed(function() {
-            twitterApi.getTweetsForUsers(this.editingList.userNames(), this.currentTweets);
-        }, this);
-    };
-
-    ko.applyBindings(new TwitterListModel(savedLists, "Tech pundits"));
-
-    // Using jQuery for Ajax loading indicator - nothing to do with Knockout
-    $(".loadingIndicator").ajaxStart(function() {
-        $(this).fadeIn();
-    }).ajaxComplete(function() {
-        $(this).fadeOut();
-    });
-/*]]>*/
-</script>
-</div><h2>Source code: View</h2><pre class='brush:html'>
-&lt;div class='configuration'&gt;
-    &lt;div class='listChooser'&gt;
-        &lt;button data-bind='click: deleteList, enable: editingList.name'&gt;Delete&lt;/button&gt;
-        &lt;button data-bind='click: saveChanges, enable: hasUnsavedChanges'&gt;Save&lt;/button&gt;
-        &lt;select data-bind='options: savedLists, optionsValue: &quot;name&quot;, value: editingList.name'&gt; &lt;/select&gt;
-    &lt;/div&gt;
-
-    &lt;p&gt;Currently viewing &lt;span data-bind='text: editingList.userNames().length'&gt; &lt;/span&gt; user(s):&lt;/p&gt;
-    &lt;div class='currentUsers' data-bind='with: editingList'&gt;
-        &lt;ul data-bind='foreach: userNames'&gt;
-            &lt;li&gt;
-                &lt;button data-bind='click: $root.removeUser'&gt;Remove&lt;/button&gt;
-                &lt;div data-bind=&quot;text: $data&quot;&gt; &lt;/div&gt;
-            &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-
-    &lt;form data-bind='submit: addUser'&gt;
-        &lt;label&gt;Add user:&lt;/label&gt;
-        &lt;input data-bind='value: userNameToAdd, valueUpdate: &quot;keyup&quot;, css: { invalid: !userNameToAddIsValid() }' /&gt;
-        &lt;button data-bind='enable: canAddUserName' type='submit'&gt;Add&lt;/button&gt;
-    &lt;/form&gt;
-&lt;/div&gt;
-&lt;div class='tweets'&gt;
-    &lt;div class='loadingIndicator'&gt;Loading...&lt;/div&gt;
-    &lt;table width='100%' data-bind=&quot;foreach: currentTweets&quot;&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;img data-bind='attr: { src: profile_image_url }' /&gt;&lt;/td&gt;
-            &lt;td&gt;
-                &lt;a class='twitterUser' data-bind='attr: { href: &quot;http://twitter.com/&quot; + from_user }, text: from_user' href='http://twitter.com/${ from_user }' &gt; &lt;/a&gt;
-                &lt;span data-bind=&quot;text: text&quot;&gt; &lt;/span&gt;
-                &lt;div class='tweetInfo' data-bind='text: created_at'&gt; &lt;/div&gt;
-            &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/table&gt;
-&lt;/div&gt;
-</pre><h2>Source code: View model</h2><pre class='brush:js'>
-    // The view model holds all the state we're working with. It also has methods that can edit it, and it uses
-    // computed observables to calculate more state in terms of the underlying data
-    // --
-    // The view (i.e., the HTML UI) binds to this using data-bind attributes, so it always stays up-to-date with
-    // the view model, even though the view model does not know or care about any view that binds to it
-    var savedLists = [
-        { name: &quot;Celebrities&quot;, userNames: ['JohnCleese', 'MCHammer', 'StephenFry', 'algore', 'StevenSanderson']},
-        { name: &quot;Microsoft people&quot;, userNames: ['BillGates', 'shanselman', 'ScottGu']},
-        { name: &quot;Tech pundits&quot;, userNames: ['Scobleizer', 'LeoLaporte', 'techcrunch', 'BoingBoing', 'timoreilly', 'codinghorror']}
-    ];
-
-    var TwitterListModel = function(lists, selectedList) {
-        this.savedLists = ko.observableArray(lists);
-        this.editingList = {
-            name: ko.observable(selectedList),
-            userNames: ko.observableArray()
-        };
-        this.userNameToAdd = ko.observable(&quot;&quot;);
-        this.currentTweets = ko.observableArray([])
-
-        this.findSavedList = function(name) {
-            var lists = this.savedLists();
-            return ko.utils.arrayFirst(lists, function(list) {
-                return list.name === name;
-            });
-        };
-
-        this.addUser = function() {
-            if (this.userNameToAdd() &amp;&amp; this.userNameToAddIsValid()) {
-                this.editingList.userNames.push(this.userNameToAdd());
-                this.userNameToAdd(&quot;&quot;);
-            }
-        };
-
-        this.removeUser = function(userName) { 
-            this.editingList.userNames.remove(userName) 
-        }.bind(this);
-
-        this.saveChanges = function() {
-            var saveAs = prompt(&quot;Save as&quot;, this.editingList.name());
-            if (saveAs) {
-                var dataToSave = this.editingList.userNames().slice(0);
-                var existingSavedList = this.findSavedList(saveAs);
-                if (existingSavedList) existingSavedList.userNames = dataToSave; // Overwrite existing list
-                else this.savedLists.push({
-                    name: saveAs,
-                    userNames: dataToSave
-                }); // Add new list
-                this.editingList.name(saveAs);
-            }
-        };
-
-        this.deleteList = function() {
-            var nameToDelete = this.editingList.name();
-            var savedListsExceptOneToDelete = $.grep(this.savedLists(), function(list) {
-                return list.name != nameToDelete
-            });
-            this.editingList.name(savedListsExceptOneToDelete.length == 0 ? null : savedListsExceptOneToDelete[0].name);
-            this.savedLists(savedListsExceptOneToDelete);
-        };
-
-        ko.computed(function() {
-            // Observe viewModel.editingList.name(), so when it changes (i.e., user selects a different list) we know to copy the saved list into the editing list
-            var savedList = this.findSavedList(this.editingList.name());
-            if (savedList) {
-                var userNamesCopy = savedList.userNames.slice(0);
-                this.editingList.userNames(userNamesCopy);
-            } else {
-                this.editingList.userNames([]);
-            }
-        }, this);
-
-        this.hasUnsavedChanges = ko.computed(function() {
-            if (!this.editingList.name()) {
-                return this.editingList.userNames().length &gt; 0;
-            }
-            var savedData = this.findSavedList(this.editingList.name()).userNames;
-            var editingData = this.editingList.userNames();
-            return savedData.join(&quot;|&quot;) != editingData.join(&quot;|&quot;);
-        }, this);
-
-        this.userNameToAddIsValid = ko.computed(function() {
-            return (this.userNameToAdd() == &quot;&quot;) || (this.userNameToAdd().match(/^\s*[a-zA-Z0-9_]{1,15}\s*$/) != null);
-        }, this);
-
-        this.canAddUserName = ko.computed(function() {
-            return this.userNameToAddIsValid() &amp;&amp; this.userNameToAdd() != &quot;&quot;;
-        }, this);
-
-        // The active user tweets are (asynchronously) computed from editingList.userNames
-        ko.computed(function() {
-            twitterApi.getTweetsForUsers(this.editingList.userNames(), this.currentTweets);
-        }, this);
-    };
-
-    ko.applyBindings(new TwitterListModel(savedLists, &quot;Tech pundits&quot;));
-
-    // Using jQuery for Ajax loading indicator - nothing to do with Knockout
-    $(&quot;.loadingIndicator&quot;).ajaxStart(function() {
-        $(this).fadeIn();
-    }).ajaxComplete(function() {
-        $(this).fadeOut();
-    });
-</pre>
 <p><a href='http://jsfiddle.net/rniemeyer/rhQLj/'>Try it in jsFiddle</a></p>   		    		    	
 		    </div>
 		    
@@ -447,10 +159,8 @@
     <ul>
         <li><a rel="home" href="../index.html">Home</a></li>
         <li><a rel="installation" href="../documentation/installation.html">Download / Install</a></li>
-<!--         <li><a rel="tutorials" href="../documentation/tutorials.html">Tutorials</a></li> -->
         <li><a rel="examples" href="../examples/">Examples</a></li>
         <li><a rel="documentation" href="../documentation/introduction.html">Documentation</a></li>
-<!--         <li><a href="http://groups.google.com/group/knockoutjs">Forum</a></li> -->
         <li><a href="http://github.com/cts2/twinkql">Source</a></li>
     </ul>
 </div>        	
