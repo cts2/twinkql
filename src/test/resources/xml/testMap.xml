@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sparqlMap namespace="myTestNamespace"
-	xmlns="http://mayo.edu/twinkql" 
+	xmlns="http://twinkql.org" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://mayo.edu/twinkql ../../../main/castor/twinkql.xsd ">
+	xsi:schemaLocation="http://twinkql.org ../../../main/castor/twinkql.xsd ">
 	
-	<resultMap id="test" resultClass="edu.mayo.twinkql.result.TestResult">
+	<resultMap id="test" resultClass="org.twinkql.result.TestResult">
 		<uniqueResult>uri</uniqueResult>
 		<association resultMap="testNested" beanProperty="test.bean.nested"/>
 		<rowMap  var="a" varType="uri" beanProperty="asdf1" match="?p = foaf:name"/>

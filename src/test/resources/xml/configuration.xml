@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <twinkqlConfig
-	xmlns="http://mayo.edu/twinkql" 
+	xmlns="http://twinkql.org" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	
 	<namespace prefix="rdfs" uri="http://www.w3.org/2000/01/rdf-schema#"/>

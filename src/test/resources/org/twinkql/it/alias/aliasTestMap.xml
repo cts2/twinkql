@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparqlMap namespace="alias"
+	xmlns="http://twinkql.org" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://twinkql.org ../../../../../../../main/castor/twinkql.xsd ">
+	
+	<resultMap id="tetrisCommentsResultMap" resultClass="tetris">
+		<uniqueResult>s</uniqueResult>
+		<rowMap var="comment" varType="literalValue" beanProperty="comments[]"/>
+	</resultMap>
+	
+	
+	<select id="getTetrisComments" resultMap="tetrisCommentsResultMap">
+	<![CDATA[
+		SELECT 
+		(<http://dbpedia.org/resource/Tetris> as ?s)
+		?comment
+		
+		WHERE {
+
+			<http://dbpedia.org/resource/Tetris> <http://www.w3.org/2000/01/rdf-schema#comment> ?comment
+		
+		} LIMIT 100
+	]]>
+	</select>
+	
+	<select id="getTetrisCommentsWithNamespaces" resultMap="tetrisCommentsResultMap">
+	<![CDATA[
+		SELECT 
+		(dbpedia_alias:Tetris as ?s)
+		?comment
+		
+		WHERE {
+
+			dbpedia_alias:Tetris rdfs_alias:comment ?comment
+		
+		} LIMIT 100
+	]]>
+	</select>
+	
+</sparqlMap>
