@@ -65,7 +65,8 @@ import org.twinkql.model.TwinkqlConfigItem;
 import org.twinkql.model.types.TestType;
 
 /**
- * The Class TwinkqlTemplate.
+ * The TwinkqlTemplate is the main user entry point into Twinkql. Use this to execute SPARQL
+ * Queries, add dynamic parameters, etc.
  * 
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
@@ -465,19 +466,19 @@ public class TwinkqlTemplate implements InitializingBean {
 	}
 
 	/**
-	 * Select for list.
+	 * Execute a query, expecting a List of results to be returned.
 	 * 
 	 * @param <T>
-	 *            the generic type
+	 *            the result type
 	 * @param namespace
 	 *            the namespace
 	 * @param selectId
 	 *            the select id
 	 * @param parameters
-	 *            the parameters
+	 *            the parameters to use for mapping placeholders
 	 * @param requiredType
 	 *            the required type
-	 * @return the list
+	 * @return the results
 	 */
 	public <T> List<T> selectForList(
 			String namespace, 
@@ -496,7 +497,8 @@ public class TwinkqlTemplate implements InitializingBean {
 	}
 
 	/**
-	 * Select for object.
+	 * Execute a query, expecting a List of results to be returned. If more than one 
+	 * unique result is found, a {@link TooManyResultsException} Exception is thrown.
 	 * 
 	 * @param <T>
 	 *            the generic type
@@ -505,10 +507,10 @@ public class TwinkqlTemplate implements InitializingBean {
 	 * @param selectId
 	 *            the select id
 	 * @param parameters
-	 *            the parameters
+	 *            the parameters to use for mapping placeholders
 	 * @param requiredType
 	 *            the required type
-	 * @return the t
+	 * @return the result
 	 */
 	public <T> T selectForObject(
 			String namespace, 
