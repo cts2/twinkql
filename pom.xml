@@ -1,9 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+	    <groupId>org.sonatype.oss</groupId>
+	    <artifactId>oss-parent</artifactId>
+	    <version>7</version>
+  	</parent>
+  
 	<groupId>org.twinkql</groupId>
 	<artifactId>twinkql</artifactId>
-	<version>0.4.0-SNAPSHOT</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<name>Twinkql</name>
 	<description>Twinkql is a SPARQL to Object Mapping Framework that lets you
 	specify your SPARQL queries in XML, instead of in your code, and map the results
@@ -42,23 +49,9 @@
 
 	<scm>
 		<url>https://github.com/cts2/twinkql</url>
+		<connection>scm:git:git@github.com:cts2/twinkql.git</connection>
 		<developerConnection>scm:git:git@github.com:cts2/twinkql.git</developerConnection>
 	</scm>
-
-	<distributionManagement>
-		<repository>
-			<id>informatics-releases</id>
-			<url>http://informatics.mayo.edu/maven/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>informatics-snapshots</id>
-			<url>http://informatics.mayo.edu/maven/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<site>
-			<id>site-upload-server</id>
-			<url>scp://informatics.mayo.edu:/home/informatics/homes/cts2framework/public_html/sites/${project.artifactId}</url>
-		</site>
-	</distributionManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -164,6 +157,7 @@
 				<configuration>
 					<generateImportedSchemas>true</generateImportedSchemas>
 					<verbose>true</verbose>
+					<schema>http://twinkql.org/schema/1.0/twinkql.xsd</schema>
 					<properties>${basedir}/src/main/castor/castorbuilder.properties</properties>
 				</configuration>
 				<executions>
@@ -287,14 +281,6 @@
 			<id>com.springsource.repository.bundles.release</id>
 			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/release</url>
-		</repository>
-		<repository>
-			<id>informatics-releases</id>
-			<url>http://informatics.mayo.edu/maven/content/repositories/releases</url>
-		</repository>
-		<repository>
-			<id>informatics-snapshots</id>
-			<url>http://informatics.mayo.edu/maven/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
 </project>

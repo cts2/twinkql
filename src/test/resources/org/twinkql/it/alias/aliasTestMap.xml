@@ -2,13 +2,12 @@
 <sparqlMap namespace="alias"
 	xmlns="http://twinkql.org" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://twinkql.org ../../../../../../../main/castor/twinkql.xsd ">
+	xsi:schemaLocation="http://twinkql.org/schema/1.0/twinkql.xsd">
 	
 	<resultMap id="tetrisCommentsResultMap" resultClass="tetris">
 		<uniqueResult>s</uniqueResult>
 		<rowMap var="comment" varType="literalValue" beanProperty="comments[]"/>
 	</resultMap>
-	
 	
 	<select id="getTetrisComments" resultMap="tetrisCommentsResultMap">
 	<![CDATA[

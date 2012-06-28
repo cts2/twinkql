@@ -2,7 +2,7 @@
 <sparqlMap namespace="myTestNamespace"
 	xmlns="http://twinkql.org" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://twinkql.org ../../../main/castor/twinkql.xsd ">
+	xsi:schemaLocation="http://twinkql.org/schema/1.0/twinkql.xsd">
 	
 	<resultMap id="test" resultClass="org.twinkql.result.TestResult">
 		<uniqueResult>uri</uniqueResult>

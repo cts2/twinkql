@@ -1,0 +1,11 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://twinkql.org/gen" 
+	xmlns:tns="http://twinkql.org/gen" 
+	targetNamespace="http://twinkql.org/gen"
+	elementFormDefault="qualified">
+	
+	<xsd:import namespace="http://twinkql.org"
+		schemaLocation="http://twinkql.org/schema/1.0/twinkql.xsd" />
+		
+	
+</xsd:schema>
