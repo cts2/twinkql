@@ -117,6 +117,7 @@
 <h2>Working with ResultSets</h2>
 <ol>
 	<li><a href="resultMap.html">The <code>resultMap</code></a></li>
+	<li><a href="rowMap.html">The <code>rowMap</code></a></li>
 	<li><a href="associations-and-collections.html">Associations and Collections</a></li>
 	<li><a href="afterMap-callback.html">The <code>afterMap</code> callback</a></li>	
 </ol>
@@ -146,7 +147,53 @@
 
 <p>A String Collection is mapped via a <code>[]</code> designation, shown as <code>beanProperty=&quot;isA[]&quot;</code> above.</p>
 
-<p><strong><em>NOTE:</em></strong> the <code>uniqueResult</code> element is important, as it identifies what defines a unique instances of the <code>resultClass</code>. See <a href='resultMap.html'>resultMap</a> for more info.</p>    
+<p><strong><em>NOTE:</em></strong> the <code>uniqueResult</code> element is important, as it identifies what defines a unique instances of the <code>resultClass</code>. See <a href='resultMap.html'>resultMap</a> for more info.</p>
+
+<h3 id='mapping_an_association'>Mapping an Association</h3>
+
+<p>An Association is a property on a Bean that is another Bean. For example</p>
+
+<pre><code>public class Parent {
+
+	private String name;
+
+	private Child child;
+	
+	...
+
+}</code></pre>
+
+<p>The attribute <code>child</code>, in this case, is an <em>Association</em>, and could be mapped as such:</p>
+
+<pre><code>&lt;resultMap id=&quot;parentResultMap&quot; resultClass=&quot;org.twinkql.Parent&quot;&gt;
+	&lt;uniqueResult&gt;s&lt;/uniqueResult&gt;
+	&lt;rowMap  var=&quot;s&quot; varType=&quot;literalValue&quot; beanProperty=&quot;name&quot; /&gt;
+	&lt;association beanProperty=&quot;child&quot; isCollection=&quot;false&quot; resultMap=&quot;childResultMap&quot;/&gt;
+&lt;/resultMap&gt;</code></pre>
+
+<h3 id='important__attributes'>Important <code>Association</code> attributes</h3>
+
+<ul>
+<li>
+<p><code>isCollection</code>: whether or not this is a <em>one-to-one</em> relationship or a <em>one-to-many</em>.</p>
+</li>
+
+<li>
+<p><code>resultMap</code>: the nested <code>resultMap</code> id that describes this Assocation. If <code>resultMap</code> is omitted, it is assumed that the mapping will be inlined, as such:</p>
+
+<pre><code>&lt;resultMap id=&quot;parentResultMap&quot; resultClass=&quot;org.twinkql.Parent&quot;&gt;
+	&lt;uniqueResult&gt;s&lt;/uniqueResult&gt;
+	&lt;rowMap  var=&quot;s&quot; varType=&quot;literalValue&quot; beanProperty=&quot;name&quot; /&gt;
+	&lt;association beanProperty=&quot;child&quot; isCollection=&quot;false&quot;&gt;
+		&lt;rowMap var=&quot;childName&quot; 
+			varType=&quot;literalValue&quot; 
+			beanProperty=&quot;childName&quot;/&gt;
+	&lt;/association&gt;
+&lt;/resultMap&gt;</code></pre>
+</li>
+</ul>
+
+<p><strong><em>NOTE:</em></strong> An <code>association</code> <em>cannot</em> specify a <code>resultMap</code> attribute and also define inline <code>rowMap</code>s.</p>    
 		    </div>
 		    
 		    <div class="clear"></div>

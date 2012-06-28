@@ -117,6 +117,7 @@
 <h2>Working with ResultSets</h2>
 <ol>
 	<li><a href="resultMap.html">The <code>resultMap</code></a></li>
+	<li><a href="rowMap.html">The <code>rowMap</code></a></li>
 	<li><a href="associations-and-collections.html">Associations and Collections</a></li>
 	<li><a href="afterMap-callback.html">The <code>afterMap</code> callback</a></li>	
 </ol>
@@ -139,7 +140,7 @@
 <ol>
 <li>Many times accessing a SPARQL endpoint is only one layer of a complex application. An application may use data from a SPARQL endpoint to power a REST or SOAP service, to validate parts of the system, or any number of different applications. In this case, we need to go from SPARQL query to application-specific beans as quickly as possible, and with the least amount of code.</li>
 
-<li>SPARQL in your code is hard to maintain. In Java, for example, complex SPARQL in in Java files is represented as large String concatenations. This limits the readability of your code. Moving the SPARQL queries to XML files let you have a clean separation between application logic and SPARQL queries.</li>
+<li>SPARQL in your code is hard to maintain. In Java, for example, complex SPARQL in Java files is represented as large String concatenations. This limits the readability of your code. Moving the SPARQL queries to XML files let you have a clean separation between application logic and SPARQL queries.</li>
 
 <li>Accessing a SPARQL endpoint should be no harder than a SQL datasource. In fact, your application should only be concerned with the query you want to execute and what parameters you need put in that query.</li>
 </ol>    

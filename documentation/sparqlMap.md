@@ -37,3 +37,5 @@ described.
 	</sparqlMap>
 
 ### Elements
+* ```resultMap```: a [resultMap](resultMap.html) is a binding between SPARQL results and bean attributes.
+* ```select```: a [select](select.html) is where a SPARQL SELECT statement is defined.

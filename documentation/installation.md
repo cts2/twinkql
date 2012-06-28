@@ -10,7 +10,7 @@ Add the following dependency to your ```pom.xml``` file
 	<dependency>
 		<groupId>org.twinkql</groupId>
 		<artifactId>twinkql</artifactId>
-		<version>0.8.0.RELEASE</version>
+		<version>{% include current-version.html %}</version>
 	</dependency>
 
 ### Build from source

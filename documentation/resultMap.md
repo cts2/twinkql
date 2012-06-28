@@ -25,6 +25,10 @@ the containing __namespace__, must be unique.
 
 * ```uniqueResult```: The SPARQL variable that indicates a unique result.
 
+* ```rowMap```: A [rowMap](rowMap.html) is a binding of a SPARQL result row to a Bean property.
+
+* ```association```: A [association](associations-and-collections.html) is the binding of a property on a Bean that is another Bean.
+
 ___Example SPARQL Results:___ 
 
 <table>
