@@ -4,9 +4,11 @@
 	<groupId>org.twinkql</groupId>
 	<artifactId>twinkql</artifactId>
 	<version>0.4.0-SNAPSHOT</version>
-	<name>twinkql</name>
-	<description>SPARQL with a Twist! tiwnkql A SPARQL query building tool that lets you
-	specify your SPARQL queries in XML, instead of in your code.</description>
+	<name>Twinkql</name>
+	<description>Twinkql is a SPARQL to Object Mapping Framework that lets you
+	specify your SPARQL queries in XML, instead of in your code, and map the results
+	to Java Beans.</description>
+	<url>http://twinkql.org</url>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
 		<license>
@@ -39,6 +41,7 @@
 	</developers>
 
 	<scm>
+		<url>https://github.com/cts2/twinkql</url>
 		<developerConnection>scm:git:git@github.com:cts2/twinkql.git</developerConnection>
 	</scm>
 
