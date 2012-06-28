@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Twinkql : Links</title>
+        <title>Twinkql : Mapping Associations and Collections</title>
         <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" type="text/css" href="../css/styles.css" />
         <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
@@ -131,20 +131,22 @@
 	<div class="rightCol">
 		<div class="documentation sticker">
 		    <div class="content">
-		    	<h1>Links</h1>	
-		    	<h3 id='rdf_resources'>RDF Resources</h3>
+		    	<h1>Mapping Associations and Collections</h1>	
+		    	<h3 id='purpose'>Purpose</h3>
 
-<p>The <a href='http://www.w3.org/TR/rdf-primer/'>RDF Primer</a> is a good starting place for general RDF info.</p>
+<p>Often, SPARQL results need to be mapped to an Associations or Collection.</p>
 
-<h3 id='public_sparql_endpoints'>Public SPARQL Endpoints</h3>
+<h3 id='mapping_a_string_collection'>Mapping a String Collection</h3>
 
-<p>Take a look a these <a href='http://www.w3.org/wiki/SparqlEndpoints'>SPARQL Endpoints</a> to get started using RDF as the datasource for your next application.</p>
+<pre><code>&lt;resultMap id=&quot;governorsResultMap&quot; resultClass=&quot;org.twinkql.it.association.Governor&quot;&gt;
+	&lt;uniqueResult&gt;s&lt;/uniqueResult&gt;
+	&lt;rowMap  var=&quot;s&quot; varType=&quot;localName&quot; beanProperty=&quot;name&quot; /&gt;
+	&lt;rowMap var=&quot;isa&quot; varType=&quot;localName&quot; beanProperty=&quot;isA[]&quot;/&gt;
+&lt;/resultMap&gt;</code></pre>
 
-<h3 id='whos_using_twinkql'>Who&#8217;s using Twinkql</h3>
+<p>A String Collection is mapped via a <code>[]</code> designation, shown as <code>beanProperty=&quot;isA[]&quot;</code> above.</p>
 
-<p><a href='http://informatics.mayo.edu/cts2'>Common Terminology Services 2 (CTS2)</a> has used Twinkql is implementations that are currently connecting to the <a href='http://sparql.bioontology.org/'>NCBO SPARQL Endpoint</a>.</p>
-
-<p>If you are using or thinking of using Twinkql for your application, please <a href='mailto:info@twinkql.org'>Let us know!</a></p>    
+<p><strong><em>NOTE:</em></strong> the <code>uniqueResult</code> element is important, as it identifies what defines a unique instances of the <code>resultClass</code>. See <a href='resultMap.html'>resultMap</a> for more info.</p>    
 		    </div>
 		    
 		    <div class="clear"></div>

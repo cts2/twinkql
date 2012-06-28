@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Twinkql : Links</title>
+        <title>Twinkql : Adding Dyanmic Parameters SPARQL Select</title>
         <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" type="text/css" href="../css/styles.css" />
         <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
@@ -131,20 +131,39 @@
 	<div class="rightCol">
 		<div class="documentation sticker">
 		    <div class="content">
-		    	<h1>Links</h1>	
-		    	<h3 id='rdf_resources'>RDF Resources</h3>
+		    	<h1>Adding Dyanmic Parameters SPARQL Select</h1>	
+		    	<h3 id='purpose'>Purpose</h3>
 
-<p>The <a href='http://www.w3.org/TR/rdf-primer/'>RDF Primer</a> is a good starting place for general RDF info.</p>
+<p>Defining SPARQL Select statement is one of the basic functions of Twinkql. These queries are defined in XML files, keeping SPARQL out of your Java code.</p>
 
-<h3 id='public_sparql_endpoints'>Public SPARQL Endpoints</h3>
+<h3 id='example'>Example</h3>
 
-<p>Take a look a these <a href='http://www.w3.org/wiki/SparqlEndpoints'>SPARQL Endpoints</a> to get started using RDF as the datasource for your next application.</p>
+<pre><code>&lt;select id=&quot;getNovel&quot; resultMap=&quot;novelResultMap&quot;&gt;
+&lt;![CDATA[
+	SELECT ?novel ?author 
+	WHERE { 
+		?novel a &lt;http://dbpedia.org/class/yago/EnglishNovels&gt; ;
+			&lt;http://dbpedia.org/property/name&gt; &quot;#{novelName}&quot;@en ;
+			&lt;http://dbpedia.org/property/author&gt; ?author .
+	}
+]]&gt;
+&lt;/select&gt;</code></pre>
 
-<h3 id='whos_using_twinkql'>Who&#8217;s using Twinkql</h3>
+<p>In the above example, we define a <code>SELECT</code> SPARQL query with a dynamic parameter, <code>#{novelName}</code>. This parameter can be set at runtime by passing parameters into the <a href='../maven-site/apidocs/org/twinkql/template/TwinkqlTemplate.html'>TwinkqlTemplate</a>.</p>
 
-<p><a href='http://informatics.mayo.edu/cts2'>Common Terminology Services 2 (CTS2)</a> has used Twinkql is implementations that are currently connecting to the <a href='http://sparql.bioontology.org/'>NCBO SPARQL Endpoint</a>.</p>
+<h3 id='groovy_template_example'>Groovy Template Example</h3>
 
-<p>If you are using or thinking of using Twinkql for your application, please <a href='mailto:info@twinkql.org'>Let us know!</a></p>    
+<pre><code>def factory = new TwinkqlContextFactory(
+		&quot;http://dbpedia.org/sparql&quot;,
+		&quot;classpath:org/twinkql/it/param/*.xml&quot;)
+
+def template = new TwinkqlTemplateFactory(factory.getTwinkqlContext()).getTwinkqlTemplate()
+
+def params = [&quot;novelName&quot;:&quot;The Lord of the Rings&quot;]
+
+def novel = template.selectForObject(&quot;param&quot;, &quot;getNovel&quot;, params, Novel)</code></pre>
+
+<p>In the above example, the variable <code>params</code> is the Map which drives the parameter substitution. In this example, the Map <em>key</em> is the name of the placeholder, and the Map <em>value</em> is the value that will be substituted. Paring this with the above <code>SELECT</code> statement, the <code>#{novelName}</code> placeholder will be replaced with <code>The Lord of the Rings</code>.</p>    
 		    </div>
 		    
 		    <div class="clear"></div>

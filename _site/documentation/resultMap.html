@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Twinkql : Links</title>
+        <title>Twinkql : A resultMap</title>
         <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" type="text/css" href="../css/styles.css" />
         <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
@@ -131,20 +131,76 @@
 	<div class="rightCol">
 		<div class="documentation sticker">
 		    <div class="content">
-		    	<h1>Links</h1>	
-		    	<h3 id='rdf_resources'>RDF Resources</h3>
+		    	<h1>A resultMap</h1>	
+		    	<h3 id='purpose'>Purpose</h3>
 
-<p>The <a href='http://www.w3.org/TR/rdf-primer/'>RDF Primer</a> is a good starting place for general RDF info.</p>
+<p>A <code>resultMap</code> is where SPARQL results are bound to Object attributes.</p>
 
-<h3 id='public_sparql_endpoints'>Public SPARQL Endpoints</h3>
+<h3 id='example'>Example</h3>
 
-<p>Take a look a these <a href='http://www.w3.org/wiki/SparqlEndpoints'>SPARQL Endpoints</a> to get started using RDF as the datasource for your next application.</p>
+<pre><code>&lt;resultMap id=&quot;novelResultMap&quot; resultClass=&quot;org.twinkql.it.param.Novel&quot;&gt;
+	&lt;uniqueResult&gt;novel&lt;/uniqueResult&gt;
+	&lt;rowMap var=&quot;novel&quot; varType=&quot;uri&quot; beanProperty=&quot;novel&quot;/&gt;
+	&lt;rowMap var=&quot;author&quot; varType=&quot;uri&quot; beanProperty=&quot;author&quot;/&gt;
+&lt;/resultMap&gt;</code></pre>
 
-<h3 id='whos_using_twinkql'>Who&#8217;s using Twinkql</h3>
+<h3 id='attributes'>Attributes</h3>
 
-<p><a href='http://informatics.mayo.edu/cts2'>Common Terminology Services 2 (CTS2)</a> has used Twinkql is implementations that are currently connecting to the <a href='http://sparql.bioontology.org/'>NCBO SPARQL Endpoint</a>.</p>
+<ul>
+<li>
+<p><code>id</code>: The the unique name of the query. The <strong>id</strong> value, when paired with the containing <strong>namespace</strong>, must be unique.</p>
+</li>
 
-<p>If you are using or thinking of using Twinkql for your application, please <a href='mailto:info@twinkql.org'>Let us know!</a></p>    
+<li>
+<p><code>resultClass</code>: The full class name of the desired result (or <em>alias</em>, if an <em>alias</em> has been registered).</p>
+</li>
+</ul>
+
+<h3 id='elements'>Elements</h3>
+
+<ul>
+<li><code>uniqueResult</code>: The SPARQL variable that indicates a unique result.</li>
+</ul>
+
+<p><strong><em>Example SPARQL Results:</em></strong></p>
+<table>
+	<tr>
+	 	<th>Variable: novel</th>
+        <th>Variable: label</th>
+	</tr>
+    <tr>
+        <td>http://dbpedia.org/resource/The_Lord_of_the_Rings</td>
+        <td>The Lord of the Rings</td>
+    </tr>
+    <tr>
+        <td>http://dbpedia.org/resource/The_Lord_of_the_Rings</td>
+        <td>Der Herr der Ringe</td>
+    </tr>    
+    <tr>
+        <td>http://dbpedia.org/resource/The_Lord_of_the_Rings</td>
+        <td>El Senor de los Anillos</td>
+    </tr>
+</table>
+<p>In this example, we have 3 rows returned from a SPARQL result. There are two ways Twinkql can deal with this result:</p>
+
+<ul>
+<li>Treat each individual row as a new instance of the <code>resultClass</code>.</li>
+
+<li>Group the results based on a <code>uniqueResult</code> variable.</li>
+</ul>
+
+<p>When grouping, instead of getting multiple Objects, you can group results and populate lists.</p>
+
+<p><strong>For Example:</strong></p>
+
+<pre><code>public class Novel
+	
+	private String uri;
+	private List&lt;String&gt; names;
+	
+	...</code></pre>
+
+<p>if the above result where grouped by the <code>novel</code> variable (<code>&lt;uniqueResult&gt;novel&lt;/uniqueResult&gt;</code>), there would be one <code>Novel</code> Object created, and all names would be added to the <code>names</code> list.</p>    
 		    </div>
 		    
 		    <div class="clear"></div>
