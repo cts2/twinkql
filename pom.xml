@@ -9,7 +9,7 @@
   
 	<groupId>org.twinkql</groupId>
 	<artifactId>twinkql</artifactId>
-	<version>0.9.0</version>
+	<version>0.9.1-SNAPSHOT</version>
 	<name>Twinkql</name>
 	<description>Twinkql is a SPARQL to Object Mapping Framework that lets you
 	specify your SPARQL queries in XML, instead of in your code, and map the results
