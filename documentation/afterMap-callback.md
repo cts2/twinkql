@@ -10,8 +10,8 @@ bean for further processing
 
 ### Example
 	<resultMap id="governorsResultMap" 
-		afterMap="edu.mayo.twinkql.it.association.AfterGovernorMapCallback"
-		resultClass="edu.mayo.twinkql.it.association.Governor">
+		afterMap="org.twinkql.it.association.AfterGovernorMapCallback"
+		resultClass="org.twinkql.it.association.Governor">
 		<uniqueResult>s</uniqueResult>
 		<rowMap  var="s" varType="localName" beanProperty="name" />
 		<rowMap var="isa" varType="localName" beanProperty="isA[]"/>
@@ -21,4 +21,4 @@ In the above example, we define a ```resultMap``` that will fire a ```afterMap``
 
 ### Attributes
 
- * ```afterMap```: The full Class Name of the callback. This class must implement the [AfterResultBinding](../maven-site/apidocs/edu/mayo/twinkql/result/callback/AfterResultBinding.html) interface
+ * ```afterMap```: The full Class Name of the callback. This class must implement the [AfterResultBinding](../maven-site/apidocs/org/twinkql/result/callback/AfterResultBinding.html) interface

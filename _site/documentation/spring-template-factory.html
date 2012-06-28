@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Twinkql : Setting up the Twinkql Context using Spring</title>
+        <title>Twinkql : Setting up the TwinkqlTemplate using Spring</title>
         <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" type="text/css" href="../css/styles.css" />
         <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
@@ -95,7 +95,7 @@
 
 <ol>
 	<li><a href="template.html"><em>TwinkqlTemplate</em></a></li>
-    <li><a href="template-factory.html"><em>TwinkqlTemmplateFactory</em></a></li>
+    <li><a href="template-factory.html"><em>TwinkqlTemplateFactory</em></a></li>
     <li><a href="spring-template-factory.html">Using Spring</a></li>
 </ol>
 
@@ -130,7 +130,7 @@
 	<div class="rightCol">
 		<div class="documentation sticker">
 		    <div class="content">
-		    	<h1>Setting up the Twinkql Context using Spring</h1>	
+		    	<h1>Setting up the TwinkqlTemplate using Spring</h1>	
 		    	<h3 id='purpose'>Purpose</h3>
 
 <p>For applications that use the <a href='http://www.springsource.org'>Spring Framework</a>, configuration is a snap.</p>
@@ -147,14 +147,17 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd&quot;&gt;
-
-	&lt;bean class=&quot;edu.mayo.twinkql.context.SpringTwinkqlContextFactory&quot;&gt;
+	
+	&lt;bean id=&quot;twinkqlContext&quot; class=&quot;org.twinkql.context.SpringTwinkqlContextFactory&quot;&gt;
 		&lt;!-- additional properties definitions here --&gt;
 	&lt;/bean&gt;
-
+	
+	&lt;bean class=&quot;org.twinkql.template.SpringTwinkqlTemplateFactory&quot;&gt;
+		&lt;property name=&quot;twinkqlContext&quot; ref=&quot;twinkqlContext&quot;/&gt;
+	&lt;/bean&gt;
 &lt;/beans&gt;</code></pre>
 
-<p>A <a href='../maven-site/apidocs/edu/mayo/twinkql/context/SpringTwinkqlContextFactory.html'>SpringTwinkqlContextFactory</a> is the Spring-enabled Factory Bean for creating a TwinkqlContext.</p>    
+<p>A <a href='../maven-site/apidocs/org/twinkql/template/SpringTwinkqlTemplateFactory.html'>SpringTwinkqlTemplateFactory</a> is the Spring-enabled Factory Bean for creating a TwinkqlTemplate.</p>    
 		    </div>
 		    
 		    <div class="clear"></div>

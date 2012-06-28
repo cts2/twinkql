@@ -95,7 +95,7 @@
 
 <ol>
 	<li><a href="template.html"><em>TwinkqlTemplate</em></a></li>
-    <li><a href="template-factory.html"><em>TwinkqlTemmplateFactory</em></a></li>
+    <li><a href="template-factory.html"><em>TwinkqlTemplateFactory</em></a></li>
     <li><a href="spring-template-factory.html">Using Spring</a></li>
 </ol>
 
@@ -138,8 +138,8 @@
 <h3 id='example'>Example</h3>
 
 <pre><code>&lt;resultMap id=&quot;governorsResultMap&quot; 
-	afterMap=&quot;edu.mayo.twinkql.it.association.AfterGovernorMapCallback&quot;
-	resultClass=&quot;edu.mayo.twinkql.it.association.Governor&quot;&gt;
+	afterMap=&quot;org.twinkql.it.association.AfterGovernorMapCallback&quot;
+	resultClass=&quot;org.twinkql.it.association.Governor&quot;&gt;
 	&lt;uniqueResult&gt;s&lt;/uniqueResult&gt;
 	&lt;rowMap  var=&quot;s&quot; varType=&quot;localName&quot; beanProperty=&quot;name&quot; /&gt;
 	&lt;rowMap var=&quot;isa&quot; varType=&quot;localName&quot; beanProperty=&quot;isA[]&quot;/&gt;
@@ -150,7 +150,7 @@
 <h3 id='attributes'>Attributes</h3>
 
 <ul>
-<li><code>afterMap</code>: The full Class Name of the callback. This class must implement the <a href='../maven-site/apidocs/edu/mayo/twinkql/result/callback/AfterResultBinding.html'>AfterResultBinding</a> interface</li>
+<li><code>afterMap</code>: The full Class Name of the callback. This class must implement the <a href='../maven-site/apidocs/org/twinkql/result/callback/AfterResultBinding.html'>AfterResultBinding</a> interface</li>
 </ul>    
 		    </div>
 		    

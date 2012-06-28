@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Twinkql : Setting up the Twinkql Context using Spring</title>
+        <title>Twinkql : Using the TwinkqlTemplateFactory</title>
         <link href="../css/tripoli.simple.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" type="text/css" href="../css/styles.css" />
         <link rel="stylesheet" type="text/css" href="../css/smallScreen.css" media="only screen and (max-device-width: 800px)" />
@@ -95,7 +95,7 @@
 
 <ol>
 	<li><a href="template.html"><em>TwinkqlTemplate</em></a></li>
-    <li><a href="template-factory.html"><em>TwinkqlTemmplateFactory</em></a></li>
+    <li><a href="template-factory.html"><em>TwinkqlTemplateFactory</em></a></li>
     <li><a href="spring-template-factory.html">Using Spring</a></li>
 </ol>
 
@@ -130,31 +130,20 @@
 	<div class="rightCol">
 		<div class="documentation sticker">
 		    <div class="content">
-		    	<h1>Setting up the Twinkql Context using Spring</h1>	
+		    	<h1>Using the TwinkqlTemplateFactory</h1>	
 		    	<h3 id='purpose'>Purpose</h3>
 
-<p>For applications that use the <a href='http://www.springsource.org'>Spring Framework</a>, configuration is a snap.</p>
+<p>A <a href='../maven-site/apidocs/edu/mayo/twinkql/template/TwinkqlTemplateFactory.html'>TwinkqlTemplateFactory</a> is a Factory for creating a <a href='template.html'>TwinkqlTemplate</a>, which is the main user entry point into Twinkql.</p>
 
 <h3 id='example'>Example</h3>
 
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
-	xmlns:osgi=&quot;http://www.springframework.org/schema/osgi&quot;
-	xmlns:osgix=&quot;http://www.springframework.org/schema/osgi-compendium&quot;
-	xsi:schemaLocation=&quot;http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.2.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-		http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd&quot;&gt;
+<pre><code>TwinkqlContext context = //init the context via the Factory or Spring
 
-	&lt;bean class=&quot;edu.mayo.twinkql.context.SpringTwinkqlContextFactory&quot;&gt;
-		&lt;!-- additional properties definitions here --&gt;
-	&lt;/bean&gt;
+TwinkqlTemplateFactory factory = TwinkqlTemplateFactory(context);
 
-&lt;/beans&gt;</code></pre>
+TwinkqlTemplate template = factory.getTwinkqlTemplate();</code></pre>
 
-<p>A <a href='../maven-site/apidocs/edu/mayo/twinkql/context/SpringTwinkqlContextFactory.html'>SpringTwinkqlContextFactory</a> is the Spring-enabled Factory Bean for creating a TwinkqlContext.</p>    
+<p><strong><em>NOTE:</em></strong> For more information on how to initialize the <code>TwinkqlContext</code>, see <a href='context.html'>here</a></p>    
 		    </div>
 		    
 		    <div class="clear"></div>

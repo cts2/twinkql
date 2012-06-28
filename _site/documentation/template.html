@@ -95,7 +95,7 @@
 
 <ol>
 	<li><a href="template.html"><em>TwinkqlTemplate</em></a></li>
-    <li><a href="template-factory.html"><em>TwinkqlTemmplateFactory</em></a></li>
+    <li><a href="template-factory.html"><em>TwinkqlTemplateFactory</em></a></li>
     <li><a href="spring-template-factory.html">Using Spring</a></li>
 </ol>
 
@@ -133,7 +133,7 @@
 		    	<h1>TwinkqlTemplate</h1>	
 		    	<h3 id='purpose'>Purpose</h3>
 
-<p>The <a href='../maven-site/apidocs/edu/mayo/twinkql/template/TwinkqlTemplate.html'>TwinkqlTemplate</a> is access point into the Twinkql API. It is here that queries are executed and results are returned.</p>
+<p>The <a href='../maven-site/apidocs/org/twinkql/template/TwinkqlTemplate.html'>TwinkqlTemplate</a> is access point into the Twinkql API. It is here that queries are executed and results are returned.</p>
 
 <h3 id='example'>Example</h3>
 
@@ -149,7 +149,7 @@ ResultType result =
 List&lt;ResultType&gt; result = 
 	template.selectForList(&quot;myNs&quot;, &quot;mySelectStatement&quot;, null, ResultType.class);</code></pre>
 
-<p><strong>NOTE:</strong> when using <a href='http://cts2.github.com/twinkql/maven-site/apidocs/edu/mayo/twinkql/template/TwinkqlTemplate.html#selectForObject%28java.lang.String,%20java.lang.String,%20java.util.Map,%20java.lang.Class%29'>selectForObject</a>, only <strong>ONE</strong> unique result should be expected. If any more results are returned by the SPARQL query, a <a href='http://cts2.github.com/twinkql/maven-site/apidocs/edu/mayo/twinkql/template/TooManyResultsException.html'>TooManyResultsException</a> will be thrown.</p>    
+<p><strong>NOTE:</strong> when using <a href='http://cts2.github.com/twinkql/maven-site/apidocs/org/twinkql/template/TwinkqlTemplate.html#selectForObject%28java.lang.String,%20java.lang.String,%20java.util.Map,%20java.lang.Class%29'>selectForObject</a>, only <strong>ONE</strong> unique result should be expected. If any more results are returned by the SPARQL query, a <a href='http://cts2.github.com/twinkql/maven-site/apidocs/org/twinkql/template/TooManyResultsException.html'>TooManyResultsException</a> will be thrown.</p>    
 		    </div>
 		    
 		    <div class="clear"></div>

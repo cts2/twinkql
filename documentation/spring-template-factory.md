@@ -1,6 +1,6 @@
 ---
 layout: documentation
-title: Setting up the Twinkql Context using Spring
+title: Setting up the TwinkqlTemplate using Spring
 ---
 
 ### Purpose
@@ -17,15 +17,18 @@ For applications that use the [Spring Framework](http://www.springsource.org), c
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 			http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
-
-		<bean class="edu.mayo.twinkql.context.SpringTwinkqlContextFactory">
+		
+		<bean id="twinkqlContext" class="org.twinkql.context.SpringTwinkqlContextFactory">
 			<!-- additional properties definitions here -->
 		</bean>
-
+		
+		<bean class="org.twinkql.template.SpringTwinkqlTemplateFactory">
+			<property name="twinkqlContext" ref="twinkqlContext"/>
+		</bean>
 	</beans>
 
-A [SpringTwinkqlContextFactory](../maven-site/apidocs/edu/mayo/twinkql/context/SpringTwinkqlContextFactory.html) is the Spring-enabled
-Factory Bean for creating a TwinkqlContext.
+A [SpringTwinkqlTemplateFactory](../maven-site/apidocs/org/twinkql/template/SpringTwinkqlTemplateFactory.html) is the Spring-enabled
+Factory Bean for creating a TwinkqlTemplate.
 
 
 
