@@ -26,7 +26,7 @@ package org.twinkql.template;
 import org.twinkql.context.TwinkqlContext;
 
 /**
- * A factory for creating TwinkqlTemplate objects.
+ * A Factory for creating TwinkqlTemplate objects.
  */
 public class TwinkqlTemplateFactory extends AbstractTwinkqlTemplateFactory {
 

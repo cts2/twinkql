@@ -24,7 +24,7 @@
 package org.twinkql.template;
 
 /**
- * The Class SelectNotFoundException.
+ * Thrown when a 'SELECT' is requested but not found in the mapping files.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */

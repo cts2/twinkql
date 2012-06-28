@@ -32,7 +32,7 @@ import org.twinkql.model.TwinkqlConfig;
 import org.twinkql.model.TwinkqlConfigItem;
 
 /**
- * The Class ConfigurationBuilder.
+ * The Builder-style class for programmatically building a {@link TwinklContext}.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */

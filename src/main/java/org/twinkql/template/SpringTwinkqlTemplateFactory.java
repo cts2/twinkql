@@ -28,9 +28,8 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.FactoryBean;
 import org.twinkql.context.TwinkqlContext;
 
-
 /**
- * A factory for creating TwinkqlTemplate objects.
+ * A Spring-enabled Factory for creating TwinkqlTemplate objects.
  */
 public class SpringTwinkqlTemplateFactory extends AbstractTwinkqlTemplateFactory
 	implements FactoryBean<TwinkqlTemplate> {

@@ -26,8 +26,15 @@ package org.twinkql.context;
 import com.hp.hpl.jena.query.QueryExecution;
 
 /**
- * The Interface QueryExecutionProvider.
+ * Interface to allow clients to process a SPARQL query string.
+ * 
+ * See the Jena QueryExecutionFactory for some options:
  *
+ * @see <a href="http://jena.apache.org/documentation/javadoc/arq/com/hp/hpl/jena/query/QueryExecutionFactory.html">Jena's QueryExecutionFactory</a>
+ * for more some examples.
+ * 
+ * Or the provided {@link JenaHttpQueryExecutionProvider} 
+ * 
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
 public interface QueryExecutionProvider {
