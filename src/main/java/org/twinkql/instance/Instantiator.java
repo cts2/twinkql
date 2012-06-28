@@ -24,7 +24,7 @@
 package org.twinkql.instance;
 
 /**
- * The Interface Instantiator.
+ * Given a designation in the form of a String, return a new Object.
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */

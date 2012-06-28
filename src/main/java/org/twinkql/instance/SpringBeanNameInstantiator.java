@@ -28,7 +28,10 @@ import org.springframework.context.ApplicationContext;
 
 
 /**
- * The Class SpringBeanNameInstantiator.
+ * An implementation of {@link Instantiator} that resolves a Spring bean.
+ * 
+ * Beans should be specified using the pattern:
+ * {@literal spring:[spring-bean-name] }
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */

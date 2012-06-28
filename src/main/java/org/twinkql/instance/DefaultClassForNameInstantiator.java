@@ -25,7 +25,8 @@ package org.twinkql.instance;
 
 
 /**
- * The Class DefaultClassForNameInstantiator.
+ * The default implementation of {@link Instantiator}, this simply takes the full Class name
+ * and executes a 'Class.forName.'
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */

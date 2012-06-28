@@ -34,7 +34,13 @@ import org.twinkql.model.SparqlMap;
 import org.twinkql.model.TwinkqlConfig;
 
 /**
- * The Interface TwinkqlContext.
+ * A TwinkqlContext defines the configuration information for Twinkql. Most users will not
+ * need to implement this, as {@link TwinkqlContextFactory} or {@link SpringTwinkqlContextFactory}
+ * (or subclasses thereof) should provide most of the needed functionality.
+ * 
+ * @see DefaultTwinkqlContext
+ * @see TwinkqlContextFactory
+ * @see SpringTwinkqlContextFactory
  *
  * @author <a href="mailto:kevin.peterson@mayo.edu">Kevin Peterson</a>
  */
