@@ -1,5 +1,5 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns="http://mayo.edu/twinkql" targetNamespace="http://mayo.edu/twinkql"
+	xmlns="http://twinkql.org" targetNamespace="http://twinkql.org"
 	elementFormDefault="qualified">
 	
 	<xsd:element name="twinkqlConfig">
