@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparqlMap namespace="param"
+	xmlns="http://twinkql.org" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://twinkql.org ../../../../../../../main/castor/twinkql.xsd ">
+	
+	<resultMap id="novelResultMap" resultClass="org.twinkql.it.param.Novel">
+		<uniqueResult>novel</uniqueResult>
+		<rowMap var="novel" varType="uri" beanProperty="novel"/>
+		<rowMap var="author" varType="uri" beanProperty="author"/>
+	</resultMap>
+	
+	
+	<select id="getNovel" resultMap="novelResultMap">
+	<![CDATA[
+		SELECT ?novel ?author 
+		WHERE { 
+			?novel a <http://dbpedia.org/class/yago/EnglishNovels> ;
+				<http://dbpedia.org/property/name> "#{novelName}"@en ;
+				<http://dbpedia.org/property/author> ?author .
+		}
+	]]>
+	</select>
+	
+</sparqlMap>
