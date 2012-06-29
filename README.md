@@ -55,4 +55,4 @@ In many applications, the SPARQL query is just part of the architecture. Results
 In this example, a bean of class 'com.sample.twinkql.Bean' will be instantiated, and for each row of the SPARQL result set returned, the variables will be bound. The user will be returned a Collectin of the resulting beans.
 
 ### More Info
-For more info, please see the [Project Page](http://twinql.org).
+For more info, please see the [Project Page](http://twinkql.org).
