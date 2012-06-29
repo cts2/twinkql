@@ -8,7 +8,14 @@ The [TwinkqlTemplate](../maven-site/apidocs/org/twinkql/template/TwinkqlTemplate
 the Twinkql API. It is here that queries are executed and results are returned.
 
 ### Example
-	TwinkqlTemplateFactory factory = TwinkqlTemplateFactory(context);
+	/*
+	For more information on how to create a TwinkqlContext,
+	see TwinkqlContextFactory
+	*/
+	TwinkqlContext context = new TwinkqlContextFactory(
+		"http://dbpedia.org/sparql").getTwinkqlContext();
+
+	TwinkqlTemplateFactory factory = new TwinkqlTemplateFactory(context);
 		
 	TwinkqlTemplate template = factory.getTwinkqlTemplate();
 	

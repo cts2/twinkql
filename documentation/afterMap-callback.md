@@ -21,4 +21,4 @@ In the above example, we define a ```resultMap``` that will fire a ```afterMap``
 
 ### Attributes
 
- * ```afterMap```: The full Class Name of the callback. This class must implement the [AfterResultBinding](../maven-site/apidocs/org/twinkql/result/callback/AfterResultBinding.html) interface
+ * ```afterMap```: The full Class Name (or alias) of the callback. This class must implement the [AfterResultBinding](../maven-site/apidocs/org/twinkql/result/callback/AfterResultBinding.html) interface
