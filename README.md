@@ -1,5 +1,5 @@
 ### What is Twinkql?
-Twinkql is a SPARQL to Object Mapping Framework that allows users to bind named SQARQL queries to ResultMaps, which in turn may be bound to beans.
+[Twinkql](http://twinql.org) is a SPARQL to Object Mapping Framework that allows users to bind named SQARQL queries to ResultMaps, which in turn may be bound to beans.
 <br/>
 _**Twinkql has a few simple goals**_
 <br/>
@@ -45,13 +45,13 @@ In this case, when I execute my query, I simply pass in a Map with a key of 'myQ
 In many applications, the SPARQL query is just part of the architecture. Results from a SPARQL query may need to be manipulated further, passed into a messaging queue, processed into a different format, etc. Twinql allows you to bind beans to SPARQL query results via 'ResultMaps'. Result maps simply take a variable from the SPARQL query (the 'var' attribute) and map it to a property on your result bean (the 'beanProperty' attribute).
 
 ```xml
-<perRowResultMap id="myTestResultMap" 
+<resultMap id="myTestResultMap" 
     resultClass="com.sample.twinkql.Bean">
     <rowMap var="label" varType="literalValue" beanProperty="name"/>
     <rowMap var="comment" varType="literalValue" beanProperty="node"/>
-</perRowResultMap>
+</resultMap>
 ```
 In this example, a bean of class 'com.sample.twinkql.Bean' will be instantiated, and for each row of the SPARQL result set returned, the variables will be bound. The user will be returned a Collectin of the resulting beans.
 
 ### More Info
-For more info, please see the [Usage Page](https://github.com/cts2/twinkql/wiki/Usage).
+For more info, please see the [Usage Page](http://twinql.org).
