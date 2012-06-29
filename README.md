@@ -54,5 +54,11 @@ In many applications, the SPARQL query is just part of the architecture. Results
 ```
 In this example, a bean of class 'com.sample.twinkql.Bean' will be instantiated, and for each row of the SPARQL result set returned, the variables will be bound. The user will be returned a Collectin of the resulting beans.
 
+### License
+[Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license)
+
+### Inspirations
+Twinkql has been heavily inspired by the (MyBatis Project)[http://mybatis.org], and we thank them for a great project. Twinkql aims to be the _MyBatis_ for the SPARQL community.
+
 ### More Info
-For more info, please see the [Project Page](http://twinkql.org).
+For more info, please see the [Project Page](http://twinkql.org) and [follow us on Twitter](https://twitter.com/Twinkql).
