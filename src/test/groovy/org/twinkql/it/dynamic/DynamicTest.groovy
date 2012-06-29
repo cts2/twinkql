@@ -2,13 +2,9 @@ package org.twinkql.it.dynamic;
 
 import static org.junit.Assert.*;
 
-
-import org.junit.Test
-
-import org.twinkql.context.ConfigBuilder
+import org.junit.Test;
 import org.twinkql.context.TwinkqlContextFactory
-import org.twinkql.model.AliasDefinition
-import org.twinkql.model.NamespaceDefinition
+import org.twinkql.example.dynamic.Novel
 import org.twinkql.template.TwinkqlTemplateFactory
 
 class DynamicTest {
@@ -17,7 +13,7 @@ class DynamicTest {
 	void TestDynamicSparql(){
 		def factory = new TwinkqlContextFactory(
 				"http://dbpedia.org/sparql",
-				"classpath:org/twinkql/it/dynamic/*.xml")
+				"classpath:org/twinkql/example/dynamic/*.xml")
 		
 		def template = new TwinkqlTemplateFactory(factory.getTwinkqlContext()).getTwinkqlTemplate()
 		
@@ -37,7 +33,7 @@ class DynamicTest {
 	void TestDynamicSparqlNullParam(){
 		def factory = new TwinkqlContextFactory(
 				"http://dbpedia.org/sparql",
-				"classpath:org/twinkql/it/dynamic/*.xml")
+				"classpath:org/twinkql/example/dynamic/*.xml")
 		
 		def template = new TwinkqlTemplateFactory(factory.getTwinkqlContext()).getTwinkqlTemplate()
 		

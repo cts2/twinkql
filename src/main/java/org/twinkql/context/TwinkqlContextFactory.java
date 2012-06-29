@@ -129,7 +129,7 @@ public class TwinkqlContextFactory {
 	 * @return the twinkql context
 	 * @throws Exception the exception
 	 */
-	public TwinkqlContext getTwinkqlContext() throws Exception {
+	public TwinkqlContext getTwinkqlContext(){
 		Assert.notNull(this.queryExecutionProvider,
 				"Please provide a 'QueryExecutionProvider'");
 

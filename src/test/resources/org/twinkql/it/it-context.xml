@@ -13,7 +13,7 @@
 		
 	<bean id="twinkqlContext" class="org.twinkql.context.SpringTwinkqlContextFactory">
 		<property name="queryExecutionProvider" ref="httpQueryExecutionProvider"/>
-		<property name="mappingFiles" value="classpath:org/twinkql/it/**/*TestMap.xml"/>
+		<property name="mappingFiles" value="classpath:org/twinkql/example/**/*Map.xml"/>
 	</bean>
 	
 	<bean class="org.twinkql.template.SpringTwinkqlTemplateFactory">

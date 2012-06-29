@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://twinkql.org/schema/1.0/twinkql.xsd">
 	
-	<resultMap id="novelResultMap" resultClass="org.twinkql.it.param.Novel">
+	<resultMap id="novelResultMap" resultClass="org.twinkql.example.param.Novel">
 		<uniqueResult>novel</uniqueResult>
 		<rowMap var="novel" varType="uri" beanProperty="novel"/>
 		<rowMap var="author" varType="uri" beanProperty="author"/>

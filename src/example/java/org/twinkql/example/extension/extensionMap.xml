@@ -4,13 +4,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://twinkql.org/schema/1.0/twinkql.xsd">
 	
-	<resultMap id="personResultMap" resultClass="org.twinkql.it.extension.Person">
+	<resultMap id="personResultMap" resultClass="org.twinkql.example.extension.Person">
 		<uniqueResult>s</uniqueResult>
 		<rowMap varType="literalValue" beanProperty="names[]" var="o" match="?p = http://www.w3.org/2000/01/rdf-schema#label"/>
 		<rowMap varType="literalValue" beanProperty="birthDate" var="o" match="?p = http://dbpedia.org/ontology/birthDate"/>
 	</resultMap>
 	
-	<resultMap id="boxerResultMap" resultClass="org.twinkql.it.extension.Boxer" 
+	<resultMap id="boxerResultMap" resultClass="org.twinkql.example.extension.Boxer" 
 		extends="personResultMap">
 		<rowMap varType="literalValue" beanProperty="comments[]" var="o" match="?p = http://www.w3.org/2000/01/rdf-schema#comment"/>
 	</resultMap>

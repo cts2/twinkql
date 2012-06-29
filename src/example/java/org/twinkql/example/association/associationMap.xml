@@ -4,27 +4,27 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://twinkql.org/schema/1.0/twinkql.xsd">
 	
-	<resultMap id="whatGovernorsAreShortResultMap" resultClass="org.twinkql.it.association.Governor">
+	<resultMap id="whatGovernorsAreShortResultMap" resultClass="org.twinkql.example.association.Governor">
 		<uniqueResult>s</uniqueResult>
 		<rowMap  var="s" varType="localName" beanProperty="name" />
 		<rowMap var="isa" varType="localName" beanProperty="isA[]"/>
 	</resultMap>
 	
-	<resultMap id="whatGovernorsAreObjectResultMap" resultClass="org.twinkql.it.association.Governor">
+	<resultMap id="whatGovernorsAreObjectResultMap" resultClass="org.twinkql.example.association.Governor">
 		<uniqueResult>s</uniqueResult>
 		<rowMap  var="s" varType="localName" beanProperty="name" />
-		<association beanProperty="isAObject" isCollection="true" resultClass="org.twinkql.it.association.IsA">
+		<association beanProperty="isAObject" isCollection="true" resultClass="org.twinkql.example.association.Governor$IsA">
 			<rowMap var="isa" varType="localName" beanProperty="isA"/>
 		</association>
 	</resultMap>
 		
-	<resultMap id="whatGovernorsAreDoubleObjectResultMap" resultClass="org.twinkql.it.association.Governor">
+	<resultMap id="whatGovernorsAreDoubleObjectResultMap" resultClass="org.twinkql.example.association.Governor">
 		<uniqueResult>s</uniqueResult>
 		<rowMap  var="s" varType="localName" beanProperty="name" />
-		<association beanProperty="isAObject" isCollection="true" resultClass="org.twinkql.it.association.IsA">
+		<association beanProperty="isAObject" isCollection="true" resultClass="org.twinkql.example.association.Governor$IsA">
 			<uniqueResult>isa</uniqueResult>
 			<rowMap var="isa" varType="localName" beanProperty="isA"/>
-			<association beanProperty="details" isCollection="true" resultClass="org.twinkql.it.association.Detail">
+			<association beanProperty="details" isCollection="true" resultClass="org.twinkql.example.association.Governor$Detail">
 				<uniqueResult>detail</uniqueResult>
 				<rowMap var="detail" varType="localName" beanProperty="name"/>
 				<rowMap var="value" varType="literalValue" match="value.isLiteral()" beanProperty="values[]"/>
@@ -33,19 +33,19 @@
 		</association>
 	</resultMap>
 	
-	<resultMap id="whatGovernorsAreNonInlineResultMap" resultClass="org.twinkql.it.association.Governor">
+	<resultMap id="whatGovernorsAreNonInlineResultMap" resultClass="org.twinkql.example.association.Governor">
 		<uniqueResult>s</uniqueResult>
 		<rowMap  var="s" varType="localName" beanProperty="name" />
 		<association beanProperty="isAObject" isCollection="true" resultMap="isAResultMap"/>
 	</resultMap>
 	
-	<resultMap id="isAResultMap" resultClass="org.twinkql.it.association.IsA">
+	<resultMap id="isAResultMap" resultClass="org.twinkql.example.association.Governor$IsA">
 		<uniqueResult>isa</uniqueResult>
 		<rowMap var="isa" varType="localName" beanProperty="isA"/>
 		<association beanProperty="details" isCollection="true" resultMap="detailResultMap"/>
 	</resultMap>
 	
-	<resultMap id="detailResultMap" resultClass="org.twinkql.it.association.Detail">
+	<resultMap id="detailResultMap" resultClass="org.twinkql.example.association.Governor$Detail">
 		<uniqueResult>detail</uniqueResult>
 		<rowMap var="detail" varType="localName" beanProperty="name"/>
 		<rowMap var="value" varType="literalValue" match="value.isLiteral()" beanProperty="values[]"/>

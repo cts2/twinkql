@@ -5,10 +5,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test
 
-import org.twinkql.context.ConfigBuilder
 import org.twinkql.context.TwinkqlContextFactory
-import org.twinkql.model.AliasDefinition
-import org.twinkql.model.NamespaceDefinition
+import org.twinkql.example.param.Novel
 import org.twinkql.template.TwinkqlTemplateFactory
 
 class ParamTest {
@@ -17,7 +15,7 @@ class ParamTest {
 	void TestParameter(){
 		def factory = new TwinkqlContextFactory(
 				"http://dbpedia.org/sparql",
-				"classpath:org/twinkql/it/param/*.xml")
+				"classpath:org/twinkql/example/param/*.xml")
 		
 		def template = new TwinkqlTemplateFactory(factory.getTwinkqlContext()).getTwinkqlTemplate()
 		

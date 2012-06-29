@@ -45,7 +45,7 @@ public abstract class AbstractTwinkqlTemplateFactory {
 	 * @return the twinkql template
 	 * @throws Exception the exception
 	 */
-	public TwinkqlTemplate getTwinkqlTemplate() throws Exception {
+	public TwinkqlTemplate getTwinkqlTemplate(){
 		
 		DefaultListableBeanFactory parentBeanFactory = new DefaultListableBeanFactory();
 		

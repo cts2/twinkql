@@ -13,7 +13,7 @@ import org.twinkql.template.TwinkqlTemplate
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations=["../it-context.xml"])
-class PersonTest {
+class ExtensionTest {
 	
 	@Resource
 	TwinkqlTemplate template

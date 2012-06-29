@@ -8,22 +8,8 @@
 		<uniqueResult>s</uniqueResult>
 		<rowMap var="comment" varType="literalValue" beanProperty="comments[]"/>
 	</resultMap>
-	
-	<select id="getTetrisComments" resultMap="tetrisCommentsResultMap">
-	<![CDATA[
-		SELECT 
-		(<http://dbpedia.org/resource/Tetris> as ?s)
-		?comment
-		
-		WHERE {
 
-			<http://dbpedia.org/resource/Tetris> <http://www.w3.org/2000/01/rdf-schema#comment> ?comment
-		
-		} LIMIT 100
-	]]>
-	</select>
-	
-	<select id="getTetrisCommentsWithNamespaces" resultMap="tetrisCommentsResultMap">
+	<select id="getTetrisComments" resultMap="tetrisCommentsResultMap">
 	<![CDATA[
 		SELECT 
 		(dbpedia_alias:Tetris as ?s)
