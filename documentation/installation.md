@@ -5,9 +5,6 @@ mainmenukeyoverride: installation
 ---
 
 ### Maven
-___NOTE:___ Twinkql is currently in the process of migrating to the Maven Central Repository. The below
-dependency information should be active on June 29th.
-
 Add the following dependency to your ```pom.xml``` file
 
 	<dependency>
