@@ -308,7 +308,7 @@ public class TwinkqlTemplate implements InitializingBean {
 				
 				TestType testType = test.getTestType();
 				
-				if(this.doesTestPass(parameters.get(param), testType)){
+				if(parameters != null && this.doesTestPass(parameters.get(param), testType)){
 					query = this.replaceMarker(id, query, test.getContent());
 				} else {
 					query = this.replaceMarker(id, query, "");
