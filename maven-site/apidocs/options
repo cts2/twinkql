@@ -15,10 +15,10 @@
 -docencoding
 'UTF-8'
 -doctitle
-'Twinkql 0.4.0-SNAPSHOT API'
+'Twinkql 0.9.1-SNAPSHOT API'
 -linkoffline
 'http://download.oracle.com/javase/6/docs/api' '/Users/m005256/Documents/workspace-sts-2.8.0.RELEASE/twinkql/target/javadoc-bundle-options'
 -use
 -version
 -windowtitle
-'Twinkql 0.4.0-SNAPSHOT API'
+'Twinkql 0.9.1-SNAPSHOT API'
