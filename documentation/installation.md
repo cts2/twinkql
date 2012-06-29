@@ -3,15 +3,21 @@ layout: documentation
 title: Installation
 mainmenukeyoverride: installation
 ---
+### Dependency
+Integrate Twinkql using you Dependency Management tool:
 
-### Maven
-Add the following dependency to your ```pom.xml``` file
-
+#### Maven
 	<dependency>
 		<groupId>org.twinkql</groupId>
 		<artifactId>twinkql</artifactId>
 		<version>{% include current-version.html %}</version>
 	</dependency>
+
+#### Ivy
+	<dependency org="org.twinkql" name="twinkql" rev="{% include current-version.html %}"/>
+
+#### Gradle
+	'org.twinkql:twinkql:{% include current-version.html %}'
 
 ### Build from source
 

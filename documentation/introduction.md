@@ -4,7 +4,7 @@ title: Introduction
 ---
 
 ### What is Twinkql?
-Twinkql is a SPARQL to Object Mapping Framework that allows users to bind named SQARQL queries to ResultMaps, which in turn may be bound to beans.
+Twinkql is a SPARQL to Object Mapping Framework that allows users to bind named SPARQL queries to ResultMaps, which in turn may be bound to beans.
 <br/>
 <br/>
 _**Twinkql has a few simple goals**_
