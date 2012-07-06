@@ -1,6 +1,6 @@
 ![Twinkql Logl](http://twinkql.org/img/twinkql-logo.png)
 ### What is Twinkql?
-[Twinkql](http://twinql.org) is a SPARQL to Object Mapping Framework that allows users to bind named SQARQL queries to ResultMaps, which in turn may be bound to beans.
+[Twinkql](http://twinkql.org) is a SPARQL to Object Mapping Framework that allows users to bind named SQARQL queries to ResultMaps, which in turn may be bound to beans.
 <br/>
 _**Twinkql has a few simple goals**_
 <br/>
