@@ -1,6 +1,6 @@
 ![Twinkql Logl](http://twinkql.org/img/twinkql-logo.png)
 
-[![Build Status](https://travis-ci.org/cts2/twinkql.png)](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME])
+[![Build Status](https://travis-ci.org/cts2/twinkql.png)](https://travis-ci.org/cts2/twinkql)
 
 ### What is Twinkql?
 [Twinkql](http://twinkql.org) is a SPARQL to Object Mapping Framework that allows users to bind named SPARQL queries to ResultMaps, which in turn may be bound to beans.
