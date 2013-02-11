@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparqlMap namespace="iterator"
+	xmlns="http://twinkql.org" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://twinkql.org http://twinkql.org/schema/1.0/twinkql.xsd">
+	
+	<resultMap id="novelResultMap" resultClass="org.twinkql.example.dynamic.Novel">
+		<uniqueResult>novel</uniqueResult>
+		<rowMap var="novel" varType="uri" beanProperty="novel"/>
+		<rowMap var="author" varType="uri" beanProperty="author"/>
+		<rowMap var="abstract" varType="literalValue" beanProperty="novelAbstract"/>
+	</resultMap>
+	
+	
+	<select id="getNovel" resultMap="novelResultMap">
+		<![CDATA[
+		SELECT ?novel ?author ?abstract
+		WHERE { 
+			?novel a <http://dbpedia.org/class/yago/EnglishNovels> ;
+				<http://dbpedia.org/property/author> ?author ;
+				<http://dbpedia.org/ontology/abstract> ?abstract .
+		
+		    <iterator property="filters" collection="." open="FILTER(" close=")" separator="&amp;&amp;">
+                CONTAINS( UCASE( ?abstract ), UCASE( "#{item}" ) )
+            </iterator>
+		}
+		]]>
+		LIMIT 10
+	</select>
+	
+</sparqlMap>

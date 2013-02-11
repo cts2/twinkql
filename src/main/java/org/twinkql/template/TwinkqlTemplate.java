@@ -42,6 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.twinkql.context.Qname;
 import org.twinkql.context.TwinkqlContext;
@@ -355,11 +356,16 @@ public class TwinkqlTemplate implements InitializingBean {
 					List<String> variables = this.getVariables(content);
 
 					for (String variable : variables) {
-						String value = (String) BeanUtil
-								.getProperty(
-										item,
-										this.stripVariableWrappingForIterator(variable));
-						content = StringUtils.replace(content, variable, value);
+                        String value;
+                        if(this.isPrimitiveOrWrapper(item.getClass())){
+                            value = item.toString();
+                        } else {
+                            value = (String) BeanUtil
+                                    .getProperty(
+                                            item,
+                                            this.stripVariableWrappingForIterator(variable));
+                        }
+                        content = StringUtils.replace(content, variable, value);
 					}
 
 					totalContent.append(content);
@@ -409,6 +415,10 @@ public class TwinkqlTemplate implements InitializingBean {
 
 		return query;
 	}
+
+    private boolean isPrimitiveOrWrapper(Class<?> clazz){
+        return ClassUtils.isPrimitiveOrWrapper(clazz) || clazz.equals(String.class);
+    }
 
 	/**
 	 * Replace marker.
@@ -542,8 +552,6 @@ public class TwinkqlTemplate implements InitializingBean {
 	 *            the select id
 	 * @param parameters
 	 *            the parameters
-	 * @param doBind
-	 *            the do bind
 	 * @return the t
 	 */
 	@SuppressWarnings("unchecked")
