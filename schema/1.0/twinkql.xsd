@@ -53,7 +53,14 @@
 		<xsd:simpleContent>
 			<xsd:extension base="xsd:string">
 				<xsd:attribute name="property" type="xsd:string" use="required" />
-				<xsd:attribute name="collection" type="xsd:string" use="required" />
+				<xsd:attribute name="collection" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                        The property representing the collection. If omitted, it is assumed
+                        that the 'property' attribute is the actual collection to be iterated over.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
 				<xsd:attribute name="open" type="xsd:string" />
 				<xsd:attribute name="separator" type="xsd:string" />
 				<xsd:attribute name="close" type="xsd:string" />
