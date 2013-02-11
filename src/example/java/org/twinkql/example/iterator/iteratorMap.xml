@@ -20,7 +20,7 @@
 				<http://dbpedia.org/property/author> ?author ;
 				<http://dbpedia.org/ontology/abstract> ?abstract .
 		
-		    <iterator property="filters" collection="." open="FILTER(" close=")" separator="&amp;&amp;">
+		    <iterator property="filters" open="FILTER(" close=")" separator="&&">
                 CONTAINS( UCASE( ?abstract ), UCASE( "#{item}" ) )
             </iterator>
 		}

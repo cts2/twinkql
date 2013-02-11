@@ -17,7 +17,7 @@ class IteratorTest {
 		
 		def template = new TwinkqlTemplateFactory(factory.getTwinkqlContext()).getTwinkqlTemplate()
 		
-		def params = ["filters":["farm"]]
+		def params = ["filters":["farm", "animal"]]
 		
 		def novels = template.selectForList("iterator", "getNovel", params, Novel)
 	
@@ -25,6 +25,7 @@ class IteratorTest {
 		
 		novels.each {
 			assertTrue it.novelAbstract.toLowerCase().contains("farm")
+            assertTrue it.novelAbstract.toLowerCase().contains("animal")
 		}
 	}
 

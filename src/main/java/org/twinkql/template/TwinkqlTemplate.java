@@ -332,7 +332,7 @@ public class TwinkqlTemplate implements InitializingBean {
 				}
 
 				Collection<?> collection;
-				if (collectionPath.equals(".")) {
+				if (StringUtils.isBlank(collectionPath) || collectionPath.equals(".")) {
 					collection = (Collection<?>) iterableParam;
 				} else {
 					collection = (Collection<?>) BeanUtil.getProperty(
