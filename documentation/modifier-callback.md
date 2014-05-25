@@ -18,4 +18,4 @@ In the above example, we define a ```rowMap``` that will fire a ```modifier``` c
 
 ### Attributes
 
- * ```modifier```: The full Class Name (or alias) of the callback. This class must implement the [AfterResultBinding](../maven-site/apidocs/org/twinkql/result/callback/Modifier.html) interface
+ * ```modifier```: The full Class Name (or alias) of the callback. This class must implement the [Modifier](../maven-site/apidocs/org/twinkql/result/callback/Modifier.html) interface
