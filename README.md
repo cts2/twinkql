@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/cts2/twinkql.png)](https://travis-ci.org/cts2/twinkql)
 
+# This service implementation has been archived.
+
 ### What is Twinkql?
 [Twinkql](http://twinkql.org) is a SPARQL to Object Mapping Framework that allows users to bind named SPARQL queries to ResultMaps, which in turn may be bound to beans.
 <br/>
